@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 
-public class placeWheat : MonoBehaviour
+public class PlaceWheat : MonoBehaviour
 {
     public GameObject wheat;
 
@@ -18,8 +18,8 @@ public class placeWheat : MonoBehaviour
     private float xMax = 100f;
 
     // Range of coordinates on the y axis where wheat can appear
-    private float yMin = 1f;
-    private float yMax = 1.8f;
+    private float yMin = 0.8f;
+    private float yMax = 1.2f;
 
     // Range of coordinates on the z axis where wheat can appear
     private float zMin = 0f;
