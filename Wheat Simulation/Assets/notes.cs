@@ -6,4 +6,7 @@ public class notes : MonoBehaviour
 {
 	//Dirt texture:
 	//https://www.deviantart.com/fabooguy/art/Dirt-Ground-Texture-Tileable-2048x2048-441212191
+	
+	//Skyboxes:
+	//https://assetstore.unity.com/packages/2d/textures-materials/sky/skybox-series-free-103633
 }
