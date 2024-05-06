@@ -496,7 +496,7 @@ TerrainCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_TerrainData: {fileID: 15600000, guid: b73712bda29123d4a8808c281010dcfd, type: 2}
-  m_EnableTreeColliders: 1
+  m_EnableTreeColliders: 0
 --- !u!218 &419039605
 Terrain:
   m_ObjectHideFlags: 0
@@ -603,6 +603,54 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Padding: {x: -8, y: -5, z: -8, w: -5}
   m_Softness: {x: 0, y: 0}
+--- !u!1 &680051334
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 680051335}
+  - component: {fileID: 680051336}
+  m_Layer: 0
+  m_Name: Wheat bounds
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &680051335
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 680051334}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1826283975}
+  - {fileID: 1187441223}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &680051336
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 680051334}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7f88b72e8ba6b5428cec9279fd9899b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  boundary1: {fileID: 1826283974}
+  boundary2: {fileID: 1187441222}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -843,8 +891,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72f65522e66bf3749853c9073ddcb33c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wheat: {fileID: 919132149155446097, guid: 803943004d435cd44a46a2d2a40697c4, type: 3}
+  wheat: {fileID: 919132149155446097, guid: 3ee706525040e2a478a7cffed3e0f01b, type: 3}
   quantityToPlaceInputField: {fileID: 782437343}
+  boundary1: {fileID: 1826283974}
+  boundary2: {fileID: 1187441222}
 --- !u!1 &782437341
 GameObject:
   m_ObjectHideFlags: 0
@@ -1033,7 +1083,7 @@ GameObject:
   - component: {fileID: 830734408}
   - component: {fileID: 830734407}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1489,6 +1539,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1146285044}
   m_CullTransparentMesh: 1
+--- !u!1 &1187441222
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1187441223}
+  m_Layer: 0
+  m_Name: Wheat bounds (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1187441223
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1187441222}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 100, y: 0, z: 100}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 680051335}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1473567247
 GameObject:
   m_ObjectHideFlags: 0
@@ -1897,6 +1978,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1659560567}
   m_CullTransparentMesh: 1
+--- !u!1 &1826283974
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1826283975}
+  m_Layer: 0
+  m_Name: Wheat bounds (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1826283975
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1826283974}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.29, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 680051335}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1923709279
 GameObject:
   m_ObjectHideFlags: 0
@@ -2112,8 +2224,9 @@ CanvasRenderer:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 830734410}
+  - {fileID: 181258997}
   - {fileID: 963194228}
   - {fileID: 705507995}
   - {fileID: 419039606}
-  - {fileID: 830734410}
-  - {fileID: 181258997}
+  - {fileID: 680051335}

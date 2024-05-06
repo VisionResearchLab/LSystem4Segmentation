@@ -9,21 +9,46 @@ using UnityEngine.UIElements;
 
 public class PlaceWheat : MonoBehaviour
 {
+    // The wheat 3D model to randomly place
     public GameObject wheat;
 
+    // UI text field that sets the amount of wheat objects to place
     public TMPro.TMP_InputField quantityToPlaceInputField;
 
+    // Boundaries of wheat growth
+    public GameObject boundary1;
+    public GameObject boundary2;
+
     // Range of coordinates on the x axis where wheat can appear
-    private float xMin = 0f;
-    private float xMax = 100f;
+    private float xMin;
+    private float xMax;
 
     // Range of coordinates on the y axis where wheat can appear
-    private float yMin = 0.8f;
-    private float yMax = 1.2f;
+    private float yMin;
+    private float yMax;
 
     // Range of coordinates on the z axis where wheat can appear
-    private float zMin = 0f;
-    private float zMax = 100f;
+    private float zMin;
+    private float zMax;
+
+    private void Start(){
+        defineBoundaries();
+    }
+
+    // Finds the positions of the boundary transforms, and ensures that wheat will only spawn within these boundaries.
+    private void defineBoundaries()
+    {
+        Transform transform1 = boundary1.GetComponent<Transform>();
+        Transform transform2 = boundary2.GetComponent<Transform>();
+
+        xMin = transform1.position.x;
+        yMin = transform1.position.y;
+        zMin = transform1.position.z;
+
+        xMax = transform2.position.x;
+        yMax = transform2.position.y;
+        zMax = transform2.position.z;
+    }
 
     // When called, create a new wheat object in a random position that is within the coordinates given above
     public void InstantiateWheat()
