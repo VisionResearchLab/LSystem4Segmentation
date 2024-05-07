@@ -1959,6 +1959,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1187441223}
+  - component: {fileID: 1187441224}
   m_Layer: 0
   m_Name: Wheat bounds (2)
   m_TagString: Untagged
@@ -1975,12 +1976,26 @@ Transform:
   m_GameObject: {fileID: 1187441222}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 100, y: 0, z: 100}
+  m_LocalPosition: {x: 100, y: -0.49, z: 100}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 680051335}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1187441224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1187441222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7f88b72e8ba6b5428cec9279fd9899b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  boundary1: {fileID: 1826283974}
+  boundary2: {fileID: 1187441222}
 --- !u!1 &1473567247
 GameObject:
   m_ObjectHideFlags: 0
@@ -2398,6 +2413,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1826283975}
+  - component: {fileID: 1826283976}
   m_Layer: 0
   m_Name: Wheat bounds (1)
   m_TagString: Untagged
@@ -2414,12 +2430,26 @@ Transform:
   m_GameObject: {fileID: 1826283974}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.29, z: 0}
+  m_LocalPosition: {x: 0, y: 2.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 680051335}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1826283976
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1826283974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7f88b72e8ba6b5428cec9279fd9899b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  boundary1: {fileID: 1826283974}
+  boundary2: {fileID: 1187441222}
 --- !u!1 &1923709279
 GameObject:
   m_ObjectHideFlags: 0

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEditor;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
@@ -38,24 +39,37 @@ public class MassAddWheat : MonoBehaviour
     // Finds the positions of the boundary transforms, and ensures that wheat will only spawn within these boundaries.
     private void defineBoundaries()
     {
-        Transform transform1 = boundary1.GetComponent<Transform>();
-        Transform transform2 = boundary2.GetComponent<Transform>();
+        Vector3 pos1 = boundary1.GetComponent<Transform>().position;
+        Vector3 pos2 = boundary2.GetComponent<Transform>().position;
 
-        xMin = transform1.position.x;
-        yMin = transform1.position.y;
-        zMin = transform1.position.z;
+        xMin = pos1.x;
+        yMin = pos1.y;
+        zMin = pos1.z;
 
-        xMax = transform2.position.x;
-        yMax = transform2.position.y;
-        zMax = transform2.position.z;
+        xMax = pos2.x;
+        yMax = pos2.y;
+        zMax = pos2.z;
     }
 
     // When called, create a new wheat object in a random position that is within the coordinates given above
     public void InstantiateWheat()
     {
+        // Get the amount of wheat to place from the user input
         int quantityToPlace = int.Parse(quantityToPlaceInputField.GetComponent<TMPro.TMP_InputField>().text);
+
         for (int i = 0; i < quantityToPlace; i++){
-            Instantiate(wheat, new Vector3(Random.Range(xMin, xMax), Random.Range(yMin, yMax), Random.Range(zMin, zMax)), Quaternion.Euler(0f, Random.Range(0f, 360f), 0f));
+            // X and Z positions are always assumed to be valid, because ground exists everywhere
+            float wheatPosX = Random.Range(xMin, xMax);
+            float wheatPosZ = Random.Range(zMin, zMax);
+
+            // The Y position must be found by casting a ray downwards, in case the ground is not level
+            Ray ray = new Ray(origin: new Vector3(wheatPosX, Mathf.Max(yMin, yMax), wheatPosZ), direction: new Vector3(0, -1, 0));
+            RaycastHit hit;
+            if(Physics.Raycast(ray, out hit, Mathf.Abs(yMax - yMin))){
+                Instantiate(wheat, hit.point, Quaternion.Euler(0f, Random.Range(0f, 360f), 0f));
+            } else {
+                Debug.Log("Missed");
+            }
         }
     }
 }
