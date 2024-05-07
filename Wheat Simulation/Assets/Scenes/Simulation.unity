@@ -191,6 +191,56 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &317227207
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 317227209}
+  - component: {fileID: 317227208}
+  m_Layer: 0
+  m_Name: Singletons
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &317227208
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 317227207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e39b9b792c1fd8d40b7dd20c9fe5bd07, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wheatPrefab: {fileID: 5939593783080564098, guid: 7b07b77ad8278ba42954d338ad010e60, type: 3}
+  downTranslationMin: 0.1
+  downTranslationMax: 0.25
+  xRotationMax: 15
+  yRotationMax: 360
+  zRotationMax: 15
+--- !u!4 &317227209
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 317227207}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &385351879
 GameObject:
   m_ObjectHideFlags: 0
@@ -750,7 +800,7 @@ GameObject:
   - component: {fileID: 680051335}
   - component: {fileID: 680051336}
   m_Layer: 0
-  m_Name: Wheat bounds
+  m_Name: Wheat bounds for mass add wheat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -966,8 +1016,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 748708771}
-        m_TargetAssemblyTypeName: placeWheat, Assembly-CSharp
-        m_MethodName: InstantiateWheat
+        m_TargetAssemblyTypeName: MassAddWheat, Assembly-CSharp
+        m_MethodName: AddWheat
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1027,7 +1077,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72f65522e66bf3749853c9073ddcb33c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wheat: {fileID: 9145986472014733479, guid: e733e177b5ea88449bebfaf84f97bf84, type: 3}
   quantityToPlaceInputField: {fileID: 782437343}
   boundary1: {fileID: 1826283974}
   boundary2: {fileID: 1187441222}
@@ -1714,7 +1763,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7dee6b6f7af08c64daa3c24ae9eff875, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wheat: {fileID: 9145986472014733479, guid: e733e177b5ea88449bebfaf84f97bf84, type: 3}
   buttonText: {fileID: 951208507}
 --- !u!1 &1014170561
 GameObject:
@@ -2742,9 +2790,10 @@ CanvasRenderer:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 963194228}
   - {fileID: 830734410}
   - {fileID: 181258997}
-  - {fileID: 963194228}
   - {fileID: 705507995}
   - {fileID: 419039606}
   - {fileID: 680051335}
+  - {fileID: 317227209}

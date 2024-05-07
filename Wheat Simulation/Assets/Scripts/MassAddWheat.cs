@@ -10,9 +10,6 @@ using UnityEngine.UIElements;
 
 public class MassAddWheat : MonoBehaviour
 {
-    // The wheat 3D model to randomly place
-    public GameObject wheat;
-
     // UI text field that sets the amount of wheat objects to place
     public TMPro.TMP_InputField quantityToPlaceInputField;
 
@@ -66,7 +63,7 @@ public class MassAddWheat : MonoBehaviour
             Ray ray = new Ray(origin: new Vector3(wheatPosX, Mathf.Max(yMin, yMax), wheatPosZ), direction: new Vector3(0, -1, 0));
             RaycastHit hit;
             if(Physics.Raycast(ray, out hit, Mathf.Abs(yMax - yMin))){
-                IW.GenerateWheat(hit.point);
+                InstantiateWheat.IW.GenerateWheat(hit.point);
             }
         }
     }

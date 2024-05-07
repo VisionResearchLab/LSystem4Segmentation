@@ -16,10 +16,10 @@ public class InstantiateWheat : MonoBehaviour
     public float zRotationMax = 15f;
 
     void Awake(){
-        if (IW = null){
-            IW = this;
-        } else {
+        if (IW != null && IW != this){
             GameObject.Destroy(IW);
+        } else {
+            IW = this;
         }
 
         DontDestroyOnLoad(this);

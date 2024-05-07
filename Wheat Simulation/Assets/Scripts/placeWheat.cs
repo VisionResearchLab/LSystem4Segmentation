@@ -5,9 +5,6 @@ using TMPro;
 
 public class PlaceWheat : MonoBehaviour
 {
-    // The wheat 3D model to be placed
-    public GameObject wheat;
-
     // The text on the button that allows the user to place wheat; usually "Start" or "Stop"
     public TextMeshProUGUI buttonText;
 
@@ -49,7 +46,7 @@ public class PlaceWheat : MonoBehaviour
             RaycastHit hit;
 
             if (Physics.Raycast(ray, out hit)){
-                IW.GenerateWheat(hit.point);
+                InstantiateWheat.IW.GenerateWheat(hit.point);
             }
         }
     }
