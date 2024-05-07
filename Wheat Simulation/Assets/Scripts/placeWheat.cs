@@ -49,7 +49,7 @@ public class PlaceWheat : MonoBehaviour
             RaycastHit hit;
 
             if (Physics.Raycast(ray, out hit)){
-                Instantiate(wheat, hit.point, Quaternion.Euler(0f, Random.Range(0f, 360f), 0f));
+                IW.GenerateWheat(hit.point);
             }
         }
     }

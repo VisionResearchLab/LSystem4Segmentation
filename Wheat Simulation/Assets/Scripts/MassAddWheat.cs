@@ -52,7 +52,7 @@ public class MassAddWheat : MonoBehaviour
     }
 
     // When called, create a new wheat object in a random position that is within the coordinates given above
-    public void InstantiateWheat()
+    public void AddWheat()
     {
         // Get the amount of wheat to place from the user input
         int quantityToPlace = int.Parse(quantityToPlaceInputField.GetComponent<TMPro.TMP_InputField>().text);
@@ -66,9 +66,7 @@ public class MassAddWheat : MonoBehaviour
             Ray ray = new Ray(origin: new Vector3(wheatPosX, Mathf.Max(yMin, yMax), wheatPosZ), direction: new Vector3(0, -1, 0));
             RaycastHit hit;
             if(Physics.Raycast(ray, out hit, Mathf.Abs(yMax - yMin))){
-                Instantiate(wheat, hit.point, Quaternion.Euler(0f, Random.Range(0f, 360f), 0f));
-            } else {
-                Debug.Log("Missed");
+                IW.GenerateWheat(hit.point);
             }
         }
     }
