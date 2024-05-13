@@ -11,9 +11,15 @@ public class notes : MonoBehaviour
 	//https://assetstore.unity.com/packages/2d/textures-materials/sky/skybox-series-free-103633
 
 	//Good L-system rulesets
-	//1.
+
+	//1. Three wheat
 	//Premise: [-/FL+FLAFW][--//FL+FLAFW]FL+FLAFW
 	//1L: A
 	//1R: +FLA
+
+	//2. One wheat
+	//Premise: FAFW
+	//1L: A
+	//1R: -FLA
 
 }
