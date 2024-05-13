@@ -9,4 +9,11 @@ public class notes : MonoBehaviour
 	
 	//Skyboxes:
 	//https://assetstore.unity.com/packages/2d/textures-materials/sky/skybox-series-free-103633
+
+	//Good L-system rulesets
+	//1.
+	//Premise: [-/FL+FLAFW][--//FL+FLAFW]FL+FLAFW
+	//1L: A
+	//1R: +FLA
+
 }
