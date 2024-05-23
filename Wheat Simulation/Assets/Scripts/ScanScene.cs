@@ -39,7 +39,7 @@ public class ScanScene : MonoBehaviour
     private int getWheatCount(){
         int count = 0;
         foreach (GameObject obj in FindObjectsOfType<GameObject>()){
-            if (WheatData.ObjectIsWheat(obj)){
+            if (Wheat.IsWheat(obj)){
                 count++;
             }
         }
@@ -47,10 +47,10 @@ public class ScanScene : MonoBehaviour
     }
 
     // Returns the sum of how many objects of a specific type exist
-    private int getWheatPartCount(WheatData.Part part){
+    private int getWheatPartCount(Wheat.Part part){
         int count = 0;
         foreach (GameObject obj in FindObjectsOfType<GameObject>()){
-            if (WheatData.ObjectIsWheat(obj, part)){
+            if (Wheat.IsWheat(obj, part)){
                 count++;
             }
         }
@@ -79,20 +79,20 @@ public class ScanScene : MonoBehaviour
                 {
                     GameObject obj = hit.transform.gameObject;
                     name = obj.name;
-                    if (WheatData.ObjectIsWheat(obj, WheatData.Part.Head)){
+                    if (Wheat.IsWheat(obj, Wheat.Part.Head)){
                         headsScanned.Add(obj);
-                    } else if (WheatData.ObjectIsWheat(obj, WheatData.Part.Leaf)){
+                    } else if (Wheat.IsWheat(obj, Wheat.Part.Leaf)){
                         leavesScanned.Add(obj);
-                    } else if (WheatData.ObjectIsWheat(obj, WheatData.Part.Stem)){
+                    } else if (Wheat.IsWheat(obj, Wheat.Part.Stem)){
                         stemsScanned.Add(obj);
                     }
                 }
             }
         }
 
-        float headsFraction = Mathf.Round(100 * headsScanned.Count / getWheatPartCount(WheatData.Part.Head));
-        float leavesFraction = Mathf.Round(100 * leavesScanned.Count / getWheatPartCount(WheatData.Part.Leaf));
-        float stemsFraction = Mathf.Round(100 * stemsScanned.Count / getWheatPartCount(WheatData.Part.Stem));
+        float headsFraction = Mathf.Round(100 * headsScanned.Count / getWheatPartCount(Wheat.Part.Head));
+        float leavesFraction = Mathf.Round(100 * leavesScanned.Count / getWheatPartCount(Wheat.Part.Leaf));
+        float stemsFraction = Mathf.Round(100 * stemsScanned.Count / getWheatPartCount(Wheat.Part.Stem));
         Debug.Log(String.Format("Scan results: {0} Rays, {1} Wheat Heads ({2}%), {3} Leaves ({4}%), {5} Stems ({6}%)", 
             rayCounter, headsScanned.Count, headsFraction, leavesScanned.Count, leavesFraction, stemsScanned.Count, stemsFraction));
     }

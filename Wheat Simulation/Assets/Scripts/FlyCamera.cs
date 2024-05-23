@@ -4,19 +4,19 @@ using UnityEngine;
 
 [RequireComponent( typeof(Camera) )]
 public class FlyCamera : MonoBehaviour {
-	public float acceleration = 50; // how fast you accelerate
-	public float accSprintMultiplier = 4; // how much faster you go when "sprinting"
-	public float lookSensitivity = 1; // mouse look sensitivity
-	public float dampingCoefficient = 5; // how quickly you break to a halt after you stop your input
-	public bool focusOnEnable = true; // whether or not to focus and lock cursor immediately on enable
+	[SerializeField] private float acceleration = 50; // how fast you accelerate
+	[SerializeField] private float accSprintMultiplier = 4; // how much faster you go when "sprinting"
+	[SerializeField] private float lookSensitivity = 1; // mouse look sensitivity
+	[SerializeField] private float dampingCoefficient = 5; // how quickly you break to a halt after you stop your input
+	[SerializeField] private bool focusOnEnable = true; // whether or not to focus and lock cursor immediately on enable
 
-	Vector3 velocity; // current velocity
+	private Vector3 velocity; // current velocity
 
-    void Start() {
+    private void Start() {
         Focused = false;
     }
 
-	static bool Focused {
+	private static bool Focused {
 		get => Cursor.lockState == CursorLockMode.Locked;
 		set {
 			Cursor.lockState = value ? CursorLockMode.Locked : CursorLockMode.None;
@@ -24,13 +24,13 @@ public class FlyCamera : MonoBehaviour {
 		}
 	}
 
-	void OnEnable() {
+	private void OnEnable() {
 		if( focusOnEnable ) Focused = true;
 	}
 
-	void OnDisable() => Focused = false;
+	private void OnDisable() => Focused = false;
 
-	void Update() {
+	private void Update() {
 		// Input
 		if( Focused )
 			UpdateInput();
@@ -42,7 +42,7 @@ public class FlyCamera : MonoBehaviour {
 		transform.position += velocity * Time.deltaTime;
 	}
 
-	void UpdateInput() {
+	private void UpdateInput() {
 		// Position
 		velocity += GetAccelerationVector() * Time.deltaTime;
 
@@ -58,7 +58,7 @@ public class FlyCamera : MonoBehaviour {
 			Focused = false;
 	}
 
-	Vector3 GetAccelerationVector() {
+	private Vector3 GetAccelerationVector() {
 		Vector3 moveInput = default;
 
 		void AddMovement( KeyCode key, Vector3 dir ) {
