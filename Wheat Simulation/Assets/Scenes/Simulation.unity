@@ -201,6 +201,7 @@ GameObject:
   m_Component:
   - component: {fileID: 317227209}
   - component: {fileID: 317227208}
+  - component: {fileID: 317227210}
   m_Layer: 0
   m_Name: Singletons
   m_TagString: Untagged
@@ -221,11 +222,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   wheatPrefab: {fileID: 8409164160792242166, guid: d6376d7411c17204c836cdbf4b4a8d9b, type: 3}
-  downTranslationMin: 0.1
-  downTranslationMax: 0.25
-  xRotationMax: 15
+  downTranslationMin: 0.08
+  downTranslationMax: 0.12
+  xRotationMax: 3
   yRotationMax: 360
-  zRotationMax: 15
+  zRotationMax: 3
 --- !u!4 &317227209
 Transform:
   m_ObjectHideFlags: 0
@@ -241,6 +242,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &317227210
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 317227207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 173bc67304c112c47991ed71e29b20e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MouseOverWheatGameObject: {fileID: 963194225}
+  WheatScanGameObject: {fileID: 963194225}
+  AnnotateCameraGameObject: {fileID: 1848740315}
 --- !u!1 &385351879
 GameObject:
   m_ObjectHideFlags: 0
@@ -522,7 +538,7 @@ GameObject:
   - component: {fileID: 419039606}
   - component: {fileID: 419039605}
   - component: {fileID: 419039604}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Terrain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1966,7 +1982,7 @@ MonoBehaviour:
   accSprintMultiplier: 4
   lookSensitivity: 1
   dampingCoefficient: 5
-  focusOnEnable: 1
+  focusOnEnable: 0
 --- !u!114 &963194230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2872,6 +2888,120 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   boundary1: {fileID: 1826283974}
   boundary2: {fileID: 1187441222}
+--- !u!1 &1848740315
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1848740319}
+  - component: {fileID: 1848740318}
+  - component: {fileID: 1848740316}
+  - component: {fileID: 1848740320}
+  m_Layer: 0
+  m_Name: Annotation Camera
+  m_TagString: MainCamera
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1848740316
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1848740315}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0418ce2028563c44bb9fc7d7b98309b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  acceleration: 50
+  accSprintMultiplier: 4
+  lookSensitivity: 1
+  dampingCoefficient: 5
+  focusOnEnable: 0
+--- !u!20 &1848740318
+Camera:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1848740315}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
+  m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
+  m_Iso: 200
+  m_ShutterSpeed: 0.005
+  m_Aperture: 16
+  m_FocusDistance: 10
+  m_FocalLength: 50
+  m_BladeCount: 5
+  m_Curvature: {x: 2, y: 11}
+  m_BarrelClipping: 0.25
+  m_Anamorphism: 0
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.3
+  far clip plane: 1000
+  field of view: 60
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: -1
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 64
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 1
+  m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
+--- !u!4 &1848740319
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1848740315}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.25976828, y: -0, z: -0, w: 0.965671}
+  m_LocalPosition: {x: 50, y: 10, z: -5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 30.113, y: 0, z: 0}
+--- !u!114 &1848740320
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1848740315}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 191da82e6e300fd439ec30b749ab01d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1923709279
 GameObject:
   m_ObjectHideFlags: 0
@@ -3165,6 +3295,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 963194228}
+  - {fileID: 1848740319}
   - {fileID: 830734410}
   - {fileID: 181258997}
   - {fileID: 705507995}

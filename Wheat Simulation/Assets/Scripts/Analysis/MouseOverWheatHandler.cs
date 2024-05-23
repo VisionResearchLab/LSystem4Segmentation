@@ -11,14 +11,7 @@ public class MouseOverWheatHandler : MonoBehaviour
         mainCamera = this.gameObject.GetComponent<Camera>();
     }
 
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Q)){
-            DetectWheatPart();
-        }
-    }
-
-    void DetectWheatPart()
+    public void DetectWheatPart()
     {
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;

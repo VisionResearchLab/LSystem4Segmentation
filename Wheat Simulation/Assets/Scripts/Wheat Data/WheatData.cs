@@ -35,10 +35,6 @@ public class WheatData : MonoBehaviour
     
     // Set the material of this object to the material corresponding to its part in Wheat.cs
     public void ToggleAnnotationOn(Dictionary<Wheat.Part, Material> partMaterialDict){
-        
-        foreach (Wheat.Part key in Wheat.partAnnotationMaterials.Keys){
-            Debug.Log(key.ToString());
-        }
         gameObject.transform.GetComponent<Renderer>().material = partMaterialDict.GetValueOrDefault(part, material);
     }
 

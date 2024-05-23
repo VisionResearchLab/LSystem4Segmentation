@@ -14,24 +14,18 @@ public class AnnotateCamera : MonoBehaviour
         annotateCamera.enabled = false;
     }
 
-    // When R is pressed, toggle wheat annotation
-    void Update(){
-        if (Input.GetKeyDown(KeyCode.R)){
-            Wheat.ToggleAnnotation();
-            SwapCameras();
-        }
-    }
-
-    void SwapCameras(){
+    public void SwapCameras(){
         // Start annotation
         if (Wheat.wheatIsAnnotated){
             mainCamera.enabled = false;
             annotateCamera.enabled = true;
+            annotateCamera.transform.position = mainCamera.transform.position;
         }
         // End annotation
         else {
             mainCamera.enabled = true;
             annotateCamera.enabled = false;
+            mainCamera.transform.position = annotateCamera.transform.position;
         }
     }
 }
