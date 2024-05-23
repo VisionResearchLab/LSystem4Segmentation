@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,14 +7,21 @@ public class Wheat : MonoBehaviour
 {
     // All parts of a wheat object are considered to have the Wheat type, as well as their own (i.e. Head, Stem, or Leaf) type.
     public enum Part {
-        Wheat,
-        Head,
-        Stem,
-        Leaf
+        Wheat = 0,
+        Head = 1,
+        Stem = 2,
+        Leaf = 3
     }
 
     // Maps each Part to a color material for annotating data
-    public static Dictionary<Part, Material> partAnnotationMaterials = new Dictionary<Part, Material>();
+    public static Dictionary<Part, Material> partAnnotationMaterials = new Dictionary<Part, Material> {
+        {Part.Head, new Material(Shader.Find("Standard")) { color = Color.red }},
+        {Part.Stem, new Material(Shader.Find("Standard")) { color = Color.blue }},
+        {Part.Leaf, new Material(Shader.Find("Standard")) { color = Color.green }}
+    };
+
+    // Track whether wheat objects are currently annotated (materials are simplified colors) or not
+    public static bool wheatIsAnnotated = false;
 
 
     // Check if an obj is a wheat. If there is a second argument, also check if the obj is of the same part as the parameter.
@@ -34,14 +42,6 @@ public class Wheat : MonoBehaviour
     }
 
 
-    // Add the part-material pairs to the dictionary
-    private void Start(){
-        partAnnotationMaterials.Add(Part.Head, Resources.Load("/Materials/RED", typeof(Material)) as Material);
-        partAnnotationMaterials.Add(Part.Stem, Resources.Load("/Materials/BLUE", typeof(Material)) as Material);
-        partAnnotationMaterials.Add(Part.Leaf, Resources.Load("/Materials/GREEN", typeof(Material)) as Material);
-    }
-
-
     // Returns all Wheat objects in the scene
     public static HashSet<GameObject> getAllWheats(){
         HashSet<GameObject> wheats = new HashSet<GameObject>();
@@ -54,20 +54,31 @@ public class Wheat : MonoBehaviour
     }
 
     
+    // Swap between Annotation On and Annotation Off modes
+    public static void ToggleAnnotation(){
+        if (!wheatIsAnnotated){
+            ToggleAnnotationOn();
+        } else {
+            ToggleAnnotationOff();
+        }
+    }
+
     // Swap materials of each wheat with simple colors, for annotation purposes
     public static void ToggleAnnotationOn(){
         foreach (GameObject wheat in getAllWheats()){
             WheatData wheatData = wheat.GetComponent<WheatData>();
             wheatData.ToggleAnnotationOn(partAnnotationMaterials);
         }
+        wheatIsAnnotated = true;
     }
 
 
     // Reset the materials of each wheat
-    public static void ToggleAnnotationff(){
+    public static void ToggleAnnotationOff(){
         foreach (GameObject wheat in getAllWheats()){
             WheatData wheatData = wheat.GetComponent<WheatData>();
             wheatData.ToggleAnnotationOff();
         }
+        wheatIsAnnotated = false;
     }
 }

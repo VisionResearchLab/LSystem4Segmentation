@@ -13,7 +13,9 @@ public class MouseOverWheatHandler : MonoBehaviour
 
     void Update()
     {
-        DetectWheatPart();
+        if (Input.GetKeyDown(KeyCode.Q)){
+            DetectWheatPart();
+        }
     }
 
     void DetectWheatPart()
