@@ -20,7 +20,8 @@ public class ScanScene : MonoBehaviour
     private static int rayCounter = 0;
 
     // Increases the amount of rays to cast when searching for wheat on screen. Time to calculate increases with the square of this value.
-    private static int resolution = 150;
+    // 60 --> 960x540, 120 --> 1920x1080, 240 --> 3940x2160
+    private static int resolution = 60;
 
     private void Start()
     {
@@ -60,8 +61,8 @@ public class ScanScene : MonoBehaviour
     {
         ResetVariables();
         
-        int xIncrement = Screen.width/resolution;
-        int yIncrement = Screen.height/resolution;
+        int xIncrement = Screen.width / (16 * resolution);
+        int yIncrement = Screen.height / (9 * resolution);
         for (int x = 0; x < Screen.width; x += xIncrement){
             for (int y = 0; y < Screen.height; y += yIncrement){
                 rayCounter++;

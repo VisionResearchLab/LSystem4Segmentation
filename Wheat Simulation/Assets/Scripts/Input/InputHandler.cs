@@ -38,6 +38,7 @@ public class InputHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Checks each KeyCode in the keyMap dictionary. If that key is pressed down, activate the corresponding function
         foreach (KeyCode keyCode in keyMap.Keys){
             if (Input.GetKeyDown(keyCode)){
                 keyMap[keyCode]();
