@@ -5,8 +5,6 @@ using UnityEngine;
 public class InstantiateWheat : MonoBehaviour
 {
     public static InstantiateWheat IW;
-
-    public GameObject wheatPrefab;
     
     // When the wheat is randomly generated, it will be shifted downward and rotated slightly.
     public float downTranslationMin = 0.1f;
@@ -26,15 +24,25 @@ public class InstantiateWheat : MonoBehaviour
     }
 
     public void GenerateWheat(Vector3 requestedPosition){
-        // The wheat will be placed at a slightly lower position than requested, as wheat grows partly inside of the ground.
-        float downTranslation = Random.Range(downTranslationMin, downTranslationMax);
-        Vector3 position = requestedPosition - new Vector3(0, downTranslation, 0);
+        GameObject[] wheatPrefabs = Wheat.GetAllWheatPrefabs();
+        int numberOfWheatPrefabs = wheatPrefabs.Length;
+        if (numberOfWheatPrefabs > 0){
+            int chosenWheatPrefabIndex = Random.Range(0, numberOfWheatPrefabs-1);
+            GameObject wheatPrefab = wheatPrefabs[chosenWheatPrefabIndex];
 
-        float xRotation = Random.Range(-xRotationMax, xRotationMax);
-        float yRotation = Random.Range(-yRotationMax, yRotationMax);
-        float zRotation = Random.Range(-zRotationMax, zRotationMax);
-        Quaternion rotation = Quaternion.Euler(xRotation, yRotation, zRotation);
+            // The wheat will be placed at a slightly lower position than requested, as wheat grows partly inside of the ground.
+            float downTranslation = Random.Range(downTranslationMin, downTranslationMax);
+            Vector3 position = requestedPosition - new Vector3(0, downTranslation, 0);
 
-        Instantiate(wheatPrefab, position, rotation);
+            float xRotation = Random.Range(-xRotationMax, xRotationMax);
+            float yRotation = Random.Range(-yRotationMax, yRotationMax);
+            float zRotation = Random.Range(-zRotationMax, zRotationMax);
+            Quaternion rotation = Quaternion.Euler(xRotation, yRotation, zRotation);
+
+            Instantiate(wheatPrefab, position, rotation);
+        } else {
+            Debug.Log("Error: No wheat prefabs found!");
+        }
+        
     }
 }

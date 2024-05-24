@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class Wheat : MonoBehaviour
@@ -22,6 +23,9 @@ public class Wheat : MonoBehaviour
 
     // Track whether wheat objects are currently annotated (materials are simplified colors) or not
     public static bool wheatIsAnnotated = false;
+
+    public static int wheatLayer = 6;
+    public static int wheatLayerMask = 1 << 6;
 
 
     // Check if an obj is a wheat. If there is a second argument, also check if the obj is of the same part as the parameter.
@@ -80,5 +84,11 @@ public class Wheat : MonoBehaviour
             wheatData.ToggleAnnotationOff();
         }
         wheatIsAnnotated = false;
+    }
+
+    // Get all wheat prefabs
+    public static GameObject[] GetAllWheatPrefabs(){
+        string wheatPrefabPath = "Prefabs/Wheat Models";
+        return Resources.LoadAll<GameObject>(wheatPrefabPath);
     }
 }

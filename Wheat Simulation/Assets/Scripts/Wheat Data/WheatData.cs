@@ -5,32 +5,34 @@ using UnityEngine;
 
 public class WheatData : MonoBehaviour
 {
-    public Wheat.Part part;
-    public String age;
-    public Material material;
-    public String materialName;
+    // Variables are determined whenever they are requested, rather than being set on start, to prevent issues with model-->prefab conversion.
 
-    private void Start()
+    // The part can be Stem, Head, Leaf, or generic Wheat
+    public Wheat.Part part
     {
-        // Get the material of this object
-        material = gameObject.transform.GetComponent<Renderer>().material;
-        materialName = material.name;
-        
-        // If the material is named after a part that exists, this object is one of those parts
-        foreach (Wheat.Part enumPart in Enum.GetValues(typeof(Wheat.Part))){
-            if (materialName.Contains(enumPart.ToString())){
-                part = enumPart;
+        get { 
+            foreach (Wheat.Part enumPart in Enum.GetValues(typeof(Wheat.Part))){
+                if (materialName.Contains(enumPart.ToString())){
+                    return enumPart;
+                }
             }
+            return Wheat.Part.Wheat;
         }
+    }
 
-        // The age can be derived from the material name
-        if (materialName.Contains("Young")){
-            age = "Young";
-        } else if (materialName.Contains("Middle")){
-            age = "Middle";
-        } else if (materialName.Contains("Mature")){
-            age = "Mature";
-        }
+    public String age
+    {
+        get { return GetAgeFromMaterialName(materialName); }
+    }
+
+    public Material material
+    {
+        get { return gameObject.transform.GetComponent<Renderer>().material; }
+    }
+
+    public String materialName
+    {
+        get { return material.name; }
     }
     
     // Set the material of this object to the material corresponding to its part in Wheat.cs
@@ -41,5 +43,16 @@ public class WheatData : MonoBehaviour
     // Set the material of this object back to the original material
     public void ToggleAnnotationOff(){
         gameObject.transform.GetComponent<Renderer>().material = material;
+    }
+
+    private string GetAgeFromMaterialName(String materialName){
+        if (materialName.Contains("Young")){
+            return "Young";
+        } else if (materialName.Contains("Middle")){
+            return "Middle";
+        } else if (materialName.Contains("Mature")){
+            return "Mature";
+        }
+        return "Unknown";
     }
 }

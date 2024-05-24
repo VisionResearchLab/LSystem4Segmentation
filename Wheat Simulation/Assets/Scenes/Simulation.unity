@@ -200,6 +200,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 317227209}
+  - component: {fileID: 317227211}
   - component: {fileID: 317227208}
   - component: {fileID: 317227210}
   m_Layer: 0
@@ -221,7 +222,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e39b9b792c1fd8d40b7dd20c9fe5bd07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wheatPrefab: {fileID: 8409164160792242166, guid: d6376d7411c17204c836cdbf4b4a8d9b, type: 3}
   downTranslationMin: 0.08
   downTranslationMax: 0.12
   xRotationMax: 3
@@ -257,6 +257,18 @@ MonoBehaviour:
   MouseOverWheatGameObject: {fileID: 963194225}
   WheatScanGameObject: {fileID: 963194225}
   AnnotateCameraGameObject: {fileID: 1848740315}
+--- !u!114 &317227211
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 317227207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90d36082495cc7145b54470f677787b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &385351879
 GameObject:
   m_ObjectHideFlags: 0

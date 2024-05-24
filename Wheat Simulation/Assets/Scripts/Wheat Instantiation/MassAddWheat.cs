@@ -62,7 +62,9 @@ public class MassAddWheat : MonoBehaviour
             // The Y position must be found by casting a ray downwards, in case the ground is not level
             Ray ray = new Ray(origin: new Vector3(wheatPosX, Mathf.Max(yMin, yMax), wheatPosZ), direction: new Vector3(0, -1, 0));
             RaycastHit hit;
-            if(Physics.Raycast(ray, out hit, Mathf.Abs(yMax - yMin))){
+
+            // Layermask 6 is the wheat layermask
+            if(Physics.Raycast(ray, out hit, Mathf.Abs(yMax - yMin), Wheat.wheatLayerMask)){
                 InstantiateWheat.IW.GenerateWheat(hit.point);
             }
         }

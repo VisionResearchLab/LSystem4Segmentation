@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.Rendering.HighDefinition;
+using System;
+using UnityEngine.UIElements;
 
 public class PlaceWheat : MonoBehaviour
 {
@@ -45,7 +48,8 @@ public class PlaceWheat : MonoBehaviour
             Ray ray = new Ray(origin: GetComponent<Camera>().transform.position, direction: (mouseWorldPosition - GetComponent<Camera>().transform.position).normalized);
             RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit)){
+            // Layermask 6 is the wheat layermask
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, Wheat.wheatLayerMask)){
                 InstantiateWheat.IW.GenerateWheat(hit.point);
             }
         }
