@@ -24,8 +24,9 @@ public class Wheat : MonoBehaviour
     // Track whether wheat objects are currently annotated (materials are simplified colors) or not
     public static bool wheatIsAnnotated = false;
 
-    public static int wheatLayer = 6;
-    public static int wheatLayerMask = 1 << 6;
+    // Keep track of the ground layer for instantiation purposes
+    public static int groundLayer = 3;
+    public static int groundLayerMask = 1 << groundLayer;
 
 
     // Check if an obj is a wheat. If there is a second argument, also check if the obj is of the same part as the parameter.

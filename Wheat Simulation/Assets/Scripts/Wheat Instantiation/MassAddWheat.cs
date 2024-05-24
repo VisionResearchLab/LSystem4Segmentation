@@ -64,7 +64,7 @@ public class MassAddWheat : MonoBehaviour
             RaycastHit hit;
 
             // Layermask 6 is the wheat layermask
-            if(Physics.Raycast(ray, out hit, Mathf.Abs(yMax - yMin), Wheat.wheatLayerMask)){
+            if(Physics.Raycast(ray, out hit, Mathf.Abs(yMax - yMin), Wheat.groundLayerMask)){
                 InstantiateWheat.IW.GenerateWheat(hit.point);
             }
         }

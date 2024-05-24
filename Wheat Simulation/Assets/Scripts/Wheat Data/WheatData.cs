@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class WheatData : MonoBehaviour
@@ -28,13 +29,16 @@ public class WheatData : MonoBehaviour
     public Material material
     {
         get { return gameObject.transform.GetComponent<Renderer>().material; }
+        set { material = value; }
     }
 
-    public String materialName
-    {
-        get { return material.name; }
-    }
+    public String materialName;
     
+    private void Start(){
+        
+    }
+
+
     // Set the material of this object to the material corresponding to its part in Wheat.cs
     public void ToggleAnnotationOn(Dictionary<Wheat.Part, Material> partMaterialDict){
         gameObject.transform.GetComponent<Renderer>().material = partMaterialDict.GetValueOrDefault(part, material);

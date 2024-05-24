@@ -49,7 +49,7 @@ public class PlaceWheat : MonoBehaviour
             RaycastHit hit;
 
             // Layermask 6 is the wheat layermask
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, Wheat.wheatLayerMask)){
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, Wheat.groundLayerMask)){
                 InstantiateWheat.IW.GenerateWheat(hit.point);
             }
         }
