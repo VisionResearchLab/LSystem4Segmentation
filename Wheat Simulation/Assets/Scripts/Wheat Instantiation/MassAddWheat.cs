@@ -63,7 +63,7 @@ public class MassAddWheat : MonoBehaviour
             Ray ray = new Ray(origin: new Vector3(wheatPosX, Mathf.Max(yMin, yMax), wheatPosZ), direction: new Vector3(0, -1, 0));
             RaycastHit hit;
 
-            // Layermask 6 is the wheat layermask
+            // Should only interact with the ground layer
             if(Physics.Raycast(ray, out hit, Mathf.Abs(yMax - yMin), Wheat.groundLayerMask)){
                 InstantiateWheat.IW.GenerateWheat(hit.point);
             }

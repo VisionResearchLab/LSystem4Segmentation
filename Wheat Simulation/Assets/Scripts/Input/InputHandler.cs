@@ -21,6 +21,11 @@ public class InputHandler : MonoBehaviour
     [SerializeField] private GameObject AnnotateCameraGameObject;
     private AnnotateCamera annotateCamera;
 
+    // Place Wheat at Cursor
+    [SerializeField] private GameObject placeWheatGameObject;
+    private PlaceWheat placeWheat;
+
+    // Map KeyCodes to Actions
     Dictionary<KeyCode, Action> keyMap = new Dictionary<KeyCode, Action>();
     
     void Start(){
@@ -28,11 +33,13 @@ public class InputHandler : MonoBehaviour
         mouseOverWheatHandler = MouseOverWheatGameObject.GetComponent<MouseOverWheatHandler>();
         scanScene = WheatScanGameObject.GetComponent<ScanScene>();
         annotateCamera = AnnotateCameraGameObject.GetComponent<AnnotateCamera>();
+        placeWheat = placeWheatGameObject.GetComponent<PlaceWheat>();
 
         // Maps keybinds to functions in other scripts
-        keyMap[KeyCode.Q] = DetectWheatPart;
+        keyMap[KeyCode.F] = DetectWheatPart;
         keyMap[KeyCode.E] = ScanWheat;
         keyMap[KeyCode.R] = Annotate;
+        keyMap[KeyCode.Q] = PlaceWheatAtCursor;
     }
 
     // Update is called once per frame
@@ -60,5 +67,9 @@ public class InputHandler : MonoBehaviour
     private void Annotate(){
         Wheat.ToggleAnnotation();
         annotateCamera.SwapCameras();
+    }
+
+    private void PlaceWheatAtCursor(){
+        placeWheat.PlaceWheatAtCursor();
     }
 }

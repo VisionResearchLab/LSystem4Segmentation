@@ -26,27 +26,33 @@ public class WheatData : MonoBehaviour
         get { return GetAgeFromMaterialName(materialName); }
     }
 
-    public Material material
-    {
-        get { return gameObject.transform.GetComponent<Renderer>().material; }
-        set { material = value; }
+    public Material originalMaterial;
+
+    public Material annotationMaterial {
+        get { return Wheat.partAnnotationMaterials.GetValueOrDefault(part, originalMaterial); }
     }
 
-    public String materialName;
+    public String materialName {
+        get { return originalMaterial.name; }
+    }
     
     private void Start(){
-        
+        originalMaterial = gameObject.transform.GetComponent<Renderer>().material;
+
+        if (Wheat.wheatIsAnnotated){
+            ToggleAnnotationOn();
+        }
     }
 
 
     // Set the material of this object to the material corresponding to its part in Wheat.cs
-    public void ToggleAnnotationOn(Dictionary<Wheat.Part, Material> partMaterialDict){
-        gameObject.transform.GetComponent<Renderer>().material = partMaterialDict.GetValueOrDefault(part, material);
+    public void ToggleAnnotationOn(){
+        gameObject.transform.GetComponent<Renderer>().material = annotationMaterial;
     }
 
     // Set the material of this object back to the original material
     public void ToggleAnnotationOff(){
-        gameObject.transform.GetComponent<Renderer>().material = material;
+        gameObject.transform.GetComponent<Renderer>().material = originalMaterial;
     }
 
     private string GetAgeFromMaterialName(String materialName){

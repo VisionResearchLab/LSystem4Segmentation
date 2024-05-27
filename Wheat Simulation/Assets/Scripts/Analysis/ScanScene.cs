@@ -83,9 +83,26 @@ public class ScanScene : MonoBehaviour
             }
         }
 
-        float headsFraction = Mathf.Round(100 * headsScanned.Count / getWheatPartCount(Wheat.Part.Head));
-        float leavesFraction = Mathf.Round(100 * leavesScanned.Count / getWheatPartCount(Wheat.Part.Leaf));
-        float stemsFraction = Mathf.Round(100 * stemsScanned.Count / getWheatPartCount(Wheat.Part.Stem));
+        // Display the number and percentage of each wheat part that was found in the scan
+        float headsFraction, leavesFraction, stemsFraction;
+        if (headsScanned.Count != 0){
+            headsFraction = Mathf.Round(100 * headsScanned.Count / getWheatPartCount(Wheat.Part.Head));
+        } else {
+            headsFraction = 0f;
+        }
+        
+        if (leavesScanned.Count != 0){
+            leavesFraction = Mathf.Round(100 * leavesScanned.Count / getWheatPartCount(Wheat.Part.Leaf));
+        } else {
+            leavesFraction = 0f;
+        }
+        
+        if (stemsScanned.Count != 0){
+            stemsFraction = Mathf.Round(100 * stemsScanned.Count / getWheatPartCount(Wheat.Part.Stem));
+        } else {
+            stemsFraction = 0f;
+        }
+        
         Debug.Log(String.Format("Scan results: {0} Rays, {1} Wheat Heads ({2}%), {3} Leaves ({4}%), {5} Stems ({6}%)", 
             rayCounter, headsScanned.Count, headsFraction, leavesScanned.Count, leavesFraction, stemsScanned.Count, stemsFraction));
     }

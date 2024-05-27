@@ -24,8 +24,9 @@ public class Wheat : MonoBehaviour
     // Track whether wheat objects are currently annotated (materials are simplified colors) or not
     public static bool wheatIsAnnotated = false;
 
-    // Keep track of the ground layer for instantiation purposes
+    // Keep track of the ground and wheat layers for instantiation purposes
     public static int groundLayer = 3;
+    public static int wheatLayer = 6;
     public static int groundLayerMask = 1 << groundLayer;
 
 
@@ -72,7 +73,7 @@ public class Wheat : MonoBehaviour
     public static void ToggleAnnotationOn(){
         foreach (GameObject wheat in getAllWheats()){
             WheatData wheatData = wheat.GetComponent<WheatData>();
-            wheatData.ToggleAnnotationOn(partAnnotationMaterials);
+            wheatData.ToggleAnnotationOn();
         }
         wheatIsAnnotated = true;
     }

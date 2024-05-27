@@ -26,12 +26,12 @@ public class PrefabsFromMeshes : MonoBehaviour
                     // Add components to the child object
                     childTransform.gameObject.AddComponent<WheatData>();
                     childTransform.gameObject.AddComponent<MeshCollider>();
-                    childTransform.gameObject.layer = Wheat.groundLayer;
+                    childTransform.gameObject.layer = Wheat.wheatLayer;
                 }
             }
 
             // Set layer to "Wheat"
-            instantiatedModel.layer = Wheat.groundLayer;
+            instantiatedModel.layer = Wheat.wheatLayer;
 
             // Adjust scale
             instantiatedModel.transform.localScale = new Vector3(scaleModifier, scaleModifier, scaleModifier);
