@@ -13,6 +13,9 @@ public class InstantiateWheat : MonoBehaviour
     public float yRotationMax = 360f;
     public float zRotationMax = 15f;
 
+    // Parent object of the instantiated wheats
+    public Transform parent;
+
     void Awake(){
         if (IW != null && IW != this){
             GameObject.Destroy(IW);
@@ -39,7 +42,8 @@ public class InstantiateWheat : MonoBehaviour
             float zRotation = Random.Range(-zRotationMax, zRotationMax);
             Quaternion rotation = Quaternion.Euler(xRotation, yRotation, zRotation);
 
-            Instantiate(wheatPrefab, position, rotation);
+            GameObject newWheat = Instantiate(wheatPrefab, position, rotation);
+            newWheat.transform.SetParent(parent);
         } else {
             Debug.Log("Error: No wheat prefabs found!");
         }

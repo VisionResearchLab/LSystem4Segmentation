@@ -25,6 +25,10 @@ public class InputHandler : MonoBehaviour
     [SerializeField] private GameObject placeWheatGameObject;
     private PlaceWheat placeWheat;
 
+    // Screenshot script
+    [SerializeField] private GameObject screenShotGameObject;
+    private ScreenShot screenShot;
+
     // Map KeyCodes to Actions
     Dictionary<KeyCode, Action> keyMap = new Dictionary<KeyCode, Action>();
     
@@ -34,12 +38,14 @@ public class InputHandler : MonoBehaviour
         scanScene = WheatScanGameObject.GetComponent<ScanScene>();
         annotateCamera = AnnotateCameraGameObject.GetComponent<AnnotateCamera>();
         placeWheat = placeWheatGameObject.GetComponent<PlaceWheat>();
+        screenShot = screenShotGameObject.GetComponent<ScreenShot>();
 
         // Maps keybinds to functions in other scripts
         keyMap[KeyCode.F] = DetectWheatPart;
         keyMap[KeyCode.E] = ScanWheat;
         keyMap[KeyCode.R] = Annotate;
         keyMap[KeyCode.Q] = PlaceWheatAtCursor;
+        keyMap[KeyCode.T] = TakeScreenShot;
     }
 
     // Update is called once per frame
@@ -71,5 +77,10 @@ public class InputHandler : MonoBehaviour
 
     private void PlaceWheatAtCursor(){
         placeWheat.PlaceWheatAtCursor();
+    }
+
+    // Take a screen shot
+    private void TakeScreenShot(){
+        screenShot.TakeScreenShot();
     }
 }
