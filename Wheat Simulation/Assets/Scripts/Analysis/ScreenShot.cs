@@ -1,11 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Enumeration;
-using Unity.Profiling;
 using UnityEditor;
 using UnityEngine;
-
 public class ScreenShot : MonoBehaviour
 {
     // Cameras
@@ -20,8 +18,8 @@ public class ScreenShot : MonoBehaviour
 
     // Save directory
     private string saveDirectory = "Screenshots";
-    private string screenshotName = "s-test.png";
-    private string annotatedScreenshotName = "a-test.png";
+    private string screenshotName = "s.png";
+    private string annotatedScreenshotName = "a.png";
 
 
     // Define scripts with functions that need to be called
@@ -34,7 +32,7 @@ public class ScreenShot : MonoBehaviour
     public void TakeScreenShot(){
         HideUI();
         StartCoroutine(ScreenshotEnum(screenshotName, 1, true, true));
-        StartCoroutine(ScreenshotEnum(annotatedScreenshotName, 2, true, false));
+        StartCoroutine(AnnotateScreenshotEnum(annotatedScreenshotName, 2, true, false));
     }
 
     // Returns a unique filepath in the screenshots folder based on the given name
@@ -47,7 +45,6 @@ public class ScreenShot : MonoBehaviour
         Wheat.ToggleAnnotation();
         annotateCameraScript.SwapCameras();
     }
-
 
     // Hide UI
     private void HideUI(){
@@ -64,11 +61,11 @@ public class ScreenShot : MonoBehaviour
     }
 
     // Use texture to avoid screenshot lag
-    private IEnumerator ScreenshotEnum(string name, int delay, bool swapCamerasAfter, bool hideUIAfter){
+    private IEnumerator ScreenshotEnum(string name, int frameDelay, bool swapCamerasAfter, bool hideUIAfter){
         // Screenshots must happen at the end of a frame. To make the annotated screenshot display the view of another camera,
         // it is necessary to wait a frame, during which the camera is switched.
-        
-        for (int i = 0; i < delay; i++){
+
+        for (int i = 0; i < frameDelay; i++){
             yield return new WaitForEndOfFrame();
         }
         
@@ -79,7 +76,7 @@ public class ScreenShot : MonoBehaviour
         screenShot.ReadPixels(new Rect(0,0,Screen.width,Screen.height),0,0);
         screenShot.Apply();
         byte[] bytes = screenShot.EncodeToPNG();
-        Object.Destroy(screenShot);
+        UnityEngine.Object.Destroy(screenShot);
         Debug.Log(path);
         File.WriteAllBytes(path, bytes);
 
@@ -93,4 +90,55 @@ public class ScreenShot : MonoBehaviour
             ShowUI();
         }
     }
+
+    private IEnumerator AnnotateScreenshotEnum(string name, int frameDelay, bool swapCamerasAfter, bool hideUIAfter){
+        // Screenshots must happen at the end of a frame. To make the annotated screenshot display the view of another camera,
+        // it is necessary to wait a frame, during which the camera is switched.
+
+        for (int i = 0; i < frameDelay; i++){
+            yield return new WaitForEndOfFrame();
+        }
+        
+        string path = getPath(name);
+
+
+        // https://stackoverflow.com/a/36188311
+        Texture2D screenShot = new Texture2D(Screen.width, Screen.height);
+
+        // Raycast to every pixel, and recolor it based on what wheat part it hits (if any)
+        for (int x = 0; x < Screen.width; x++){
+            for (int y = 0; y < Screen.height; y++){
+                Ray ray = mainCam.ScreenPointToRay(new Vector3(x, y));
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit))
+                {
+                    GameObject obj = hit.transform.gameObject;
+                    if (Wheat.IsWheat(obj)){
+                        screenShot.SetPixel(x, y, obj.GetComponent<WheatData>().color);
+                    }
+                    else { // Hits an untagged object, usually ground
+                        screenShot.SetPixel(x, y, Color.black);
+                    }
+                }
+            }
+        }
+
+        screenShot.Apply();
+        byte[] bytes = screenShot.EncodeToPNG();
+        UnityEngine.Object.Destroy(screenShot);
+        Debug.Log(path);
+        File.WriteAllBytes(path, bytes);
+
+
+        if (swapCamerasAfter){
+            SwapCameras();
+        }
+
+        if (hideUIAfter){
+            HideUI();
+        } else {
+            ShowUI();
+        }
+    }
+
 }
