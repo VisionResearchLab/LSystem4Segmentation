@@ -31,8 +31,8 @@ public class ScreenShot : MonoBehaviour
     // Take two screenshots: s-name, representing the normal screenshot, and a-name, representing the annotated screenshot
     public void TakeScreenShot(){
         HideUI();
-        StartCoroutine(ScreenshotEnum(screenshotName, 1, true, true));
-        StartCoroutine(AnnotateScreenshotEnum(annotatedScreenshotName, 2, true, false));
+        StartCoroutine(ScreenshotEnum(screenshotName, 1, true));
+        StartCoroutine(AnnotateScreenshotEnum(annotatedScreenshotName, 2, false));
     }
 
     // Returns a unique filepath in the screenshots folder based on the given name
@@ -61,7 +61,7 @@ public class ScreenShot : MonoBehaviour
     }
 
     // Use texture to avoid screenshot lag
-    private IEnumerator ScreenshotEnum(string name, int frameDelay, bool swapCamerasAfter, bool hideUIAfter){
+    private IEnumerator ScreenshotEnum(string name, int frameDelay, bool hideUIAfter){
         // Screenshots must happen at the end of a frame. To make the annotated screenshot display the view of another camera,
         // it is necessary to wait a frame, during which the camera is switched.
 
@@ -80,10 +80,6 @@ public class ScreenShot : MonoBehaviour
         Debug.Log(path);
         File.WriteAllBytes(path, bytes);
 
-        if (swapCamerasAfter){
-            SwapCameras();
-        }
-
         if (hideUIAfter){
             HideUI();
         } else {
@@ -91,7 +87,7 @@ public class ScreenShot : MonoBehaviour
         }
     }
 
-    private IEnumerator AnnotateScreenshotEnum(string name, int frameDelay, bool swapCamerasAfter, bool hideUIAfter){
+    private IEnumerator AnnotateScreenshotEnum(string name, int frameDelay, bool hideUIAfter){
         // Screenshots must happen at the end of a frame. To make the annotated screenshot display the view of another camera,
         // it is necessary to wait a frame, during which the camera is switched.
 
@@ -128,11 +124,6 @@ public class ScreenShot : MonoBehaviour
         UnityEngine.Object.Destroy(screenShot);
         Debug.Log(path);
         File.WriteAllBytes(path, bytes);
-
-
-        if (swapCamerasAfter){
-            SwapCameras();
-        }
 
         if (hideUIAfter){
             HideUI();
