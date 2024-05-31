@@ -37,11 +37,13 @@ public class InstantiateWheat : MonoBehaviour
             float downTranslation = Random.Range(downTranslationMin, downTranslationMax);
             Vector3 position = requestedPosition - new Vector3(0, downTranslation, 0);
 
+            // The wheat is randomly rotated within given bounds
             float xRotation = Random.Range(-xRotationMax, xRotationMax);
             float yRotation = Random.Range(-yRotationMax, yRotationMax);
             float zRotation = Random.Range(-zRotationMax, zRotationMax);
             Quaternion rotation = Quaternion.Euler(xRotation, yRotation, zRotation);
 
+            // Instantiate the wheat and set its parent to the given parent object
             GameObject newWheat = Instantiate(wheatPrefab, position, rotation);
             newWheat.transform.SetParent(parent);
         } else {
