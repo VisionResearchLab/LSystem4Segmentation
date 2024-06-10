@@ -131,4 +131,22 @@ public class WheatData : MonoBehaviour
         newMaterial.color = new Color(red, green, blue);
         return newMaterial;
     }
+
+    // Collision handling (to prevent overlap)
+    public bool IsOverlappingWheat(){
+        MeshCollider meshCollider = GetComponent<MeshCollider>();
+        Vector3 center = meshCollider.bounds.center;
+        Vector3 halfExtents = meshCollider.bounds.extents;
+        Collider[] colliders = Physics.OverlapBox(center, halfExtents);
+
+        foreach (Collider collider in colliders){
+            GameObject obj = collider.gameObject;
+            if (obj != this.gameObject && obj.transform.parent != gameObject.transform.parent){
+                if (Wheat.IsWheat(obj, Wheat.Part.Head)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

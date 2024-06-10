@@ -27,7 +27,7 @@ public class PrefabsFromMeshes : MonoBehaviour
                 {
                     // Add components to the child object
                     childTransform.gameObject.AddComponent<WheatData>();
-                    childTransform.gameObject.AddComponent<MeshCollider>();
+                    MeshCollider mc = childTransform.gameObject.AddComponent<MeshCollider>();
                     childTransform.gameObject.layer = Wheat.wheatLayer;
                     
                     // // Add wind interaction script
