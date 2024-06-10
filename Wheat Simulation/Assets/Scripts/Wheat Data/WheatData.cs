@@ -26,7 +26,10 @@ public class WheatData : MonoBehaviour
         get { return GetAgeFromMaterialName(materialName); }
     }
 
-    public Material originalMaterial;
+    public Material originalMaterial
+    {
+        get { return GetSlightlyRecoloredMaterial(gameObject.transform.GetComponent<Renderer>().material); }
+    }
 
     public Material annotationMaterial {
         get { return Wheat.partAnnotationMaterials.GetValueOrDefault(part, originalMaterial); }
@@ -40,7 +43,6 @@ public class WheatData : MonoBehaviour
     
     private void Start(){
         // Update the material to a new material that is slightly darker or lighter
-        originalMaterial = GetSlightlyRecoloredMaterial(gameObject.transform.GetComponent<Renderer>().material);
         gameObject.transform.GetComponent<Renderer>().material = originalMaterial;
 
         if (Wheat.wheatIsAnnotated){

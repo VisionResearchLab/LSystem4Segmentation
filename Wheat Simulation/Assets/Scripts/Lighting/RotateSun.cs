@@ -4,27 +4,36 @@ using UnityEngine;
 
 public class RotateSun : MonoBehaviour
 {
-    float minXRotation = 10f;
-    float maxXRotation = 170f;
-
-    float currentXRotation;
-
-    [SerializeField] private bool orbiting = true;
+    public float minXRotation = 10f;
+    public float maxXRotation = 170f;
+    
+    public bool controlsOwnOrbit = true;
+    public float currentTime;
     
     void Start(){
-        currentXRotation = 75f;
+        currentTime = 75f;
     }
 
     void Update()
     {
-        if (orbiting){
-            currentXRotation += Time.deltaTime;
-            if (currentXRotation >= maxXRotation){
-                currentXRotation = minXRotation;
+        // If the sun is controlling its own orbit, add time.deltaTime to its rotation every frame.
+        if (controlsOwnOrbit){
+            currentTime += Time.deltaTime;
+            if (currentTime >= maxXRotation){
+                currentTime = minXRotation;
             }
 
-            this.gameObject.transform.eulerAngles = new Vector3(currentXRotation, -270f, -180f);
+            this.gameObject.transform.eulerAngles = new Vector3(currentTime, -270f, -180f);
         }
         
+    }
+
+    void SetPosition(float currentTime){
+        float effectiveTime = currentTime;
+        while (effectiveTime > maxXRotation){
+            effectiveTime -= (maxXRotation - minXRotation);
+        }
+
+        this.gameObject.transform.eulerAngles = new Vector3(effectiveTime, -270f, -180f);
     }
 }

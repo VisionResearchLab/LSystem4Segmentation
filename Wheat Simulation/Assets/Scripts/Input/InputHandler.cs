@@ -28,6 +28,10 @@ public class InputHandler : MonoBehaviour
     // Screenshot script
     [SerializeField] private GameObject screenShotGameObject;
     private ScreenShot screenShot;
+    
+    // Auto orbit scanning script
+    [SerializeField] private GameObject autoOrbitGameObject;
+    private AutoOrbitScan autoOrbitScan;
 
     // Map KeyCodes to Actions
     Dictionary<KeyCode, Action> keyMap = new Dictionary<KeyCode, Action>();
@@ -46,6 +50,7 @@ public class InputHandler : MonoBehaviour
         keyMap[KeyCode.R] = Annotate;
         keyMap[KeyCode.Q] = PlaceWheatAtCursor;
         keyMap[KeyCode.T] = TakeScreenShot;
+        keyMap[KeyCode.Y] = ToggleOrbiting;
     }
 
     // Update is called once per frame
@@ -82,5 +87,9 @@ public class InputHandler : MonoBehaviour
     // Take a screen shot
     private void TakeScreenShot(){
         screenShot.TakeScreenShot();
+    }
+
+    private void ToggleOrbiting(){
+        autoOrbitScan.ToggleOrbiting();
     }
 }
