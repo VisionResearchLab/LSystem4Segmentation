@@ -9,7 +9,7 @@ public class PrefabsFromMeshes : MonoBehaviour
 
     [SerializeField] private float scaleModifier;
 
-    [SerializeField] private WindZone wheatWindZone;
+    // [SerializeField] private WindZone wheatWindZone;
 
     private void Start()
     {
@@ -30,9 +30,9 @@ public class PrefabsFromMeshes : MonoBehaviour
                     childTransform.gameObject.AddComponent<MeshCollider>();
                     childTransform.gameObject.layer = Wheat.wheatLayer;
                     
-                    // Add wind interaction script
-                    WheatWind wheatWind = childTransform.gameObject.AddComponent<WheatWind>();
-                    wheatWind.UpdateWindZone(wheatWindZone);
+                    // // Add wind interaction script
+                    // WheatWind wheatWind = childTransform.gameObject.AddComponent<WheatWind>();
+                    // wheatWind.UpdateWindZone(wheatWindZone);
                 }
             }
 

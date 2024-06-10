@@ -39,13 +39,19 @@ public class WheatData : MonoBehaviour
     public Color color;
     
     private void Start(){
-        originalMaterial = gameObject.transform.GetComponent<Renderer>().material;
+        // Update the material to a new material that is slightly darker or lighter
+        originalMaterial = GetSlightlyRecoloredMaterial(gameObject.transform.GetComponent<Renderer>().material);
+        gameObject.transform.GetComponent<Renderer>().material = originalMaterial;
 
         if (Wheat.wheatIsAnnotated){
             ToggleAnnotationOn();
         }
 
-        defineSelfColor();
+        if (ScreenShot.annotationIsColored){
+            DefineSelfColor(); 
+        } else {
+            DefineSelfColorMonochrome();
+        }
     }
 
 
@@ -70,7 +76,7 @@ public class WheatData : MonoBehaviour
         return "Unknown";
     }
 
-    private void defineSelfColor(){
+    private void DefineSelfColor(){
         float red = 0f;
         float blue = 0f;
         float green = 0f;
@@ -90,11 +96,39 @@ public class WheatData : MonoBehaviour
         else if (part == Wheat.Part.Stem){
             blue += 0.8f + maturityModifier;
             red += UnityEngine.Random.Range(0f, 0.4f);
-        } else if (part == Wheat.Part.Leaf){
+        } 
+        else if (part == Wheat.Part.Leaf){
             green += 0.8f + maturityModifier;
             blue += UnityEngine.Random.Range(0f, 0.4f);
         }
 
         color = new Color(red, green, blue);
+    }
+
+    private void DefineSelfColorMonochrome(){
+        if (part == Wheat.Part.Head){
+            color = Color.white;
+        }
+        else if (part == Wheat.Part.Stem){
+            color = Color.black;
+        } 
+        else if (part == Wheat.Part.Leaf){
+            color = Color.black;
+        }
+    }
+
+    private Material GetSlightlyRecoloredMaterial(Material material){
+        float red = material.color.r;
+        float green = material.color.g;
+        float blue = material.color.b;
+
+        float delta = 0.03f;
+        red *= UnityEngine.Random.Range(1f-delta, 1f+delta);
+        green *= UnityEngine.Random.Range(1f-delta, 1f+delta);
+        blue *= UnityEngine.Random.Range(1f-delta, 1f+delta);
+
+        Material newMaterial = new Material(material);
+        newMaterial.color = new Color(red, green, blue);
+        return newMaterial;
     }
 }

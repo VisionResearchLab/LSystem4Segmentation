@@ -18,9 +18,10 @@ public class ScreenShot : MonoBehaviour
 
     // Save directory
     private string saveDirectory = "Screenshots";
-    private string screenshotName = "s.png";
-    private string annotatedScreenshotName = "a.png";
 
+
+    // Determine if the annotation should be white or r/g/b
+    public static bool annotationIsColored = false;
 
     // Define scripts with functions that need to be called
     private void Start(){
@@ -31,6 +32,9 @@ public class ScreenShot : MonoBehaviour
     // Take two screenshots: s-name, representing the normal screenshot, and a-name, representing the annotated screenshot
     public void TakeScreenShot(){
         HideUI();
+        string timeInSeconds = Time.time.ToString();
+        string screenshotName = "image_" + timeInSeconds + ".png";
+        string annotatedScreenshotName = "annotation_" + timeInSeconds + ".png";
         StartCoroutine(ScreenshotEnum(screenshotName, 1, true));
         StartCoroutine(AnnotateScreenshotEnum(annotatedScreenshotName, 2, false));
     }
