@@ -43,6 +43,7 @@ public class InputHandler : MonoBehaviour
         annotateCamera = AnnotateCameraGameObject.GetComponent<AnnotateCamera>();
         placeWheat = placeWheatGameObject.GetComponent<PlaceWheat>();
         screenShot = screenShotGameObject.GetComponent<ScreenShot>();
+        autoOrbitScan = autoOrbitGameObject.GetComponent<AutoOrbitScan>();
 
         // Maps keybinds to functions in other scripts
         keyMap[KeyCode.F] = DetectWheatPart;

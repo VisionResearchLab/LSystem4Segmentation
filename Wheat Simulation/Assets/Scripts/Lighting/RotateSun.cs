@@ -22,10 +22,9 @@ public class RotateSun : MonoBehaviour
             if (currentTime >= maxXRotation){
                 currentTime = minXRotation;
             }
-
-            this.gameObject.transform.eulerAngles = new Vector3(currentTime, -270f, -180f);
         }
         
+        SetPosition(currentTime);
     }
 
     void SetPosition(float currentTime){
