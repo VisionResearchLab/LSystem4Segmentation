@@ -76,7 +76,7 @@ public class ScreenShot : MonoBehaviour
         string path = getPath(name);
 
         // https://stackoverflow.com/a/36188311
-        Texture2D screenShot = new Texture2D(Screen.width, Screen.height);
+        Texture2D screenShot = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, true); // mipchain??
         screenShot.ReadPixels(new Rect(0,0,Screen.width,Screen.height),0,0);
         screenShot.Apply();
         byte[] bytes = screenShot.EncodeToPNG();

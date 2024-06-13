@@ -24,7 +24,7 @@ RenderSettings:
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
-  m_AmbientMode: 4
+  m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
   m_SkyboxMaterial: {fileID: 0}
   m_HaloStrength: 0.5
@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 983.3164, g: 793.22235, b: 618.2819, a: 1}
+  m_IndirectSpecularColor: {r: 1174.7777, g: 1077.3981, b: 1077.9122, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -564,6 +564,9 @@ MonoBehaviour:
   rotateSun: {fileID: 705507997}
   massAddWheat: {fileID: 748708771}
   cam: {fileID: 963194227}
+  takePictureInterval: 0.2
+  sunRotationSpeed: 10
+  sun: {fileID: 705507993}
 --- !u!1 &329793927
 GameObject:
   m_ObjectHideFlags: 0
@@ -1977,7 +1980,7 @@ Light:
   m_Type: 1
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 50000
+  m_Intensity: 30000
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -2020,9 +2023,9 @@ Light:
   m_LightShadowCasterMode: 2
   m_AreaSize: {x: 0.5, y: 0.5}
   m_BounceIntensity: 1
-  m_ColorTemperature: 6570
+  m_ColorTemperature: 6275
   m_UseColorTemperature: 1
-  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: -2.3879126e+29}
+  m_BoundingSphereOverride: {x: 9.1835e-41, y: 6e-44, z: 1.4e-44, w: 1.2097e-41}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
@@ -2035,13 +2038,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 705507993}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.05957217, y: -0.6987422, z: 0.020251265, w: 0.7126012}
+  m_LocalRotation: {x: 0.14814216, y: -0.685809, z: 0.107944585, w: 0.7043209}
   m_LocalPosition: {x: 7.7, y: 37.98, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1087695798}
-  m_LocalEulerAnglesHint: {x: 6.5, y: -89.05301, z: -3.1380005}
+  m_LocalEulerAnglesHint: {x: 20.9, y: -89.05301, z: -3.1380005}
 --- !u!114 &705507996
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2054,7 +2057,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a68c43fe1f2a47cfa234b5eeaa98012, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Intensity: 50000
+  m_Intensity: 30000
   m_EnableSpotReflector: 1
   m_LuxAtDistance: 1
   m_InnerSpotPercent: 0
@@ -3464,7 +3467,7 @@ Transform:
   m_GameObject: {fileID: 1187441222}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 41.6, y: -3, z: 16}
+  m_LocalPosition: {x: 41.6, y: -0.1, z: 16}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3961,7 +3964,7 @@ Transform:
   m_GameObject: {fileID: 1826283974}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -15.8, y: 3, z: -36.1}
+  m_LocalPosition: {x: -15.8, y: 2.1, z: -36.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

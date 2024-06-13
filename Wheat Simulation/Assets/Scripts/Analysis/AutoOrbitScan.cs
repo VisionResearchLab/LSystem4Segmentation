@@ -7,12 +7,18 @@ using System.Transactions;
 using CTI;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
+using UnityEngine.Experimental.GlobalIllumination;
+using UnityEngine.Rendering;
 using UnityEngine.UIElements;
 
 public class AutoOrbitScan : MonoBehaviour
 {
     // Determines whether we are in auto orbit scanning mode (moves camera around wheat and takes pictures)
     public bool orbitScanning;
+
+    // Only true when the application is busy taking a screenshot and labeling it
+    private bool busy;
+
     
     // Scripts that have functions to be called
     public ScreenShot screenShot;
@@ -28,6 +34,8 @@ public class AutoOrbitScan : MonoBehaviour
     private Quaternion initialCameraRotation;
     private bool initialSunControlsOwnOrbit;
     private float initialSunCurrentTime;
+    private float initialSunLightTemperature;
+    private float initialSunLightIntensity;
 
     // Local variables for camera movement
     private bool timeProgressing;
@@ -35,12 +43,19 @@ public class AutoOrbitScan : MonoBehaviour
     private Vector3 cameraOrbitFocus;
 
     // Adjustable variables
-    int takePictureInterval = 4; // in seconds
-    float timeToWaitForScan = 4.0f;
-    int sunRotationSpeed = 15;
+    [SerializeField] private float takePictureInterval;
+    [SerializeField] private int sunRotationSpeed;
+
+    // Sun object
+    public GameObject sun;
+    private Light sunLight;
 
     HashSet<int> timesPicturesWereTakenAt = new HashSet<int>();
 
+    void Start(){
+        sunLight = sun.GetComponent<Light>();
+        busy = false;
+    }
 
     public void BeginOrbiting(){
         // Save initial state
@@ -48,6 +63,8 @@ public class AutoOrbitScan : MonoBehaviour
         initialCameraRotation = cam.transform.rotation;
         initialSunControlsOwnOrbit = rotateSun.controlsOwnOrbit;
         initialSunCurrentTime = rotateSun.currentTime;
+        initialSunLightTemperature = sunLight.colorTemperature;
+        initialSunLightIntensity = sunLight.intensity;
 
         // Start orbit scanning
         cameraOrbitFocus = GetCameraOrbitFocus();
@@ -73,18 +90,27 @@ public class AutoOrbitScan : MonoBehaviour
             // Change the sun angle at an increased rate
             rotateSun.currentTime = sunRotationSpeed * currentTime;
 
-            // Pause periodically to take move camera and then picture
-            if (!(timesPicturesWereTakenAt.Contains((int) currentTime)) && (int) currentTime % takePictureInterval == 0){
-                MoveCameraRandomly();
-                Debug.Log("Taking screenshot at time: " + Time.time);
-                screenShot.TakeScreenShot();
-                timesPicturesWereTakenAt.Add((int) currentTime);
-                Pause(timeToWaitForScan);
+            if (!busy){
+                TakePicture(takePictureInterval);
             }
         }
     }
 
-    // Needs >5 seconds to allow scan to happen
+    void TakePicture(float seconds){
+        busy = true;
+        
+        Debug.Log("Taking screenshot at time: " + Time.time);
+
+        MoveCameraRandomly();
+        sunLight.colorTemperature = UnityEngine.Random.Range(5500f, 8500f);
+        sunLight.intensity = UnityEngine.Random.Range(30000f, 90000f);
+        
+        screenShot.TakeScreenShot();
+        timesPicturesWereTakenAt.Add((int) currentTime);
+        Pause(seconds);
+        busy = false;
+    }
+
     IEnumerator Pause(float seconds){
         // Start pause
         timeProgressing = false;
@@ -131,6 +157,8 @@ public class AutoOrbitScan : MonoBehaviour
         rotateSun.controlsOwnOrbit = initialSunControlsOwnOrbit;
         rotateSun.currentTime = initialSunCurrentTime;
         orbitScanning = false;
+        sunLight.colorTemperature = initialSunLightTemperature;
+        sunLight.intensity = initialSunLightIntensity;
     }
 
     public void ToggleOrbiting(){
