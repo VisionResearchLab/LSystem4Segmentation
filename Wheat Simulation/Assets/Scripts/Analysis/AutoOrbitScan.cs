@@ -43,8 +43,11 @@ public class AutoOrbitScan : MonoBehaviour
     private Vector3 cameraOrbitFocus;
 
     // Adjustable variables
-    [SerializeField] private float takePictureInterval;
+    // [SerializeField] private float takePictureInterval;
     [SerializeField] private int sunRotationSpeed;
+
+    [SerializeField] private float wheatHeight;
+    [SerializeField] private float heightDelta;
 
     // Sun object
     public GameObject sun;
@@ -71,7 +74,7 @@ public class AutoOrbitScan : MonoBehaviour
         orbitScanning = true;
         
         // Start to move camera and sun
-        currentTime = 0f;
+        currentTime = 5f;
         float _ = Time.deltaTime; // reset Time.deltaTime
         timeProgressing = true;
         rotateSun.controlsOwnOrbit = false; // Because the sun's X rotation is synced to this script when orbitScanning = true
@@ -82,7 +85,7 @@ public class AutoOrbitScan : MonoBehaviour
 
     void Update()
     {
-        if (orbitScanning && timeProgressing){
+        if (orbitScanning){
             float delta = Time.deltaTime;
             // Time controls
             currentTime += delta;
@@ -91,35 +94,37 @@ public class AutoOrbitScan : MonoBehaviour
             rotateSun.currentTime = sunRotationSpeed * currentTime;
 
             if (!busy){
-                TakePicture(takePictureInterval);
+                TakePicture();
             }
         }
     }
 
-    void TakePicture(float seconds){
+    void TakePicture(){
         busy = true;
         
         Debug.Log("Taking screenshot at time: " + Time.time);
 
         MoveCameraRandomly();
-        sunLight.colorTemperature = UnityEngine.Random.Range(5500f, 8500f);
+
+        float colorDelta = 500f; // sun temp varies by this value
+        sunLight.colorTemperature = UnityEngine.Random.Range(6275f-colorDelta, 6275f+colorDelta);
         sunLight.intensity = UnityEngine.Random.Range(30000f, 90000f);
         
         screenShot.TakeScreenShot();
         timesPicturesWereTakenAt.Add((int) currentTime);
-        Pause(seconds);
+        // StartCoroutine(Pause(seconds));
         busy = false;
     }
 
-    IEnumerator Pause(float seconds){
-        // Start pause
-        timeProgressing = false;
-        yield return new WaitForSeconds(seconds);
+    // IEnumerator Pause(float seconds){
+    //     // Start pause
+    //     timeProgressing = false;
+    //     yield return new WaitForSeconds(seconds);
 
-        // End pause
-        float _ = Time.deltaTime; // reset Time.deltaTime
-        timeProgressing = true;
-    }
+    //     // End pause
+    //     float _ = Time.deltaTime; // reset Time.deltaTime
+    //     timeProgressing = true;
+    // }
 
     private Vector3 GetCameraOrbitFocus(){
         Vector3 pos1 = massAddWheat.boundary1.transform.position;
@@ -179,7 +184,7 @@ public class AutoOrbitScan : MonoBehaviour
         float pos_variance = 0.4f; // How much the camera can move around within the orbit bounds
 
         float x_pos = cameraOrbitFocus.x + UnityEngine.Random.Range(-pos_variance * x_diff, pos_variance * x_diff);
-        float y_pos = cameraOrbitFocus.y + UnityEngine.Random.Range(6f, 9f); // Wheat is 6 units tall
+        float y_pos = cameraOrbitFocus.y + UnityEngine.Random.Range(wheatHeight, wheatHeight + heightDelta); // Wheat is 6 units tall
         float z_pos = cameraOrbitFocus.z + UnityEngine.Random.Range(-pos_variance * z_diff, pos_variance * z_diff);
 
         Vector3 cam_pos = new Vector3(x_pos, y_pos, z_pos);
