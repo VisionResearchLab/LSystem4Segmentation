@@ -94,13 +94,17 @@ public class AutoOrbitScan : MonoBehaviour
             rotateSun.currentTime = sunRotationSpeed * currentTime;
 
             if (!busy){
-                TakePicture();
+                StartCoroutine(TakePicture());
             }
         }
     }
 
-    void TakePicture(){
+    IEnumerator TakePicture(){
         busy = true;
+
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
         
         Debug.Log("Taking screenshot at time: " + Time.time);
 
@@ -114,6 +118,7 @@ public class AutoOrbitScan : MonoBehaviour
         timesPicturesWereTakenAt.Add((int) currentTime);
         // StartCoroutine(Pause(seconds));
         busy = false;
+        yield return null;
     }
 
     // IEnumerator Pause(float seconds){

@@ -19,7 +19,7 @@ public class ScreenShot : MonoBehaviour
 
 
     // Save directory
-    private string saveDirectory = "Screenshots";
+    private string saveDirectory = "C:/Users/xSkul/OneDrive/Documents/Projects/Wheat/wheat/Datasets/512x512-3/";
 
 
     // Determine if the annotation should be white or r/g/b
@@ -43,7 +43,7 @@ public class ScreenShot : MonoBehaviour
 
     // Returns a unique filepath in the screenshots folder based on the given name
     private string getPath(string name){
-        return AssetDatabase.GenerateUniqueAssetPath("Assets/" + saveDirectory + "/" + name);
+        return AssetDatabase.GenerateUniqueAssetPath(saveDirectory + name);
     }
 
     // Call SwapCameras() in annotateCameraScript
