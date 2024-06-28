@@ -6,12 +6,13 @@ using UnityEditor;
 using UnityEngine;
 using Unity.Jobs;
 using Unity.Collections;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.HighDefinition;
+
 public class ScreenShot : MonoBehaviour
 {
     // Cameras
     public Camera mainCam;
-    public Camera annotateCam;
-    private AnnotateCamera annotateCameraScript;
 
 
     // UI canvas group (to hide it for screenshots)
@@ -23,11 +24,17 @@ public class ScreenShot : MonoBehaviour
 
 
     // Determine if the annotation should be white or r/g/b
+    // TODO: reimplement this
     public static bool annotationIsColored = false;
+
+    // Variables for label generation
+    public Shader labelShader;
+    public LayerMask labelLayer;
+    private CustomPassVolume customPassVolume;
+    private CustomPass customPass;
 
     // Define scripts with functions that need to be called
     private void Start(){
-        annotateCameraScript = annotateCam.GetComponent<AnnotateCamera>();
         ShowUI();
     }
 
@@ -38,7 +45,7 @@ public class ScreenShot : MonoBehaviour
         string screenshotName = "image_" + timeInSeconds + ".png";
         string annotatedScreenshotName = "annotation_" + timeInSeconds + ".png";
         StartCoroutine(ScreenshotEnum(screenshotName, 1, true));
-        StartCoroutine(AnnotateScreenshotEnum(annotatedScreenshotName, 1, false));
+        StartCoroutine(AnnotateScreenshotRaycastEnum(annotatedScreenshotName, 1, false));
     }
 
     // Returns a unique filepath in the screenshots folder based on the given name
@@ -49,7 +56,6 @@ public class ScreenShot : MonoBehaviour
     // Call SwapCameras() in annotateCameraScript
     private void SwapCameras(){
         Wheat.ToggleAnnotation();
-        annotateCameraScript.SwapCameras();
     }
 
     // Hide UI
@@ -91,40 +97,13 @@ public class ScreenShot : MonoBehaviour
         }
     }
 
-    private IEnumerator AnnotateScreenshotEnum(string name, int frameDelay, bool hideUIAfter){
+    private IEnumerator AnnotateScreenshotRaycastEnum(string name, int frameDelay, bool hideUIAfter){
         // Do this after one frame
         for (int i = 0; i < frameDelay; i++){
             yield return new WaitForEndOfFrame();
         }
         
         string path = getPath(name);
-
-        // // https://stackoverflow.com/a/36188311
-        // Texture2D screenShot = new Texture2D(Screen.width, Screen.height);
-
-        // // Raycast to every pixel, and recolor it based on what wheat part it hits (if any)
-        // for (int x = 0; x < Screen.width; x++){
-        //     for (int y = 0; y < Screen.height; y++){
-        //         Ray ray = mainCam.ScreenPointToRay(new Vector3(x, y));
-        //         RaycastHit hit;
-        //         if (Physics.Raycast(ray, out hit))
-        //         {
-        //             GameObject obj = hit.transform.gameObject;
-        //             if (Wheat.IsWheat(obj)){
-        //                 screenShot.SetPixel(x, y, obj.GetComponent<WheatData>().color);
-        //             }
-        //             else { // Hits an untagged object, usually ground
-        //                 screenShot.SetPixel(x, y, Color.black);
-        //             }
-        //         }
-        //     }
-        // }
-
-        // screenShot.Apply();
-        // byte[] bytes = screenShot.EncodeToPNG();
-        // UnityEngine.Object.Destroy(screenShot);
-        // Debug.Log(path);
-        // File.WriteAllBytes(path, bytes);
 
         int width = Screen.width;
         int height = Screen.height;
@@ -196,4 +175,64 @@ public class ScreenShot : MonoBehaviour
         }
     }
 
+
+    // private IEnumerator AnnotateScreenshotShaderEnum(string name, int frameDelay, bool hideUIAfter){
+    //     for (int i = 0; i < frameDelay; i++){
+    //         yield return new WaitForEndOfFrame();
+    //     }
+
+    //     string path = getPath(name);
+
+    //     // Create a temporary camera
+    //     Camera tempCamera = new GameObject("TempCamera").AddComponent<Camera>();
+    //     tempCamera.CopyFrom(mainCam);
+    //     tempCamera.clearFlags = CameraClearFlags.SolidColor;
+    //     tempCamera.backgroundColor = Color.black;
+    //     tempCamera.cullingMask = labelLayer;
+
+    //     // Render to a RenderTexture
+    //     RenderTexture rt = new RenderTexture(Screen.width, Screen.height, 24);
+    //     tempCamera.targetTexture = rt;
+
+    //     // Create a custom pass volume
+    //     CustomPassVolume customPassVolume = tempCamera.gameObject.AddComponent<CustomPassVolume>();
+    //     customPassVolume.isGlobal = true;
+    //     customPassVolume.injectionPoint = CustomPassInjectionPoint.AfterOpaqueDepthAndNormal;
+
+    //     // Create and configure the custom pass
+    //     LabelCustomPass labelPass = new LabelCustomPass {
+    //         name = "LabelPass",
+    //         material = labelMaterial,
+    //         labelLayer = labelLayer
+    //     };
+
+    //     customPassVolume.customPasses.Add(labelPass);
+
+    //     // Render the label image
+    //     tempCamera.Render();
+
+    //     // Save the RenderTexture to a Texture2D
+    //     RenderTexture.active = rt;
+    //     Texture2D tex = new Texture2D(rt.width, rt.height, TextureFormat.RGB24, false);
+    //     tex.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0);
+    //     tex.Apply();
+
+    //     // Save the texture as a PNG (optional)
+    //     byte[] bytes = tex.EncodeToPNG();
+    //     System.IO.File.WriteAllBytes(Application.dataPath + "/../LabelImage.png", bytes);
+
+    //     // Cleanup
+    //     RenderTexture.active = null;
+    //     tempCamera.targetTexture = null;
+    //     Destroy(rt);
+    //     Destroy(tempCamera.gameObject);
+
+    //     Debug.Log("Screenshot saved to: " + path);
+
+    //     if (hideUIAfter){
+    //         HideUI();
+    //     } else {
+    //         ShowUI();
+    //     }
+    // }
 }
