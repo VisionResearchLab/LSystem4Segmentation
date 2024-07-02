@@ -20,7 +20,7 @@ public class ScreenShot : MonoBehaviour
 
 
     // Save directory
-    private string saveDirectory = "C:/Users/xSkul/OneDrive/Documents/Projects/Wheat/wheat/Datasets/512x512-3/";
+    private string saveDirectory = "K:\\Users\\Skull\\Downloads\\Datasets\\wheat1024x1024\\";
 
 
     // Determine if the annotation should be white or r/g/b
@@ -45,6 +45,7 @@ public class ScreenShot : MonoBehaviour
         string screenshotName = "image_" + timeInSeconds + ".png";
         string annotatedScreenshotName = "annotation_" + timeInSeconds + ".png";
         StartCoroutine(ScreenshotEnum(screenshotName, 1, true));
+        
         StartCoroutine(AnnotateScreenshotRaycastEnum(annotatedScreenshotName, 1, false));
     }
 
