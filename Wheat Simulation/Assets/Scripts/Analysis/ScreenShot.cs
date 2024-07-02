@@ -20,7 +20,7 @@ public class ScreenShot : MonoBehaviour
 
 
     // Save directory
-    private string saveDirectory = "C:/Users/xSkul/OneDrive/Documents/Projects/Wheat/wheat/Datasets/1024x1024-0/";
+    private string saveDirectory = "/home/student/elijahmickelson/Datasets/1024x1024-0/";
 
 
     // Determine if the annotation should be white or r/g/b
@@ -99,6 +99,9 @@ public class ScreenShot : MonoBehaviour
         int width = Screen.width;
         int height = Screen.height;
 
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.Start();
+
         // Prepare for raycast commands and results
         NativeArray<RaycastCommand> raycastCommands = new NativeArray<RaycastCommand>(width * height, Allocator.TempJob);
         NativeArray<RaycastHit> raycastResults = new NativeArray<RaycastHit>(width * height, Allocator.TempJob);
@@ -123,7 +126,11 @@ public class ScreenShot : MonoBehaviour
         // Complete the job handle
         handle.Complete();
 
-        // Create the texture and set pixels based on raycast results
+        stopwatch.Stop();
+        Debug.Log($"Time to raycast: {stopwatch.ElapsedMilliseconds} ms");
+        Stopwatch stopwatch = new Stopwatch();
+
+        // // Create the texture and set pixels based on raycast results
         Texture2D screenShot = new Texture2D(width, height);
 
         index = 0;
@@ -156,6 +163,8 @@ public class ScreenShot : MonoBehaviour
         raycastCommands.Dispose();
         raycastResults.Dispose();
         UnityEngine.Object.Destroy(screenShot);
+
+        Debug.Log("Time to encode to PNG: " + Time.deltaTime);
 
         Debug.Log("Screenshot saved to: " + path);
     }
