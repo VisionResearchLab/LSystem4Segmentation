@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
@@ -8,6 +7,7 @@ using Unity.Jobs;
 using Unity.Collections;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.HighDefinition;
+using System.Diagnostics;
 
 public class ScreenShot : MonoBehaviour
 {
@@ -20,7 +20,8 @@ public class ScreenShot : MonoBehaviour
 
 
     // Save directory
-    private string saveDirectory = "/home/student/elijahmickelson/Datasets/1024x1024-0/";
+    // private string saveDirectory = "/home/student/elijahmickelson/Datasets/1024x1024-0/";
+    private string saveDirectory = "C:/Users/xSkul/OneDrive/Documents/Projects/Wheat/wheat/Datasets/1024x1024-1";
 
 
     // Determine if the annotation should be white or r/g/b
@@ -91,7 +92,7 @@ public class ScreenShot : MonoBehaviour
         screenShot.Apply();
         byte[] bytes = screenShot.EncodeToPNG();
         UnityEngine.Object.Destroy(screenShot);
-        Debug.Log(path);
+        UnityEngine.Debug.Log(path);
         File.WriteAllBytes(path, bytes);
     }
 
@@ -99,8 +100,8 @@ public class ScreenShot : MonoBehaviour
         int width = Screen.width;
         int height = Screen.height;
 
-        Stopwatch stopwatch = new Stopwatch();
-        stopwatch.Start();
+        Stopwatch sw = new Stopwatch();
+        sw.Start();
 
         // Prepare for raycast commands and results
         NativeArray<RaycastCommand> raycastCommands = new NativeArray<RaycastCommand>(width * height, Allocator.TempJob);
@@ -126,9 +127,10 @@ public class ScreenShot : MonoBehaviour
         // Complete the job handle
         handle.Complete();
 
-        stopwatch.Stop();
-        Debug.Log($"Time to raycast: {stopwatch.ElapsedMilliseconds} ms");
-        Stopwatch stopwatch = new Stopwatch();
+        sw.Stop();
+        float timeToRaycast = sw.ElapsedMilliseconds;
+        sw.Reset();
+        sw.Start(); // track texture encoding time
 
         // // Create the texture and set pixels based on raycast results
         Texture2D screenShot = new Texture2D(width, height);
@@ -164,9 +166,12 @@ public class ScreenShot : MonoBehaviour
         raycastResults.Dispose();
         UnityEngine.Object.Destroy(screenShot);
 
-        Debug.Log("Time to encode to PNG: " + Time.deltaTime);
+        sw.Stop();
+        float timeToEncode = sw.ElapsedMilliseconds;
 
-        Debug.Log("Screenshot saved to: " + path);
+        UnityEngine.Debug.Log($"Time to raycast: {timeToRaycast} ms\nTime to encode to PNG: {timeToEncode} ms");
+
+        UnityEngine.Debug.Log("Screenshot saved to: " + path);
     }
 
 
