@@ -110,7 +110,7 @@ public class AutoOrbitScan : MonoBehaviour
         sunLight.intensity = UnityEngine.Random.Range(30000f, 90000f);
         
         timesPicturesWereTakenAt.Add((int) currentTime);
-        yield return StartCoroutine(screenShot.ScreenshotSequenceEnum(0f));
+        yield return StartCoroutine(screenShot.ScreenshotSequenceEnum(0.5f));
 
         busy = false;
         yield return null;
