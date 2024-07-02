@@ -101,11 +101,6 @@ public class AutoOrbitScan : MonoBehaviour
 
     IEnumerator TakePicture(){
         busy = true;
-
-        yield return new WaitForEndOfFrame();
-        yield return new WaitForEndOfFrame();
-        yield return new WaitForEndOfFrame();
-        
         Debug.Log("Taking screenshot at time: " + Time.time);
 
         MoveCameraRandomly();
@@ -114,9 +109,9 @@ public class AutoOrbitScan : MonoBehaviour
         sunLight.colorTemperature = UnityEngine.Random.Range(6275f-colorDelta, 6275f+colorDelta);
         sunLight.intensity = UnityEngine.Random.Range(30000f, 90000f);
         
-        screenShot.TakeScreenShot();
         timesPicturesWereTakenAt.Add((int) currentTime);
-        // StartCoroutine(Pause(seconds));
+        yield return StartCoroutine(screenShot.ScreenshotSequenceEnum(0f));
+
         busy = false;
         yield return null;
     }

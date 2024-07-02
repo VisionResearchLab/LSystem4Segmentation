@@ -20,7 +20,7 @@ public class ScreenShot : MonoBehaviour
 
 
     // Save directory
-    private string saveDirectory = "K:\\Users\\Skull\\Downloads\\Datasets\\wheat1024x1024\\";
+    private string saveDirectory = "C:/Users/xSkul/OneDrive/Documents/Projects/Wheat/wheat/Datasets/1024x1024-0/";
 
 
     // Determine if the annotation should be white or r/g/b
@@ -38,15 +38,24 @@ public class ScreenShot : MonoBehaviour
         ShowUI();
     }
 
-    // Take two screenshots: s-name, representing the normal screenshot, and a-name, representing the annotated screenshot
+    // Call ScreenshotSequenceEnum with default time to wait of 0.1 seconds
     public void TakeScreenShot(){
+        float secondsDelay = 0.1f;
+        StartCoroutine(ScreenshotSequenceEnum(secondsDelay));
+    }
+
+    public IEnumerator ScreenshotSequenceEnum(float secondsDelay){
+        string dateTime = DateTime.Now.ToString("yyyy-MM-dd_HH:mm:ss");
+
+        string imagePath = getPath(dateTime + "_image" + ".png");
+        string labelPath = getPath(dateTime + "_label" + ".png");
+
         HideUI();
-        string timeInSeconds = Time.time.ToString();
-        string screenshotName = "image_" + timeInSeconds + ".png";
-        string annotatedScreenshotName = "annotation_" + timeInSeconds + ".png";
-        StartCoroutine(ScreenshotEnum(screenshotName, 1, true));
-        
-        StartCoroutine(AnnotateScreenshotRaycastEnum(annotatedScreenshotName, 1, false));
+        yield return new WaitForSeconds(secondsDelay);
+        StartCoroutine(ImageScreenshot(imagePath));
+        AnnotateScreenshotRaycast(labelPath);
+        yield return new WaitForEndOfFrame();
+        ShowUI();
     }
 
     // Returns a unique filepath in the screenshots folder based on the given name
@@ -74,14 +83,8 @@ public class ScreenShot : MonoBehaviour
     }
 
     // Use texture to avoid screenshot lag
-    private IEnumerator ScreenshotEnum(string name, int frameDelay, bool hideUIAfter){
-        // Screenshots must happen at the end of a frame
-        for (int i = 0; i < frameDelay; i++){
-            yield return new WaitForEndOfFrame();
-        }
-        
-        string path = getPath(name);
-
+    private IEnumerator ImageScreenshot(string path){
+        yield return new WaitForEndOfFrame();
         // https://stackoverflow.com/a/36188311
         Texture2D screenShot = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, true); // mipchain??
         screenShot.ReadPixels(new Rect(0,0,Screen.width,Screen.height),0,0);
@@ -90,22 +93,9 @@ public class ScreenShot : MonoBehaviour
         UnityEngine.Object.Destroy(screenShot);
         Debug.Log(path);
         File.WriteAllBytes(path, bytes);
-
-        if (hideUIAfter){
-            HideUI();
-        } else {
-            ShowUI();
-        }
     }
 
-    private IEnumerator AnnotateScreenshotRaycastEnum(string name, int frameDelay, bool hideUIAfter){
-        // Do this after one frame
-        for (int i = 0; i < frameDelay; i++){
-            yield return new WaitForEndOfFrame();
-        }
-        
-        string path = getPath(name);
-
+    private void AnnotateScreenshotRaycast(string path){
         int width = Screen.width;
         int height = Screen.height;
 
@@ -168,12 +158,6 @@ public class ScreenShot : MonoBehaviour
         UnityEngine.Object.Destroy(screenShot);
 
         Debug.Log("Screenshot saved to: " + path);
-
-        if (hideUIAfter){
-            HideUI();
-        } else {
-            ShowUI();
-        }
     }
 
 
