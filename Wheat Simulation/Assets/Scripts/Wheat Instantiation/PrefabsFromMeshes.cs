@@ -9,11 +9,13 @@ public class PrefabsFromMeshes : MonoBehaviour
 
     [SerializeField] private float scaleModifier;
 
+    // [SerializeField] private WindZone wheatWindZone;
+
     private void Start()
     {
         GameObject[] allWheatModels = Resources.LoadAll<GameObject>(wheatMeshPath);
-        if (!(allWheatModels.Length == Wheat.GetAllWheatPrefabs().Length)){
-            foreach (GameObject wheatModel in Resources.LoadAll<GameObject>(wheatMeshPath)){
+        //if (!(allWheatModels.Length == Wheat.GetAllWheatPrefabs().Length)){
+        foreach (GameObject wheatModel in Resources.LoadAll<GameObject>(wheatMeshPath)){
             // Instantiate the model prefab
             GameObject instantiatedModel = Instantiate(wheatModel);
 
@@ -25,8 +27,12 @@ public class PrefabsFromMeshes : MonoBehaviour
                 {
                     // Add components to the child object
                     childTransform.gameObject.AddComponent<WheatData>();
-                    childTransform.gameObject.AddComponent<MeshCollider>();
+                    MeshCollider mc = childTransform.gameObject.AddComponent<MeshCollider>();
                     childTransform.gameObject.layer = Wheat.wheatLayer;
+                    
+                    // // Add wind interaction script
+                    // WheatWind wheatWind = childTransform.gameObject.AddComponent<WheatWind>();
+                    // wheatWind.UpdateWindZone(wheatWindZone);
                 }
             }
 
@@ -41,9 +47,9 @@ public class PrefabsFromMeshes : MonoBehaviour
 
             // Destroy the instantiated model
             Destroy(instantiatedModel);
-            }
-        } else {
-            Debug.Log("All models have already been converted to prefabs.");
         }
+        // } else {
+        //     Debug.Log("All models have already been converted to prefabs.");
+        // }
     }
 }
