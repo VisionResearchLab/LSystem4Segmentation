@@ -41,7 +41,7 @@ public class InstantiateWheat : MonoBehaviour
             // Try to instantiate the wheat in a position that does not overlap with other wheat objects.
             if (tryPlaceAgainIfFail){ // For MassAddWheat
                 int placeAttempts = 0;
-                while (placed == false && placeAttempts < 10){
+                while (placed == false && placeAttempts < 5){
                     requestedPosition = massAddWheat.GetPositionInWheatBounds();
                     // The wheat will be placed at a slightly lower position than requested, as wheat grows partly inside of the ground.
                     Vector3 position = TryFindPosition(requestedPosition);
@@ -56,7 +56,7 @@ public class InstantiateWheat : MonoBehaviour
                     foreach (WheatData wheatData in newWheat.GetComponentsInChildren<WheatData>()){
                         Debug.Log("Checking for overlaps");
                         if (wheatData.IsOverlappingWheat()){
-                            // If the position was occupied, try again somewhere else, up to 10 times
+                            // If the position was occupied, try again somewhere else, up to 5 times
                             Debug.Log("Could not place wheat");
                             placeAttempts ++;
                             Destroy(newWheat);
