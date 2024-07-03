@@ -49,24 +49,33 @@ public class MassAddWheat : MonoBehaviour
     }
 
     // When called, create a new wheat object in a random position that is within the coordinates given above
-    public void AddWheat()
+    public void LoopAddWheat()
     {
         // Get the amount of wheat to place from the user input
         int quantityToPlace = int.Parse(quantityToPlaceInputField.GetComponent<TMPro.TMP_InputField>().text);
 
         for (int i = 0; i < quantityToPlace; i++){
-            // X and Z positions are always assumed to be valid, because ground exists everywhere
-            float wheatPosX = Random.Range(xMin, xMax);
-            float wheatPosZ = Random.Range(zMin, zMax);
+            // Place in a position obtained from GetPositionInWheatBounds, or retry if that position is occupied
+            Debug.Log("Test1");
+            InstantiateWheat.IW.GenerateWheat(GetPositionInWheatBounds(), true);
+        }
+    }
 
-            // The Y position must be found by casting a ray downwards, in case the ground is not level
-            Ray ray = new Ray(origin: new Vector3(wheatPosX, Mathf.Max(yMin, yMax), wheatPosZ), direction: new Vector3(0, -1, 0));
-            RaycastHit hit;
+    public Vector3 GetPositionInWheatBounds(){
+        // X and Z positions are always assumed to be valid, because ground exists everywhere
+        float wheatPosX = Random.Range(xMin, xMax);
+        float wheatPosZ = Random.Range(zMin, zMax);
 
-            // Should only interact with the ground layer
-            if(Physics.Raycast(ray, out hit, Mathf.Abs(yMax - yMin), Wheat.groundLayerMask)){
-                InstantiateWheat.IW.GenerateWheat(hit.point);
-            }
+        // The Y position must be found by casting a ray downwards, in case the ground is not level
+        Ray ray = new Ray(origin: new Vector3(wheatPosX, Mathf.Max(yMin, yMax), wheatPosZ), direction: new Vector3(0, -1, 0));
+        RaycastHit hit;
+
+        // Should only interact with the ground layer
+        if(Physics.Raycast(ray, out hit, Mathf.Abs(yMax - yMin), Wheat.groundLayerMask)){
+            return hit.point;
+        } 
+        else {
+            return new Vector3(0,0,0);
         }
     }
 }
