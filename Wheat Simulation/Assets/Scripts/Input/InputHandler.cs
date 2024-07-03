@@ -17,10 +17,6 @@ public class InputHandler : MonoBehaviour
     [SerializeField] private GameObject WheatScanGameObject;
     private ScanScene scanScene;
 
-    // Annotate Camera
-    [SerializeField] private GameObject AnnotateCameraGameObject;
-    private AnnotateCamera annotateCamera;
-
     // Place Wheat at Cursor
     [SerializeField] private GameObject placeWheatGameObject;
     private PlaceWheat placeWheat;
@@ -40,7 +36,6 @@ public class InputHandler : MonoBehaviour
         //Script references
         mouseOverWheatHandler = MouseOverWheatGameObject.GetComponent<MouseOverWheatHandler>();
         scanScene = WheatScanGameObject.GetComponent<ScanScene>();
-        annotateCamera = AnnotateCameraGameObject.GetComponent<AnnotateCamera>();
         placeWheat = placeWheatGameObject.GetComponent<PlaceWheat>();
         screenShot = screenShotGameObject.GetComponent<ScreenShot>();
         autoOrbitScan = autoOrbitGameObject.GetComponent<AutoOrbitScan>();
@@ -48,10 +43,10 @@ public class InputHandler : MonoBehaviour
         // Maps keybinds to functions in other scripts
         keyMap[KeyCode.F] = DetectWheatPart;
         keyMap[KeyCode.E] = ScanWheat;
-        keyMap[KeyCode.R] = Annotate;
         keyMap[KeyCode.Q] = PlaceWheatAtCursor;
         keyMap[KeyCode.T] = TakeScreenShot;
-        keyMap[KeyCode.Y] = ToggleOrbiting;
+        keyMap[KeyCode.Y] = BeginOrbiting;
+        keyMap[KeyCode.U] = EndOrbiting;
     }
 
     // Update is called once per frame
@@ -75,12 +70,6 @@ public class InputHandler : MonoBehaviour
         scanScene.ScanWheat();
     }
 
-    // Toggle the view to annotate mode
-    private void Annotate(){
-        Wheat.ToggleAnnotation();
-        annotateCamera.SwapCameras();
-    }
-
     private void PlaceWheatAtCursor(){
         placeWheat.PlaceWheatAtCursor();
     }
@@ -90,7 +79,12 @@ public class InputHandler : MonoBehaviour
         screenShot.TakeScreenShot();
     }
 
-    private void ToggleOrbiting(){
-        autoOrbitScan.ToggleOrbiting();
+    // Auto orbit camera and take screenshots of scene
+    private void BeginOrbiting(){
+        StartCoroutine(autoOrbitScan.BeginOrbiting());
+    }
+
+    private void EndOrbiting(){
+        autoOrbitScan.EndOrbiting();
     }
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Transactions;
 using CTI;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
 using UnityEngine.Experimental.GlobalIllumination;
@@ -22,7 +23,6 @@ public class AutoOrbitScan : MonoBehaviour
     
     // Scripts that have functions to be called
     public ScreenShot screenShot;
-    public RotateSun rotateSun;
     public MassAddWheat massAddWheat;
 
 
@@ -32,68 +32,61 @@ public class AutoOrbitScan : MonoBehaviour
     // Variables to save and reuse when ending orbit scan mode
     private Vector3 initialCameraPosition;
     private Quaternion initialCameraRotation;
-    private bool initialSunControlsOwnOrbit;
-    private float initialSunCurrentTime;
-    private float initialSunLightTemperature;
-    private float initialSunLightIntensity;
+    
 
     // Local variables for camera movement
-    private bool timeProgressing;
     private float currentTime;
     private Vector3 cameraOrbitFocus;
 
+
     // Adjustable variables
-    // [SerializeField] private float takePictureInterval;
-    [SerializeField] private int sunRotationSpeed;
+    [SerializeField] private float minCameraHeight;
+    [SerializeField] private float maxCameraHeight;
 
-    [SerializeField] private float wheatHeight;
-    [SerializeField] private float heightDelta;
-
-    // Sun object
-    public GameObject sun;
-    private Light sunLight;
 
     HashSet<int> timesPicturesWereTakenAt = new HashSet<int>();
 
+    // Switch between light sources
+    [SerializeField] private GameObject defaultSun;
+    [SerializeField] private List<GameObject> lightSources = new List<GameObject>();
+    [SerializeField] private int pictureCountPerLightSwitch;
+    private GameObject activeLightSource;
+
+    private int picturesTaken = 0;
+
     void Start(){
-        sunLight = sun.GetComponent<Light>();
         busy = false;
+        activeLightSource = defaultSun;
     }
 
-    public void BeginOrbiting(){
-        // Save initial state
+    public IEnumerator BeginOrbiting(){
+        busy = true;
+
+        // Save initial camera state
         initialCameraPosition = cam.transform.position;
         initialCameraRotation = cam.transform.rotation;
-        initialSunControlsOwnOrbit = rotateSun.controlsOwnOrbit;
-        initialSunCurrentTime = rotateSun.currentTime;
-        initialSunLightTemperature = sunLight.colorTemperature;
-        initialSunLightIntensity = sunLight.intensity;
 
         // Start orbit scanning
         cameraOrbitFocus = GetCameraOrbitFocus();
-        orbitScanning = true;
         
-        // Start to move camera and sun
-        currentTime = 5f;
-        float _ = Time.deltaTime; // reset Time.deltaTime
-        timeProgressing = true;
-        rotateSun.controlsOwnOrbit = false; // Because the sun's X rotation is synced to this script when orbitScanning = true
 
-        timesPicturesWereTakenAt = new HashSet<int>();
+        yield return StartCoroutine(SwitchLightSource());
+        // Start to move camera
+        orbitScanning = true;
+
+        busy = false;
     }
 
 
     void Update()
     {
-        if (orbitScanning){
-            float delta = Time.deltaTime;
-            // Time controls
-            currentTime += delta;
-            
-            // Change the sun angle at an increased rate
-            rotateSun.currentTime = sunRotationSpeed * currentTime;
-
-            if (!busy){
+        if (orbitScanning && !busy){
+            // If we have taken (a multiple of pictureCountPerLightSwitch that is not 0) pictures, swap the light source
+            if (picturesTaken != 0 && picturesTaken % pictureCountPerLightSwitch == 0){
+                StartCoroutine(SwitchLightSource());
+            } 
+            // Otherwise, take a picture
+            else {
                 StartCoroutine(TakePicture());
             }
         }
@@ -105,26 +98,11 @@ public class AutoOrbitScan : MonoBehaviour
 
         MoveCameraRandomly();
 
-        float colorDelta = 500f; // sun temp varies by this value
-        sunLight.colorTemperature = UnityEngine.Random.Range(6275f-colorDelta, 6275f+colorDelta);
-        sunLight.intensity = UnityEngine.Random.Range(30000f, 90000f);
-        
-        timesPicturesWereTakenAt.Add((int) currentTime);
         yield return StartCoroutine(screenShot.ScreenshotSequenceEnum(0.5f));
 
         busy = false;
         yield return null;
     }
-
-    // IEnumerator Pause(float seconds){
-    //     // Start pause
-    //     timeProgressing = false;
-    //     yield return new WaitForSeconds(seconds);
-
-    //     // End pause
-    //     float _ = Time.deltaTime; // reset Time.deltaTime
-    //     timeProgressing = true;
-    // }
 
     private Vector3 GetCameraOrbitFocus(){
         Vector3 pos1 = massAddWheat.boundary1.transform.position;
@@ -158,20 +136,9 @@ public class AutoOrbitScan : MonoBehaviour
     }
 
     public void EndOrbiting(){
-        cam.transform.SetPositionAndRotation(initialCameraPosition, initialCameraRotation);
-        rotateSun.controlsOwnOrbit = initialSunControlsOwnOrbit;
-        rotateSun.currentTime = initialSunCurrentTime;
         orbitScanning = false;
-        sunLight.colorTemperature = initialSunLightTemperature;
-        sunLight.intensity = initialSunLightIntensity;
-    }
-
-    public void ToggleOrbiting(){
-        if (orbitScanning){
-            EndOrbiting();
-        } else {
-            BeginOrbiting();
-        }
+        cam.transform.SetPositionAndRotation(initialCameraPosition, initialCameraRotation);
+        StartCoroutine(SwitchLightSource(newLightSource:defaultSun));
     }
 
     private void MoveCameraRandomly(){
@@ -184,15 +151,10 @@ public class AutoOrbitScan : MonoBehaviour
         float pos_variance = 0.4f; // How much the camera can move around within the orbit bounds
 
         float x_pos = cameraOrbitFocus.x + UnityEngine.Random.Range(-pos_variance * x_diff, pos_variance * x_diff);
-        float y_pos = cameraOrbitFocus.y + UnityEngine.Random.Range(wheatHeight, wheatHeight + heightDelta); // Wheat is 6 units tall
+        float y_pos = cameraOrbitFocus.y + UnityEngine.Random.Range(minCameraHeight, minCameraHeight + maxCameraHeight); // Wheat is 6 units tall
         float z_pos = cameraOrbitFocus.z + UnityEngine.Random.Range(-pos_variance * z_diff, pos_variance * z_diff);
 
         Vector3 cam_pos = new Vector3(x_pos, y_pos, z_pos);
-        
-        // Rotates the camera to face the center of the wheat without changing camera height
-        // Vector3 lookpos = center - cam_pos;
-        // lookpos.y = 0;
-        // Quaternion rotation = Quaternion.LookRotation(lookpos);
 
         cam.transform.SetPositionAndRotation(cam_pos, cam.transform.rotation);
         cam.transform.LookAt(center);
@@ -201,5 +163,33 @@ public class AutoOrbitScan : MonoBehaviour
         if (cam.transform.rotation.x < 40f){
             cam.transform.Rotate(40f - cam.transform.rotation.x, 0f, 0f);
         }
+    }
+
+    public IEnumerator SwitchLightSource(GameObject newLightSource = null){
+        busy = true;
+        float timeToWait = 5.0f;
+        
+        // If a light source argument is not given, get a random one from the light sources list.
+        if (newLightSource == null){
+            newLightSource = lightSources[UnityEngine.Random.Range(0, lightSources.Count - 1)];
+        }
+
+        // Set the active light source to the new light source.
+        activeLightSource = newLightSource;
+        newLightSource.SetActive(true);
+
+        // Disable all other light sources.
+        if (newLightSource != defaultSun){
+            defaultSun.SetActive(false);
+        }
+        foreach (GameObject lightSource in lightSources){
+            if (lightSource != newLightSource){
+                lightSource.SetActive(false);
+            }
+        }
+
+        yield return new WaitForSeconds(timeToWait); // need to wait for lighting to bake
+
+        busy = false;
     }
 }

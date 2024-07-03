@@ -21,8 +21,8 @@ public class ScreenShot : MonoBehaviour
 
     // Save directory
     // private string saveDirectory = "/home/student/elijahmickelson/Datasets/1024x1024-0/"; //lab
-    // private string saveDirectory = "C:/Users/xSkul/OneDrive/Documents/Projects/Wheat/wheat/Datasets/1024x1024-1/"; //laptop
-    private string saveDirectory = "K:/Users/Skull/Downloads/Datasets/"; //home
+    private string saveDirectory = "C:/Users/xSkul/OneDrive/Documents/Projects/Wheat/wheat/Datasets/1024x1024-0/"; //laptop
+    // private string saveDirectory = "K:/Users/Skull/Downloads/Datasets/"; //home
 
 
     // Determine if the annotation should be white or r/g/b
@@ -47,7 +47,7 @@ public class ScreenShot : MonoBehaviour
     }
 
     public IEnumerator ScreenshotSequenceEnum(float secondsDelay){
-        string dateTime = DateTime.Now.ToString("yyyy-MM-dd_HH:mm:ss");
+        string dateTime = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
 
         string imagePath = getPath(dateTime + "_image" + ".png");
         string labelPath = getPath(dateTime + "_label" + ".png");
