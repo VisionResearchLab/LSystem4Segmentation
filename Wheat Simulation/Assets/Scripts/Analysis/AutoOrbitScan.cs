@@ -84,6 +84,7 @@ public class AutoOrbitScan : MonoBehaviour
             // If we have taken (a multiple of pictureCountPerLightSwitch that is not 0) pictures, swap the light source
             if (picturesTaken != 0 && picturesTaken % pictureCountPerLightSwitch == 0){
                 StartCoroutine(SwitchLightSource());
+                picturesTaken = 0; // prevent loop
             } 
             // Otherwise, take a picture
             else {
@@ -99,6 +100,7 @@ public class AutoOrbitScan : MonoBehaviour
         MoveCameraRandomly();
 
         yield return StartCoroutine(screenShot.ScreenshotSequenceEnum(0.5f));
+        picturesTaken ++;
 
         busy = false;
         yield return null;

@@ -10,7 +10,7 @@ public class InstantiateWheat : MonoBehaviour
     
     // When the wheat is randomly generated, it will be shifted downward and rotated slightly.
     public float downTranslationMin = 0.1f;
-    public float downTranslationMax = 0.25f;
+    public float downTranslationMax = 0.75f;
     public float xRotationMax = 15f;
     public float yRotationMax = 360f;
     public float zRotationMax = 15f;
