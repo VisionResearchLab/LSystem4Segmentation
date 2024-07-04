@@ -21,8 +21,8 @@ public class ScreenShot : MonoBehaviour
 
     // Save directory
     // private string saveDirectory = "/home/student/elijahmickelson/Datasets/1024x1024-0/"; //lab
-    // private string saveDirectory = "C:/Users/xSkul/OneDrive/Documents/Projects/Wheat/wheat/Datasets/1024x1024-0/"; //laptop
-    private string saveDirectory = "K:/Users/Skull/Downloads/Datasets/1024x1024-1/"; //home
+    private string saveDirectory = "C:/Users/xSkul/OneDrive/Documents/Projects/Wheat/wheat/Datasets/1024x1024-2/"; //laptop
+    // private string saveDirectory = "K:/Users/Skull/Downloads/Datasets/1024x1024-1/"; //home
 
 
     // Determine if the annotation should be white or r/g/b
@@ -111,9 +111,9 @@ public class ScreenShot : MonoBehaviour
         int index = 0;
 
         // Create raycast commands for each pixel
-        for (int x = 0; x < width; x++)
+        for (int y = 0; y < height; y++)
         {
-            for (int y = 0; y < height; y++)
+            for (int x = 0; x < width; x++)
             {
                 Vector3 screenPoint = new Vector3(x, y, 0);
                 Ray ray = mainCam.ScreenPointToRay(screenPoint);
@@ -135,29 +135,22 @@ public class ScreenShot : MonoBehaviour
 
         // // Create the texture and set pixels based on raycast results
         Texture2D screenShot = new Texture2D(width, height);
+        Color[] colors = new Color[width * height];
 
-        index = 0;
-        for (int x = 0; x < width; x++)
-        {
-            for (int y = 0; y < height; y++)
+        for (int i = 0; i < width*height; i++){
+            RaycastHit hit = raycastResults[i];
+            GameObject obj = hit.transform ? hit.transform.gameObject : null;
+            if (obj != null && obj.name.StartsWith("Head")) // It would be better, but much more expensive, to use Wheat.isWheat().
             {
-                RaycastHit hit = raycastResults[index];
-                GameObject obj = hit.transform ? hit.transform.gameObject : null;
-
-                if (obj != null && Wheat.IsWheat(obj))
-                {
-                    WheatData wheatData = obj.GetComponent<WheatData>();
-                    screenShot.SetPixel(x, y, wheatData != null ? wheatData.color : Color.white);
-                }
-                else
-                {
-                    screenShot.SetPixel(x, y, Color.black);
-                }
-
-                index++;
+                colors[i] = Color.white;
+            }
+            else
+            {
+                colors[i] = Color.black;
             }
         }
 
+        screenShot.SetPixels(colors);
         screenShot.Apply();
         byte[] bytes = screenShot.EncodeToPNG();
         File.WriteAllBytes(path, bytes);
