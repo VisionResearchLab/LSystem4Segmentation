@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 758.25055, g: 636.9239, b: 543.99225, a: 1}
+  m_IndirectSpecularColor: {r: 758.0008, g: 636.57965, b: 543.5704, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -10035,6 +10035,7 @@ GameObject:
   - component: {fileID: 317227213}
   - component: {fileID: 317227214}
   - component: {fileID: 317227215}
+  - component: {fileID: 317227216}
   m_Layer: 0
   m_Name: Singletons
   m_TagString: Untagged
@@ -10153,8 +10154,8 @@ MonoBehaviour:
   screenShot: {fileID: 317227213}
   massAddWheat: {fileID: 748708771}
   cam: {fileID: 963194227}
-  minCameraHeight: 0
-  maxCameraHeight: 0
+  minCameraHeight: 3.2
+  maxCameraHeight: 4
   defaultSun: {fileID: 705507993}
   lightSources:
   - {fileID: 446961082}
@@ -10181,7 +10182,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   limitFrameRate: 1
-  limit: 144
+  limit: 60
+--- !u!114 &317227216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 317227207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba69ffb8820ecbe439999fc691c120ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  expectedWheatCount: 5000
 --- !u!1001 &318005699
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -25717,7 +25731,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6275
   m_UseColorTemperature: 1
-  m_BoundingSphereOverride: {x: 0.000053930453, y: 0.000000041998824, z: 0.0000431996, w: 1.3297861e+22}
+  m_BoundingSphereOverride: {x: 1.02e-43, y: 3e-45, z: 5.606e-41, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0

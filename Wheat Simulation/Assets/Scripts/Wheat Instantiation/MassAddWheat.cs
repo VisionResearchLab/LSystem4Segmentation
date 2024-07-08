@@ -56,7 +56,6 @@ public class MassAddWheat : MonoBehaviour
 
         for (int i = 0; i < quantityToPlace; i++){
             // Place in a position obtained from GetPositionInWheatBounds, or retry if that position is occupied
-            Debug.Log("Test1");
             InstantiateWheat.IW.GenerateWheat(GetPositionInWheatBounds(), true);
         }
     }

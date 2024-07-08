@@ -18,6 +18,9 @@ public class InstantiateWheat : MonoBehaviour
     // Parent object of the instantiated wheats
     public Transform parent;
 
+    // Number of times to attempt placing in a unique position before just placing the wheat
+    private int numberOfPlaceAttempts = 3;
+
     void Awake(){
         if (IW != null && IW != this){
             GameObject.Destroy(IW);
@@ -28,75 +31,75 @@ public class InstantiateWheat : MonoBehaviour
         DontDestroyOnLoad(this);
     }
 
-    public void GenerateWheat(Vector3 requestedPosition, bool tryPlaceAgainIfFail){
-        GameObject[] wheatPrefabs = Wheat.GetAllWheatPrefabs();
-        int numberOfWheatPrefabs = wheatPrefabs.Length;
-        if (numberOfWheatPrefabs > 0){
+public void GenerateWheat(Vector3 requestedPosition, bool tryPlaceAgainIfFail)
+{
+    GameObject[] wheatPrefabs = Wheat.GetAllWheatPrefabs();
+    int numberOfWheatPrefabs = wheatPrefabs.Length;
+    if (numberOfWheatPrefabs > 0)
+    {
+        int chosenWheatPrefabIndex = Random.Range(0, numberOfWheatPrefabs - 1);
+        GameObject wheatPrefab = wheatPrefabs[chosenWheatPrefabIndex];
 
-            int chosenWheatPrefabIndex = Random.Range(0, numberOfWheatPrefabs-1);
-            GameObject wheatPrefab = wheatPrefabs[chosenWheatPrefabIndex];
+        bool placed = false;
 
-            bool placed = false;
-
-            // Try to instantiate the wheat in a position that does not overlap with other wheat objects.
-            if (tryPlaceAgainIfFail){ // For MassAddWheat
-                int placeAttempts = 0;
-                while (placed == false && placeAttempts < 5){
-                    requestedPosition = massAddWheat.GetPositionInWheatBounds();
-                    // The wheat will be placed at a slightly lower position than requested, as wheat grows partly inside of the ground.
-                    Vector3 position = TryFindPosition(requestedPosition);
-
-                    // The wheat is randomly rotated within given bounds
-                    Quaternion rotation = TryFindRotation();
-
-                    // Instantiate the wheat and set its parent to the given parent object
-                    GameObject newWheat = Instantiate(wheatPrefab, position, rotation);
-                    newWheat.transform.SetParent(parent);
-
-                    foreach (WheatData wheatData in newWheat.GetComponentsInChildren<WheatData>()){
-                        Debug.Log("Checking for overlaps");
-                        if (wheatData.IsOverlappingWheat()){
-                            // If the position was occupied, try again somewhere else, up to 5 times
-                            Debug.Log("Could not place wheat");
-                            placeAttempts ++;
-                            Destroy(newWheat);
-                        }
-                        else 
-                        {
-                            Debug.Log("Placed wheat");
-                            placed = true;
-                        }
-                    }
-                }
-            } 
-            else // for PlaceWheat
+        if (tryPlaceAgainIfFail)
+        {
+            int placeAttempts = 0;
+            while (placed == false)
             {
-                // The wheat will be placed at a slightly lower position than requested, as wheat grows partly inside of the ground.
+                placeAttempts++;
+                requestedPosition = massAddWheat.GetPositionInWheatBounds();
                 Vector3 position = TryFindPosition(requestedPosition);
-
-                // The wheat is randomly rotated within given bounds
                 Quaternion rotation = TryFindRotation();
 
-                // Instantiate the wheat and set its parent to the given parent object
-                GameObject newWheat = Instantiate(wheatPrefab, position, rotation);
+                GameObject newWheat = ObjectPooler.Instance.SpawnFromPool(wheatPrefab.name, position, rotation);
                 newWheat.transform.SetParent(parent);
 
-                foreach (WheatData wheatData in newWheat.GetComponentsInChildren<WheatData>()){
-                    if (wheatData.IsOverlappingWheat()){
-                        Destroy(newWheat);
+                if (placeAttempts != numberOfPlaceAttempts)
+                {
+                    bool overlapping = false;
+                    foreach (WheatData wheatData in newWheat.GetComponentsInChildren<WheatData>())
+                    {
+                        if (wheatData.IsOverlappingWheat())
+                        {
+                            overlapping = true;
+                            newWheat.SetActive(false); // Instead of Destroy
+                        }
+                    }
+
+                    if (!overlapping)
+                    {
+                        placed = true;
                     }
                 }
+                else
+                {
+                    placed = true;
+                }
             }
-            // Error message if no available space was found
-            if (!placed){
-                Debug.Log("Error: Could not find space for the wheat object!");
-            }
-
-        } else {
-            Debug.Log("Error: No wheat prefabs found!");
         }
-        
+        else
+        {
+            Vector3 position = TryFindPosition(requestedPosition);
+            Quaternion rotation = TryFindRotation();
+
+            GameObject newWheat = ObjectPooler.Instance.SpawnFromPool(wheatPrefab.name, position, rotation);
+            newWheat.transform.SetParent(parent);
+
+            foreach (WheatData wheatData in newWheat.GetComponentsInChildren<WheatData>())
+            {
+                if (wheatData.IsOverlappingWheat())
+                {
+                    newWheat.SetActive(false); // Instead of Destroy
+                }
+            }
+        }
     }
+    else
+    {
+        Debug.Log("Error: No wheat prefabs found!");
+    }
+}
 
     private Vector3 TryFindPosition(Vector3 requestedPosition){
         float downTranslation = Random.Range(downTranslationMin, downTranslationMax);
