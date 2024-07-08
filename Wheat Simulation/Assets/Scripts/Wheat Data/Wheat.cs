@@ -11,7 +11,8 @@ public class Wheat : MonoBehaviour
         Wheat = 0,
         Head = 1,
         Stem = 2,
-        Leaf = 3
+        Leaf = 3,
+        Awns = 4
     }
 
     // Maps each Part to a color material for annotating data
@@ -24,10 +25,33 @@ public class Wheat : MonoBehaviour
     // Track whether wheat objects are currently annotated (materials are simplified colors) or not
     public static bool wheatIsAnnotated = false;
 
-    // Keep track of the ground and wheat layers for instantiation purposes
+    // Layers (useful for instantiation purposes)
     public static int groundLayer = 3;
-    public static int wheatLayer = 6;
+    public static int wheatLayer = 8;
+    public static int headLayer = 9;
+    public static int stemLayer = 10;
+    public static int leafLayer = 11;
+    public static int awnsLayer = 12;
+
+    // Layermasks
     public static int groundLayerMask = 1 << groundLayer;
+    public static int awnsLayerMask = ~(1 << awnsLayer); // Label should pass through awns
+
+    public static Dictionary<Part, int> partToLayerDict = new Dictionary<Part, int> {
+        {Part.Wheat, wheatLayer},
+        {Part.Head, headLayer},
+        {Part.Stem, stemLayer},
+        {Part.Leaf, leafLayer},
+        {Part.Awns, awnsLayer}
+    };
+
+    public static Dictionary<string, Part> nameToPartDict = new Dictionary<string, Part> {
+        {"Wheat", Part.Wheat},
+        {"Head", Part.Head},
+        {"Stem", Part.Stem},
+        {"Leaf", Part.Leaf},
+        {"Awns", Part.Awns}
+    };
 
 
     // Check if an obj is a wheat. If there is a second argument, also check if the obj is of the same part as the parameter.
