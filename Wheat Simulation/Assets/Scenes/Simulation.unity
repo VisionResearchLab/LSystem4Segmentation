@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 758.1558, g: 636.71686, b: 543.7364, a: 1}
+  m_IndirectSpecularColor: {r: 757.14923, g: 635.86505, b: 542.9529, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -10036,6 +10036,7 @@ GameObject:
   - component: {fileID: 317227214}
   - component: {fileID: 317227215}
   - component: {fileID: 317227216}
+  - component: {fileID: 317227217}
   m_Layer: 0
   m_Name: Singletons
   m_TagString: Untagged
@@ -10094,6 +10095,7 @@ MonoBehaviour:
   placeWheatGameObject: {fileID: 317227207}
   screenShotGameObject: {fileID: 317227207}
   autoOrbitGameObject: {fileID: 317227207}
+  massAddObjectsGameObject: {fileID: 317227207}
 --- !u!114 &317227211
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10197,6 +10199,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   expectedWheatCount: 5000
+--- !u!114 &317227217
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 317227207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a80e464e0a845a4eaadca963ae9e170, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scaleModifier: 10
+  quantityToPlaceInputField: {fileID: 782437343}
+  boundary1: {fileID: 1826283974}
+  boundary2: {fileID: 1187441222}
+  yDifferenceMin: 0
+  yDifferenceMax: 1
+  parentObject: {fileID: 1697762590}
 --- !u!1001 &318005699
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -25732,7 +25753,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6275
   m_UseColorTemperature: 1
-  m_BoundingSphereOverride: {x: 1.02e-43, y: 1.1e-44, z: 1.801755e-39, w: 0}
+  m_BoundingSphereOverride: {x: 1.02e-43, y: 1e-45, z: 9.155e-42, w: -4.5297967e+29}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
@@ -26094,7 +26115,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!64 &707702231
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -40657,7 +40678,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1085993164
 Transform:
   m_ObjectHideFlags: 0
@@ -56760,7 +56781,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!64 &1531460299
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -62692,6 +62713,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2486664226566206530, guid: c789d408c70f9074abe3e9c6a7458d90, type: 3}
   m_PrefabInstance: {fileID: 1697620502}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1697762590
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1697762591}
+  m_Layer: 0
+  m_Name: Ground Cover Objects
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1697762591
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1697762590}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -64.79086, y: -26.135305, z: -10.585886}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1700885912
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -78284,6 +78336,7 @@ SceneRoots:
   - {fileID: 1027205072}
   - {fileID: 680051335}
   - {fileID: 2060330630}
+  - {fileID: 1697762591}
   - {fileID: 1087695798}
   - {fileID: 196514692}
   - {fileID: 68107202}

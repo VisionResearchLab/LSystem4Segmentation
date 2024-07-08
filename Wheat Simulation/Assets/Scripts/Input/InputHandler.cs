@@ -29,6 +29,10 @@ public class InputHandler : MonoBehaviour
     [SerializeField] private GameObject autoOrbitGameObject;
     private AutoOrbitScan autoOrbitScan;
 
+    // Place underbrush objects script
+    [SerializeField] private GameObject massAddObjectsGameObject;
+    private MassAddObjects massAddObjects;
+
     // Map KeyCodes to Actions
     Dictionary<KeyCode, Action> keyMap = new Dictionary<KeyCode, Action>();
     
@@ -39,11 +43,13 @@ public class InputHandler : MonoBehaviour
         placeWheat = placeWheatGameObject.GetComponent<PlaceWheat>();
         screenShot = screenShotGameObject.GetComponent<ScreenShot>();
         autoOrbitScan = autoOrbitGameObject.GetComponent<AutoOrbitScan>();
+        massAddObjects = massAddObjectsGameObject.GetComponent<MassAddObjects>();
 
         // Maps keybinds to functions in other scripts
-        keyMap[KeyCode.F] = DetectWheatPart;
-        keyMap[KeyCode.E] = ScanWheat;
+        // keyMap[KeyCode.F] = DetectWheatPart;
+        // keyMap[KeyCode.E] = ScanWheat;
         keyMap[KeyCode.Q] = PlaceWheatAtCursor;
+        keyMap[KeyCode.R] = LoopAddObjects;
         keyMap[KeyCode.T] = TakeScreenShot;
         keyMap[KeyCode.Y] = BeginOrbiting;
         keyMap[KeyCode.U] = EndOrbiting;
@@ -86,5 +92,9 @@ public class InputHandler : MonoBehaviour
 
     private void EndOrbiting(){
         autoOrbitScan.EndOrbiting();
+    }
+
+    private void LoopAddObjects(){
+        massAddObjects.LoopInstantiate();
     }
 }
