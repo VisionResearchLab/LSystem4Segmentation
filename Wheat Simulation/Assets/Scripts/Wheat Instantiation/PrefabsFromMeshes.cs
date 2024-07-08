@@ -1,6 +1,7 @@
 using System;
 using UnityEditor;
 using UnityEngine;
+using System.IO;
 
 public class PrefabsFromMeshes : MonoBehaviour
 {
@@ -9,12 +10,14 @@ public class PrefabsFromMeshes : MonoBehaviour
 
     [SerializeField] private float scaleModifier;
 
-    // [SerializeField] private WindZone wheatWindZone;
+    // [SerializeField] private GameObject objectPoolerGameObject;
+    // private ObjectPooler objectPooler;
 
     private void Start()
     {
         GameObject[] allWheatModels = Resources.LoadAll<GameObject>(wheatMeshPath);
-        //if (!(allWheatModels.Length == Wheat.GetAllWheatPrefabs().Length)){
+        // DeleteAllFilesInDirectory(wheatPrefabPath);
+
         foreach (GameObject wheatModel in Resources.LoadAll<GameObject>(wheatMeshPath)){
             // Instantiate the model prefab
             GameObject instantiatedModel = Instantiate(wheatModel);
@@ -57,8 +60,39 @@ public class PrefabsFromMeshes : MonoBehaviour
             // Destroy the instantiated model
             Destroy(instantiatedModel);
         }
-        // } else {
-        //     Debug.Log("All models have already been converted to prefabs.");
-        // }
+        
+        // // Call on ObjectPooler to initialize pools, now that the prefabs exist
+        // objectPooler = objectPoolerGameObject.GetComponent<ObjectPooler>();
+        // objectPooler.InitializePools();
     }
+
+    // Used to delete all the prefabs that do not have a corresponding mesh
+    private static void DeleteAllFilesInDirectory(string path)
+    {
+        if (Directory.Exists(path))
+        {
+            string[] files = Directory.GetFiles(path);
+
+            foreach (string file in files)
+            {
+                try
+                {
+                    File.Delete(file);
+                    // Debug.Log($"Deleted file: {file}");
+                }
+                catch (IOException ioExp)
+                {
+                    Debug.LogError($"Error deleting file: {file}, {ioExp.Message}");
+                }
+            }
+
+            AssetDatabase.Refresh();
+            // Debug.Log("All files in the directory have been deleted.");
+        }
+        else
+        {
+            // Debug.LogError("The specified directory does not exist.");
+        }
+    }
+
 }

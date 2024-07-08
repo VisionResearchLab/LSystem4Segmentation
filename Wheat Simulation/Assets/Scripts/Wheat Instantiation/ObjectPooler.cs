@@ -17,13 +17,18 @@ public class ObjectPooler : MonoBehaviour
     void Start()
     {
         poolDictionary = new Dictionary<string, Queue<GameObject>>();
-        InitializePools();
+        InitializePools(); // now called from PrefabsFromMeshes
     }
 
-    void InitializePools()
+    public void InitializePools()
     {
         GameObject[] wheatPrefabs = Wheat.GetAllWheatPrefabs();
-        int poolSize = expectedWheatCount / wheatPrefabs.Length;
+
+        int poolSize = 25; // default
+        if (wheatPrefabs.Length != 0){
+            poolSize = expectedWheatCount / wheatPrefabs.Length;
+        }
+
         foreach (GameObject prefab in wheatPrefabs)
         {
             Queue<GameObject> objectPool = new Queue<GameObject>();
