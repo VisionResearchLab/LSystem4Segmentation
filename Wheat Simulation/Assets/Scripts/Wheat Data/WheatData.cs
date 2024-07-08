@@ -21,11 +21,6 @@ public class WheatData : MonoBehaviour
         }
     }
 
-    public String age
-    {
-        get { return GetAgeFromMaterialName(materialName); }
-    }
-
     public Material originalMaterial
     {
         get { return GetSlightlyRecoloredMaterial(gameObject.transform.GetComponent<Renderer>().material); }
@@ -67,40 +62,19 @@ public class WheatData : MonoBehaviour
         gameObject.transform.GetComponent<Renderer>().material = originalMaterial;
     }
 
-    private string GetAgeFromMaterialName(String materialName){
-        if (materialName.Contains("Young")){
-            return "Young";
-        } else if (materialName.Contains("Middle")){
-            return "Middle";
-        } else if (materialName.Contains("Mature")){
-            return "Mature";
-        }
-        return "Unknown";
-    }
-
     private void DefineSelfColor(){
         float red = 0f;
         float blue = 0f;
         float green = 0f;
 
-        float maturityModifier = 0f;
-        if (age == "Middle"){
-            maturityModifier = 0.1f;
-        }
-        else if (age == "Mature"){
-            maturityModifier = 0.2f;
-        }
 
         if (part == Wheat.Part.Head){
-            red += 0.8f + maturityModifier;
             green += UnityEngine.Random.Range(0f, 0.4f);
         }
         else if (part == Wheat.Part.Stem){
-            blue += 0.8f + maturityModifier;
             red += UnityEngine.Random.Range(0f, 0.4f);
         } 
         else if (part == Wheat.Part.Leaf){
-            green += 0.8f + maturityModifier;
             blue += UnityEngine.Random.Range(0f, 0.4f);
         }
 

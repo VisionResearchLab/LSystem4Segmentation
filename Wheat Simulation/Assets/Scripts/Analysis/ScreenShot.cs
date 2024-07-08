@@ -35,6 +35,9 @@ public class ScreenShot : MonoBehaviour
     private CustomPassVolume customPassVolume;
     private CustomPass customPass;
 
+    // Setting to decide whether awns should be labelled as wheat heads or passed through
+    [SerializeField] private bool labelAwnsAsWheatHeads;
+
     // Define scripts with functions that need to be called
     private void Start(){
         ShowUI();
@@ -117,7 +120,7 @@ public class ScreenShot : MonoBehaviour
             {
                 Vector3 screenPoint = new Vector3(x, y, 0);
                 Ray ray = mainCam.ScreenPointToRay(screenPoint);
-                raycastCommands[index] = new RaycastCommand(ray.origin, ray.direction);
+                raycastCommands[index] = new RaycastCommand(ray.origin, ray.direction, layerMask:Wheat.awnsLayerMask);
                 index++;
             }
         }
