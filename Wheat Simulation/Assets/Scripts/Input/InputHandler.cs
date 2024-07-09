@@ -18,8 +18,8 @@ public class InputHandler : MonoBehaviour
     private ScanScene scanScene;
 
     // Place Wheat at Cursor
-    [SerializeField] private GameObject placeWheatGameObject;
-    private PlaceWheat placeWheat;
+    [SerializeField] private GameObject placeAtCursorGameObject;
+    private PlaceAtCursor placeAtCursor;
 
     // Screenshot script
     [SerializeField] private GameObject screenShotGameObject;
@@ -30,8 +30,8 @@ public class InputHandler : MonoBehaviour
     private AutoOrbitScan autoOrbitScan;
 
     // Place underbrush objects script
-    [SerializeField] private GameObject massAddObjectsGameObject;
-    private MassAddObjects massAddObjects;
+    [SerializeField] private GameObject underBrushHandlerGameObject;
+    private UnderbrushHandler underbrushHandler;
 
     // Map KeyCodes to Actions
     Dictionary<KeyCode, Action> keyMap = new Dictionary<KeyCode, Action>();
@@ -40,15 +40,15 @@ public class InputHandler : MonoBehaviour
         //Script references
         mouseOverWheatHandler = MouseOverWheatGameObject.GetComponent<MouseOverWheatHandler>();
         scanScene = WheatScanGameObject.GetComponent<ScanScene>();
-        placeWheat = placeWheatGameObject.GetComponent<PlaceWheat>();
+        placeAtCursor = placeAtCursorGameObject.GetComponent<PlaceAtCursor>();
         screenShot = screenShotGameObject.GetComponent<ScreenShot>();
         autoOrbitScan = autoOrbitGameObject.GetComponent<AutoOrbitScan>();
-        massAddObjects = massAddObjectsGameObject.GetComponent<MassAddObjects>();
+        underbrushHandler = underBrushHandlerGameObject.GetComponent<UnderbrushHandler>();
 
         // Maps keybinds to functions in other scripts
         // keyMap[KeyCode.F] = DetectWheatPart;
         // keyMap[KeyCode.E] = ScanWheat;
-        keyMap[KeyCode.Q] = PlaceWheatAtCursor;
+        keyMap[KeyCode.Q] = PlaceObjectsAtCursor;
         keyMap[KeyCode.R] = LoopAddObjects;
         keyMap[KeyCode.T] = TakeScreenShot;
         keyMap[KeyCode.Y] = BeginOrbiting;
@@ -76,8 +76,8 @@ public class InputHandler : MonoBehaviour
         scanScene.ScanWheat();
     }
 
-    private void PlaceWheatAtCursor(){
-        placeWheat.PlaceWheatAtCursor();
+    private void PlaceObjectsAtCursor(){
+        placeAtCursor.PlaceObjectsAtCursor();
     }
 
     // Take a screen shot
@@ -95,6 +95,6 @@ public class InputHandler : MonoBehaviour
     }
 
     private void LoopAddObjects(){
-        massAddObjects.LoopInstantiate();
+        underbrushHandler.LoopInstantiateUnderbrushInBounds();
     }
 }
