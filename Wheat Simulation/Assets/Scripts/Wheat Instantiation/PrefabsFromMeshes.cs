@@ -16,7 +16,7 @@ public class PrefabsFromMeshes : MonoBehaviour
     private void Start()
     {
         GameObject[] allWheatModels = Resources.LoadAll<GameObject>(wheatMeshPath);
-        // DeleteAllFilesInDirectory(wheatPrefabPath);
+        DeleteAllFilesInDirectory(wheatPrefabPath);
 
         foreach (GameObject wheatModel in Resources.LoadAll<GameObject>(wheatMeshPath)){
             // Instantiate the model prefab

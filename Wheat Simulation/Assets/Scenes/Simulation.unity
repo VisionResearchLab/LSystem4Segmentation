@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 17.6831, g: 14.8515415, b: 12.681826, a: 1}
+  m_IndirectSpecularColor: {r: 17.657433, g: 14.826974, b: 12.661607, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -10326,10 +10326,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MouseOverWheatGameObject: {fileID: 963194225}
   WheatScanGameObject: {fileID: 963194225}
-  placeWheatGameObject: {fileID: 317227207}
+  placeAtCursorGameObject: {fileID: 0}
   screenShotGameObject: {fileID: 317227207}
   autoOrbitGameObject: {fileID: 317227207}
-  massAddObjectsGameObject: {fileID: 317227207}
+  underBrushHandlerGameObject: {fileID: 0}
 --- !u!114 &317227211
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10355,7 +10355,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7dee6b6f7af08c64daa3c24ae9eff875, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ubHandlerGameObject: {fileID: 0}
   cam: {fileID: 963194227}
+  amountOfWheatToPlace: 0
+  amountOfUnderbrushToPlace: 0
+  acceptableDistance: 0
 --- !u!114 &317227213
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10408,7 +10412,7 @@ MonoBehaviour:
   - {fileID: 1460665259}
   - {fileID: 140472289}
   pictureCountPerLightSwitch: 40
-  timeToWaitForRender: 0.2
+  timeToWaitForRender: 0.5
 --- !u!114 &317227215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10435,7 +10439,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba69ffb8820ecbe439999fc691c120ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  expectedWheatCount: 5000
+  expectedWheatCount: 1000
 --- !u!114 &317227217
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10450,8 +10454,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scaleModifier: 10
   quantityToPlaceInputField: {fileID: 782437343}
+  boundary0: {fileID: 0}
   boundary1: {fileID: 1826283974}
-  boundary2: {fileID: 1187441222}
   yDifferenceMin: -0.4
   yDifferenceMax: 0.5
   parentObject: {fileID: 1697762590}
@@ -19165,16 +19169,16 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Q: Place wheat at cursor
+  m_text: 'Q: Place objects at cursor
 
-    E: Scan screen for wheat
+    R: Add underbrush in bounds
 
-    F: Get object
-    at cursor
+    T: Take
+    screenshot
 
-    T: Take Screenshot
+    Y: Auto orbit and screenshot
 
-    Y: Auto Screenshot'
+    U: Stop orbiting'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -19201,8 +19205,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 6.6
-  m_fontSizeBase: 6.6
+  m_fontSize: 5.93
+  m_fontSizeBase: 5.93
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -25990,7 +25994,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6275
   m_UseColorTemperature: 1
-  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: -1.1771086e-38}
+  m_BoundingSphereOverride: {x: 1.02e-43, y: 6e-44, z: 8e-45, w: 4.16827e-40}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
@@ -36449,7 +36453,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7dee6b6f7af08c64daa3c24ae9eff875, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ubHandlerGameObject: {fileID: 0}
   cam: {fileID: 0}
+  amountOfWheatToPlace: 0
+  amountOfUnderbrushToPlace: 0
+  acceptableDistance: 0
 --- !u!114 &963194231
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -43347,7 +43355,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -140.7}
+  m_AnchoredPosition: {x: 0, y: -120.5}
   m_SizeDelta: {x: 100, y: 70}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1146285046
@@ -52522,7 +52530,7 @@ GameObject:
   - component: {fileID: 1412596443}
   - component: {fileID: 1412596442}
   m_Layer: 5
-  m_Name: '"Wheat Controls"'
+  m_Name: '"Simulation Controls"'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -52567,7 +52575,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Wheat Controls
+  m_text: Simulation Controls
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -52594,8 +52602,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 9
-  m_fontSizeBase: 9
+  m_fontSize: 8.28
+  m_fontSizeBase: 8.28
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
