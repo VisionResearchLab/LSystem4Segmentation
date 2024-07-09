@@ -22,7 +22,7 @@ public class ScreenShot : MonoBehaviour
     // Save directory
     // private string saveDirectory = "/home/student/elijahmickelson/Datasets/1024x1024-0/"; //lab
     private string saveDirectory = "C:/Users/xSkul/OneDrive/Documents/Projects/Wheat/wheat/Datasets/1024x1024-3/"; //laptop
-    // private string saveDirectory = "K:/Users/Skull/Downloads/Datasets/1024x1024-3/"; //home
+    // private string saveDirectory = "K:/Users/Skull/Downloads/Datasets/1024x1024-4/"; //home
 
 
     // Determine if the annotation should be white or r/g/b

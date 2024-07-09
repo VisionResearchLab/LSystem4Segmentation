@@ -53,6 +53,7 @@ public class AutoOrbitScan : MonoBehaviour
     private GameObject activeLightSource;
 
     private int picturesTaken = 0;
+    [SerializeField] private float timeToWaitForRender;
 
     void Start(){
         busy = false;
@@ -99,7 +100,7 @@ public class AutoOrbitScan : MonoBehaviour
 
         MoveCameraRandomly();
 
-        yield return StartCoroutine(screenShot.ScreenshotSequenceEnum(0.5f));
+        yield return StartCoroutine(screenShot.ScreenshotSequenceEnum(timeToWaitForRender));
         picturesTaken ++;
 
         busy = false;
