@@ -6,7 +6,6 @@ using UnityEngine;
 public class InstantiateWheat : MonoBehaviour
 {
     public static InstantiateWheat IW;
-    public MassAddWheat massAddWheat;
     
     // When the wheat is randomly generated, it will be shifted downward and rotated slightly.
     public float downTranslationMin = 0.1f;
@@ -21,6 +20,12 @@ public class InstantiateWheat : MonoBehaviour
     // Number of times to attempt placing in a unique position before just placing the wheat
     private int numberOfPlaceAttempts = 3;
 
+    // UI text field that sets the amount of wheat objects to place when placing large amounts of wheat
+    public TMPro.TMP_InputField quantityToPlaceInputField;
+
+    // Position finder
+    [SerializeField] private PositionFinder positionFinder;
+
     void Awake(){
         if (IW != null && IW != this){
             GameObject.Destroy(IW);
@@ -31,68 +36,42 @@ public class InstantiateWheat : MonoBehaviour
         DontDestroyOnLoad(this);
     }
 
-public void GenerateWheat(Vector3 requestedPosition, bool tryPlaceAgainIfFail)
+public void TryGenerateWheat(
+    Vector3 requestedPosition, 
+    int remainingAttempts = 0, bool placeIfNoRemainingAttempts = true, // If remaining attempts > 0, it will retry placing if it collides, otherwise it just places the wheat.
+    PositionFinder.FieldLayout retryPositionLayout = PositionFinder.FieldLayout.Uniform) 
 {
     GameObject[] wheatPrefabs = Wheat.GetAllWheatPrefabs();
     int numberOfWheatPrefabs = wheatPrefabs.Length;
     if (numberOfWheatPrefabs > 0)
     {
-        int chosenWheatPrefabIndex = Random.Range(0, numberOfWheatPrefabs - 1);
+        // Get the prefab, position, and rotation
+        int chosenWheatPrefabIndex = Random.Range(0, numberOfWheatPrefabs);
         GameObject wheatPrefab = wheatPrefabs[chosenWheatPrefabIndex];
+        Vector3 position = MoveDown(requestedPosition);
+        Quaternion rotation = GetRandomRotation();
 
-        bool placed = false;
+        // Instantiate the wheat
+        GameObject newWheat = ObjectPooler.Instance.SpawnFromPool(wheatPrefab.name, position, rotation);
+        newWheat.transform.SetParent(parent);
 
-        if (tryPlaceAgainIfFail)
-        {
-            int placeAttempts = 0;
-            while (placed == false)
-            {
-                placeAttempts++;
-                requestedPosition = massAddWheat.GetPositionInWheatBounds();
-                Vector3 position = TryFindPosition(requestedPosition);
-                Quaternion rotation = TryFindRotation();
-
-                GameObject newWheat = ObjectPooler.Instance.SpawnFromPool(wheatPrefab.name, position, rotation);
-                newWheat.transform.SetParent(parent);
-
-                if (placeAttempts != numberOfPlaceAttempts)
-                {
-                    bool overlapping = false;
-                    foreach (WheatData wheatData in newWheat.GetComponentsInChildren<WheatData>())
-                    {
-                        if (wheatData.IsOverlappingWheat())
-                        {
-                            overlapping = true;
-                            newWheat.SetActive(false); // Instead of Destroy
-                        }
-                    }
-
-                    if (!overlapping)
-                    {
-                        placed = true;
-                    }
-                }
-                else
-                {
-                    placed = true;
-                }
-            }
-        }
-        else
-        {
-            Vector3 position = TryFindPosition(requestedPosition);
-            Quaternion rotation = TryFindRotation();
-
-            GameObject newWheat = ObjectPooler.Instance.SpawnFromPool(wheatPrefab.name, position, rotation);
-            newWheat.transform.SetParent(parent);
-
+        if (remainingAttempts > 0 || !placeIfNoRemainingAttempts){
+            bool overlapping = false;
             foreach (WheatData wheatData in newWheat.GetComponentsInChildren<WheatData>())
             {
                 if (wheatData.IsOverlappingWheat())
                 {
+                    overlapping = true;
                     newWheat.SetActive(false); // Instead of Destroy
+                    break;
                 }
             }
+            if (overlapping && remainingAttempts > 0)
+            {
+                TryGenerateWheat(positionFinder.GetPositionFromPattern(retryPositionLayout), 
+                    remainingAttempts-1, placeIfNoRemainingAttempts, retryPositionLayout);
+            }
+
         }
     }
     else
@@ -101,17 +80,29 @@ public void GenerateWheat(Vector3 requestedPosition, bool tryPlaceAgainIfFail)
     }
 }
 
-    private Vector3 TryFindPosition(Vector3 requestedPosition){
+    private Vector3 MoveDown(Vector3 requestedPosition){
         float downTranslation = Random.Range(downTranslationMin, downTranslationMax);
         Vector3 position = requestedPosition - new Vector3(0, downTranslation, 0);
         return position;
     }
 
-    private Quaternion TryFindRotation(){
+    private Quaternion GetRandomRotation(){
         float xRotation = Random.Range(-xRotationMax, xRotationMax);
         float yRotation = Random.Range(-yRotationMax, yRotationMax);
         float zRotation = Random.Range(-zRotationMax, zRotationMax);
         Quaternion rotation = Quaternion.Euler(xRotation, yRotation, zRotation);
         return rotation;
+    }
+
+    public void LoopAddWheat(PositionFinder.FieldLayout shape = PositionFinder.FieldLayout.Uniform)
+    {
+        // Get the amount of wheat to place from the user input
+        int quantityToPlace = int.Parse(quantityToPlaceInputField.GetComponent<TMPro.TMP_InputField>().text);
+
+        for (int i = 0; i < quantityToPlace; i++){
+            // Place in a position obtained from GetPositionInWheatBounds, or retry if that position is occupied
+            Vector3 position = positionFinder.GetPositionFromPattern(shape);
+            TryGenerateWheat(position, numberOfPlaceAttempts, retryPositionLayout:shape);
+        }
     }
 }
