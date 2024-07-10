@@ -63,23 +63,30 @@ public class PositionFinder : MonoBehaviour
     }
 
 
+    Vector3 previousBound0;
+    Vector3 previousBound1;
+    Vector3[][] subBounds; //subBounds only needs to be calculated after the bounds are moved
     private Vector3 GetPositionWithEightRowLayout(Vector3 bound0, Vector3 bound1) {
         int numberOfRows = 8;
         
-        // Calculate the height and width of the main bounding box
-        float rowHeight = Mathf.Abs(bound0.z - bound1.z) / (2f * numberOfRows);
-        Vector3 basePosition = new Vector3(Mathf.Min(bound0.x, bound1.x), Mathf.Min(bound0.y, bound1.y), Mathf.Min(bound0.z, bound1.z));
-        Vector3 endPosition = new Vector3(Mathf.Max(bound0.x, bound1.x), Mathf.Max(bound0.y, bound1.y), Mathf.Max(bound0.z, bound1.z));
+        if (previousBound0 != bound0 || previousBound1 != bound1){
+            previousBound0 = bound0;
+            previousBound1 = bound1;
 
-        // Create sub-boxes that wheat can be spawned in
-        Vector3[][] subBounds = new Vector3[numberOfRows][];
-        for (int i = 0; i < numberOfRows; i++) {
-            subBounds[i] = new Vector3[2];
-            subBounds[i][0] = new Vector3(basePosition.x, basePosition.y, basePosition.z + 2 * i * rowHeight);
-            subBounds[i][1] = new Vector3(endPosition.x, endPosition.y, basePosition.z + (2 * i + 1) * rowHeight);
-            Debug.Log(subBounds[i][0] + ", " + subBounds[i][1]);
+            // Calculate the height and width of the main bounding box
+            float rowHeight = Mathf.Abs(bound0.z - bound1.z) / (2f * numberOfRows);
+            Vector3 basePosition = new Vector3(Mathf.Min(bound0.x, bound1.x), Mathf.Min(bound0.y, bound1.y), Mathf.Min(bound0.z, bound1.z));
+            Vector3 endPosition = new Vector3(Mathf.Max(bound0.x, bound1.x), Mathf.Max(bound0.y, bound1.y), Mathf.Max(bound0.z, bound1.z));
+
+            // Create sub-boxes that wheat can be spawned in
+            subBounds = new Vector3[numberOfRows][];
+            for (int i = 0; i < numberOfRows; i++) {
+                subBounds[i] = new Vector3[2];
+                subBounds[i][0] = new Vector3(basePosition.x, basePosition.y, basePosition.z + 2 * i * rowHeight);
+                subBounds[i][1] = new Vector3(endPosition.x, endPosition.y, basePosition.z + (2 * i + 1) * rowHeight);
+                Debug.Log(subBounds[i][0] + ", " + subBounds[i][1]);
+            }
         }
-
 
         // Select a random sub-bound
         int boxChoice = Random.Range(0, numberOfRows);

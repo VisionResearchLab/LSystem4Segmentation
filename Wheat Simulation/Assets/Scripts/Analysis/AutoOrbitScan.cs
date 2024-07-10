@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,9 +54,15 @@ public class AutoOrbitScan : MonoBehaviour
     private int picturesTaken = 0;
     [SerializeField] private float timeToWaitForRender;
 
+    // Move terrain slightly
+    [SerializeField] private GameObject terrain;
+    private Vector3 terrainBasePosition;
+    private float terrainPositionChangeMax = 5f;
+
     void Start(){
         busy = false;
         activeLightSource = defaultSun;
+        terrainBasePosition = terrain.transform.position;
     }
 
     public IEnumerator BeginOrbiting(){
@@ -86,6 +91,10 @@ public class AutoOrbitScan : MonoBehaviour
             if (picturesTaken != 0 && picturesTaken % pictureCountPerLightSwitch == 0){
                 StartCoroutine(SwitchLightSource());
                 picturesTaken = 0; // prevent loop
+
+                // Move terrain slightly
+                Vector3 posDelta = new Vector3(Random.Range(-terrainPositionChangeMax, terrainPositionChangeMax), 0f, Random.Range(-terrainPositionChangeMax, terrainPositionChangeMax));
+                terrain.transform.SetPositionAndRotation(terrainBasePosition + posDelta, Quaternion.Euler(0f,0f,0f));
             } 
             // Otherwise, take a picture
             else {
@@ -116,7 +125,7 @@ public class AutoOrbitScan : MonoBehaviour
 
         // Define the y-component of the camera's focal point as the average wheat height above the ground in the center of the generation bounds
         Vector3 rayCastHitPoint = Vector3.down;
-        Ray ray = new Ray(origin: new Vector3(x, Math.Max(pos1.y, pos2.y), z), direction: Vector3.down);
+        Ray ray = new Ray(origin: new Vector3(x, Mathf.Max(pos1.y, pos2.y), z), direction: Vector3.down);
         RaycastHit hit;
         if(Physics.Raycast(ray, out hit, Mathf.Abs(pos1.y - pos2.y), Wheat.groundLayerMask)){
             y = hit.point.y;
