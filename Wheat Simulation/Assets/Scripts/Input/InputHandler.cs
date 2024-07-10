@@ -10,46 +10,38 @@ public class InputHandler : MonoBehaviour
     // Scripts
 
     // Mouse Over Wheat
-    [SerializeField] private GameObject MouseOverWheatGameObject;
-    private MouseOverWheatHandler mouseOverWheatHandler;
+    [SerializeField] private MouseOverWheatHandler mouseOverWheatHandler;
 
     // Scan Wheat
-    [SerializeField] private GameObject WheatScanGameObject;
-    private ScanScene scanScene;
+    [SerializeField] private ScanScene scanScene;
 
     // Place Wheat at Cursor
-    [SerializeField] private GameObject placeAtCursorGameObject;
-    private PlaceAtCursor placeAtCursor;
+    [SerializeField] private PlaceAtCursor placeAtCursor;
 
     // Screenshot script
-    [SerializeField] private GameObject screenShotGameObject;
-    private ScreenShot screenShot;
+    [SerializeField] private ScreenShot screenShot;
     
     // Auto orbit scanning script
-    [SerializeField] private GameObject autoOrbitGameObject;
-    private AutoOrbitScan autoOrbitScan;
+    [SerializeField] private AutoOrbitScan autoOrbitScan;
 
     // Place underbrush objects script
-    [SerializeField] private GameObject underBrushHandlerGameObject;
-    private UnderbrushHandler underbrushHandler;
+    [SerializeField] private UnderbrushHandler underbrushHandler;
+
+    // Place underbrush objects script
+    [SerializeField] private InstantiateWheat instantiateWheat;
 
     // Map KeyCodes to Actions
     Dictionary<KeyCode, Action> keyMap = new Dictionary<KeyCode, Action>();
     
     void Start(){
-        //Script references
-        mouseOverWheatHandler = MouseOverWheatGameObject.GetComponent<MouseOverWheatHandler>();
-        scanScene = WheatScanGameObject.GetComponent<ScanScene>();
-        placeAtCursor = placeAtCursorGameObject.GetComponent<PlaceAtCursor>();
-        screenShot = screenShotGameObject.GetComponent<ScreenShot>();
-        autoOrbitScan = autoOrbitGameObject.GetComponent<AutoOrbitScan>();
-        underbrushHandler = underBrushHandlerGameObject.GetComponent<UnderbrushHandler>();
-
         // Maps keybinds to functions in other scripts
         // keyMap[KeyCode.F] = DetectWheatPart;
         // keyMap[KeyCode.E] = ScanWheat;
-        keyMap[KeyCode.Q] = PlaceObjectsAtCursor;
-        keyMap[KeyCode.R] = LoopAddObjects;
+        // keyMap[KeyCode.Q] = PlaceObjectsAtCursor;
+        keyMap[KeyCode.Alpha1] = AddManyWheatUniformLayout;
+        keyMap[KeyCode.Alpha2] = AddManyWheatRowLayout;
+        keyMap[KeyCode.Alpha3] = AddManyUnderbrushUniformLayout;
+        keyMap[KeyCode.Alpha4] = AddManyUnderbrushRowLayout;
         keyMap[KeyCode.T] = TakeScreenShot;
         keyMap[KeyCode.Y] = BeginOrbiting;
         keyMap[KeyCode.U] = EndOrbiting;
@@ -76,9 +68,9 @@ public class InputHandler : MonoBehaviour
         scanScene.ScanWheat();
     }
 
-    private void PlaceObjectsAtCursor(){
-        placeAtCursor.PlaceObjectsAtCursor();
-    }
+    // private void PlaceObjectsAtCursor(){
+    //     placeAtCursor.PlaceObjectsAtCursor();
+    // }
 
     // Take a screen shot
     private void TakeScreenShot(){
@@ -94,7 +86,19 @@ public class InputHandler : MonoBehaviour
         autoOrbitScan.EndOrbiting();
     }
 
-    private void LoopAddObjects(){
-        underbrushHandler.LoopInstantiateUnderbrushInBounds();
+    private void AddManyWheatUniformLayout(){
+        instantiateWheat.LoopAddWheat(PositionFinder.FieldLayout.Uniform);
+    }
+
+    private void AddManyWheatRowLayout(){
+        instantiateWheat.LoopAddWheat(PositionFinder.FieldLayout.EightRows);
+    }
+
+    private void AddManyUnderbrushUniformLayout(){
+        underbrushHandler.LoopInstantiateUnderbrushInBounds(PositionFinder.FieldLayout.Uniform);
+    }
+
+    private void AddManyUnderbrushRowLayout(){
+        underbrushHandler.LoopInstantiateUnderbrushInBounds(PositionFinder.FieldLayout.EightRows);
     }
 }

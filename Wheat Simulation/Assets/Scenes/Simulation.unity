@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 17.657433, g: 14.826974, b: 12.661607, a: 1}
+  m_IndirectSpecularColor: {r: 12.001387, g: 10.079194, b: 8.607453, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -10270,6 +10270,7 @@ GameObject:
   - component: {fileID: 317227214}
   - component: {fileID: 317227215}
   - component: {fileID: 317227216}
+  - component: {fileID: 317227218}
   - component: {fileID: 317227217}
   m_Layer: 0
   m_Name: Singletons
@@ -10290,13 +10291,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e39b9b792c1fd8d40b7dd20c9fe5bd07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  massAddWheat: {fileID: 748708771}
   downTranslationMin: 0.08
   downTranslationMax: 0.31
   xRotationMax: 3
   yRotationMax: 360
   zRotationMax: 3
   parent: {fileID: 2060330630}
+  quantityToPlaceInputField: {fileID: 782437343}
+  positionFinder: {fileID: 317227218}
 --- !u!4 &317227209
 Transform:
   m_ObjectHideFlags: 0
@@ -10324,12 +10326,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 173bc67304c112c47991ed71e29b20e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MouseOverWheatGameObject: {fileID: 963194225}
-  WheatScanGameObject: {fileID: 963194225}
-  placeAtCursorGameObject: {fileID: 0}
-  screenShotGameObject: {fileID: 317227207}
-  autoOrbitGameObject: {fileID: 317227207}
-  underBrushHandlerGameObject: {fileID: 0}
+  mouseOverWheatHandler: {fileID: 963194231}
+  scanScene: {fileID: 963194232}
+  placeAtCursor: {fileID: 317227212}
+  screenShot: {fileID: 317227213}
+  autoOrbitScan: {fileID: 317227214}
+  underbrushHandler: {fileID: 317227217}
+  instantiateWheat: {fileID: 317227208}
 --- !u!114 &317227211
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10355,11 +10358,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7dee6b6f7af08c64daa3c24ae9eff875, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ubHandlerGameObject: {fileID: 0}
-  cam: {fileID: 963194227}
-  amountOfWheatToPlace: 0
-  amountOfUnderbrushToPlace: 0
-  acceptableDistance: 0
 --- !u!114 &317227213
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10393,7 +10391,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   orbitScanning: 0
   screenShot: {fileID: 317227213}
-  massAddWheat: {fileID: 748708771}
+  positionFinder: {fileID: 317227218}
   cam: {fileID: 963194227}
   minCameraHeight: 3.2
   maxCameraHeight: 4
@@ -10409,8 +10407,6 @@ MonoBehaviour:
   - {fileID: 680475488}
   - {fileID: 625413411}
   - {fileID: 954122457}
-  - {fileID: 1460665259}
-  - {fileID: 140472289}
   pictureCountPerLightSwitch: 40
   timeToWaitForRender: 0.5
 --- !u!114 &317227215
@@ -10439,7 +10435,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba69ffb8820ecbe439999fc691c120ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  expectedWheatCount: 1000
+  expectedWheatCount: 2000
 --- !u!114 &317227217
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10452,13 +10448,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a80e464e0a845a4eaadca963ae9e170, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scaleModifier: 10
+  scaleModifier: 30
   quantityToPlaceInputField: {fileID: 782437343}
-  boundary0: {fileID: 0}
-  boundary1: {fileID: 1826283974}
-  yDifferenceMin: -0.4
-  yDifferenceMax: 0.5
+  yDifferenceMin: 0
+  yDifferenceMax: 0.75
   parentObject: {fileID: 1697762590}
+  positionFinder: {fileID: 317227218}
+--- !u!114 &317227218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 317227207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c248469d97e60ff4185317347cdc5436, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bound0Object: {fileID: 1826283974}
+  bound1Object: {fileID: 1187441222}
+  bound0: {x: 0, y: 0, z: 0}
+  bound1: {x: 0, y: 0, z: 0}
 --- !u!1001 &318005699
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -25949,7 +25960,7 @@ Light:
   m_Type: 1
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 700
+  m_Intensity: 474.8987
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -25994,7 +26005,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6275
   m_UseColorTemperature: 1
-  m_BoundingSphereOverride: {x: 1.02e-43, y: 6e-44, z: 8e-45, w: 4.16827e-40}
+  m_BoundingSphereOverride: {x: 6.64e-43, y: 7.1e-44, z: 0, w: 1.9700631e-35}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
@@ -26026,7 +26037,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a68c43fe1f2a47cfa234b5eeaa98012, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Intensity: 700
+  m_Intensity: 474.8987
   m_EnableSpotReflector: 1
   m_LuxAtDistance: 1
   m_InnerSpotPercent: 0
@@ -27869,6 +27880,12 @@ MonoBehaviour:
   quantityToPlaceInputField: {fileID: 782437343}
   boundary1: {fileID: 1826283974}
   boundary2: {fileID: 1187441222}
+  xMin: 0
+  xMax: 0
+  yMin: 0
+  yMax: 0
+  zMin: 0
+  zMax: 0
 --- !u!1001 &749590122
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -36332,7 +36349,6 @@ GameObject:
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
   - component: {fileID: 963194229}
-  - component: {fileID: 963194230}
   - component: {fileID: 963194231}
   - component: {fileID: 963194232}
   - component: {fileID: 963194234}
@@ -36441,23 +36457,6 @@ MonoBehaviour:
   lookSensitivity: 1
   dampingCoefficient: 5
   focusOnEnable: 0
---- !u!114 &963194230
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 963194225}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7dee6b6f7af08c64daa3c24ae9eff875, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ubHandlerGameObject: {fileID: 0}
-  cam: {fileID: 0}
-  amountOfWheatToPlace: 0
-  amountOfUnderbrushToPlace: 0
-  acceptableDistance: 0
 --- !u!114 &963194231
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -44875,7 +44874,7 @@ Transform:
   m_GameObject: {fileID: 1187441222}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 12, y: -0.1, z: 12}
+  m_LocalPosition: {x: 12, y: -1.48, z: 12}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -63219,7 +63218,7 @@ Transform:
   m_GameObject: {fileID: 1697762590}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -64.79086, y: -26.135305, z: -10.585886}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

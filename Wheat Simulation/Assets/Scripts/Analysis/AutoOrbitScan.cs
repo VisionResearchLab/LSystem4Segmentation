@@ -23,7 +23,7 @@ public class AutoOrbitScan : MonoBehaviour
     
     // Scripts that have functions to be called
     public ScreenShot screenShot;
-    public MassAddWheat massAddWheat;
+    public PositionFinder positionFinder;
 
 
     // Main camera
@@ -96,7 +96,6 @@ public class AutoOrbitScan : MonoBehaviour
 
     IEnumerator TakePicture(){
         busy = true;
-        Debug.Log("Taking screenshot at time: " + Time.time);
 
         MoveCameraRandomly();
 
@@ -108,8 +107,8 @@ public class AutoOrbitScan : MonoBehaviour
     }
 
     private Vector3 GetCameraOrbitFocus(){
-        Vector3 pos1 = massAddWheat.boundary1.transform.position;
-        Vector3 pos2 = massAddWheat.boundary2.transform.position;
+        Vector3 pos1 = positionFinder.bound0;
+        Vector3 pos2 = positionFinder.bound1;
 
         float x = (pos1.x + pos2.x)/2.0f;
         float y = -Mathf.Infinity; // redefined later by raycast
@@ -128,12 +127,12 @@ public class AutoOrbitScan : MonoBehaviour
     }
 
     private Vector3[] GetCameraOrbitBounds(){
-        Vector3 pos1 = massAddWheat.boundary1.transform.position;
-        Vector3 pos2 = massAddWheat.boundary2.transform.position;
+        Vector3 pos0 = positionFinder.bound0;
+        Vector3 pos1 = positionFinder.bound1;
 
         Vector3[] positions = new Vector3[2]; 
-        positions[0] = pos1;
-        positions[1] = pos2;
+        positions[0] = pos0;
+        positions[1] = pos1;
 
         return positions;
     }
