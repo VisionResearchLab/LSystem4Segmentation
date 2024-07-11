@@ -10,6 +10,7 @@ In Blender, to generate a wheat model, follow these steps:
 2. Adjust the parameters listed under Instantiate Wheat as desired, then click "Create Wheat". If you plan to export the wheat to Unity, leave the position and position variance at (0,0,0).
 3. Click on the "Separate Wheat Parts" button to apply all modifiers to all wheat models, then separate them into folders that contain their parts. This makes the process of baking textures and exporting to Unity much easier.
 4. Enter the Unity project directory into the field above the "Export Wheat Models" button, then click it to export the wheat models to Unity.
+
 If you create other objects and want to export them to Unity as well, use the "Export Selected Objects" button.
 
 ### Creating dataset via Unity
@@ -20,6 +21,7 @@ In Unity, to generate a wheat model, follow these steps:
 4. Enter the directory where the dataset should be created.
 5. Once you are ready to generate the dataset, press Y to start generation.
 6. Once you are finished generating data, press U to stop generation, or simply exit play mode.
+
 The dataset will consist of images and corresponding labels in the same folder. They have identical names of the format "YYYY-MM-DD_HH-mm-SS_image.png" for images and "YYYY-MM-DD_HH-mm-SS_label.png" for labels.
 
 ## Support
