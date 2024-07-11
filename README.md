@@ -1,13 +1,10 @@
 # Wheat Head Segmentation Dataset Generator
 
-## Name
-Wheat Head Segmentation Dataset Generator
-
 ## Description
 This application is designed for the purpose of generating synthetic datasets for wheat head segmentation.
 
 ## Usage
-### Generating models in Blender
+### Generating models via Blender
 In Blender, to generate a wheat model, follow these steps:
 1. Go to the scripting section, and activate all scripts. These should open custom menus that control the wheat model generation. If you can't see the menus, mouse over a 3D viewport view panel, then press N on your keyboard and navigate to the "Wheat" section on the right side of this panel.
 2. Adjust the parameters listed under Instantiate Wheat as desired, then click "Create Wheat". If you plan to export the wheat to Unity, leave the position and position variance at (0,0,0).
@@ -15,7 +12,7 @@ In Blender, to generate a wheat model, follow these steps:
 4. Enter the Unity project directory into the field above the "Export Wheat Models" button, then click it to export the wheat models to Unity.
 If you create other objects and want to export them to Unity as well, use the "Export Selected Objects" button.
 
-### Generating models in Blender
+### Creating dataset via Unity
 In Unity, to generate a wheat model, follow these steps:
 1. Enter Play mode.
 2. Enter the number of objects that you wish to place into the bottom left input field.
