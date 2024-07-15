@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -53,6 +54,16 @@ public class Wheat : MonoBehaviour
         {"Awns", Part.Awns}
     };
 
+    public static Dictionary<Part, int> partToFirstChannelValueDict = new Dictionary<Part, int>(){
+        {Part.Wheat, 50},
+        {Part.Head, 250},
+        {Part.Stem, 100},
+        {Part.Leaf, 150},
+        {Part.Awns, 200}
+    };
+
+    public static Dictionary<Part, string> partToNameDict = nameToPartDict.ToDictionary((i) => i.Value, (i) => i.Key);
+
 
     // Check if an obj is a wheat. If there is a second argument, also check if the obj is of the same part as the parameter.
     public static bool IsWheat(GameObject obj, Part part = Part.Wheat){
@@ -81,35 +92,6 @@ public class Wheat : MonoBehaviour
             }
         }
         return wheats;
-    }
-
-    
-    // Swap between Annotation On and Annotation Off modes
-    public static void ToggleAnnotation(){
-        if (!wheatIsAnnotated){
-            ToggleAnnotationOn();
-        } else {
-            ToggleAnnotationOff();
-        }
-    }
-
-    // Swap materials of each wheat with simple colors, for annotation purposes
-    public static void ToggleAnnotationOn(){
-        foreach (GameObject wheat in getAllWheats()){
-            WheatData wheatData = wheat.GetComponent<WheatData>();
-            wheatData.ToggleAnnotationOn();
-        }
-        wheatIsAnnotated = true;
-    }
-
-
-    // Reset the materials of each wheat
-    public static void ToggleAnnotationOff(){
-        foreach (GameObject wheat in getAllWheats()){
-            WheatData wheatData = wheat.GetComponent<WheatData>();
-            wheatData.ToggleAnnotationOff();
-        }
-        wheatIsAnnotated = false;
     }
 
     // Get all wheat prefabs

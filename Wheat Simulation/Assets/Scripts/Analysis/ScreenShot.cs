@@ -8,6 +8,10 @@ using Unity.Collections;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.HighDefinition;
 using System.Diagnostics;
+using System.Text;
+using Unity.VisualScripting;
+using System.Collections.Generic;
+using System.IO.Compression;
 
 public class ScreenShot : MonoBehaviour
 {
@@ -20,25 +24,36 @@ public class ScreenShot : MonoBehaviour
 
 
     // Save directory
-    [SerializeField] private string saveDirectory = "C:/Users/xSkul/OneDrive/Documents/Projects/Wheat/wheat/Datasets/1024x1024-5/val_UQ_2/";
-
-
-    // Determine if the annotation should be white or r/g/b
-    // TODO: reimplement this
-    public static bool annotationIsColored = false;
-
-    // Variables for label generation
-    public Shader labelShader;
-    public LayerMask labelLayer;
-    private CustomPassVolume customPassVolume;
-    private CustomPass customPass;
+    [SerializeField] private string datasetsDirectory = "C:/Users/xSkul/OneDrive/Documents/Projects/Wheat/wheat/Datasets";
+    [SerializeField] private string datasetName = "1024x1024-8";
+    [SerializeField] private string domainName = "testDomain";
+    [HideInInspector] public string datasetDirectory;
+    [HideInInspector] public string domainDirectory;
 
     // Setting to decide whether awns should be labelled as wheat heads or passed through
     [SerializeField] private bool labelAwnsAsWheatHeads;
 
+
+    // Screen width and height
+    private int width;
+    private int height;
+
     // Define scripts with functions that need to be called
     private void Start(){
         ShowUI();
+        datasetDirectory = $"{datasetsDirectory}/{datasetName}/";
+        domainDirectory = $"{datasetsDirectory}/{datasetName}/{domainName}/";
+        width = Screen.width;
+        height = Screen.height;
+        if (Directory.Exists(datasetsDirectory)){
+            if (!Directory.Exists(domainDirectory)){
+                Directory.CreateDirectory(domainDirectory);
+            }
+        }
+        else {
+            UnityEngine.Debug.LogError("The datasets directory could not be found.");
+        }
+        
     }
 
     // Call ScreenshotSequenceEnum with default time to wait of 0.1 seconds
@@ -50,25 +65,26 @@ public class ScreenShot : MonoBehaviour
     public IEnumerator ScreenshotSequenceEnum(float secondsDelay){
         string dateTime = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
 
-        string imagePath = getPath(dateTime + "_image" + ".png");
-        string labelPath = getPath(dateTime + "_label" + ".png");
+        string imageName = dateTime + "_image" + ".png";
+        string imagePath = getPath(imageName);
+
+        string labelName = dateTime + "_label" + ".png";
+        string labelPath = getPath(labelName);
 
         HideUI();
         yield return new WaitForSeconds(secondsDelay);
         StartCoroutine(ImageScreenshot(imagePath));
-        AnnotateScreenshotRaycast(labelPath);
+        // AnnotateScreenshotRaycast(labelPath);
+        // AddBoundingBoxForImage(imageName);
+        // TestBMPExport(getPath($"{dateTime}_label.bmp"), imageName);
+        InstanceSegment();
         yield return new WaitForEndOfFrame();
         ShowUI();
     }
 
     // Returns a unique filepath in the screenshots folder based on the given name
     private string getPath(string name){
-        return AssetDatabase.GenerateUniqueAssetPath(saveDirectory + name);
-    }
-
-    // Call SwapCameras() in annotateCameraScript
-    private void SwapCameras(){
-        Wheat.ToggleAnnotation();
+        return AssetDatabase.GenerateUniqueAssetPath(domainDirectory + name);
     }
 
     // Hide UI
@@ -94,14 +110,10 @@ public class ScreenShot : MonoBehaviour
         screenShot.Apply();
         byte[] bytes = screenShot.EncodeToPNG();
         UnityEngine.Object.Destroy(screenShot);
-        UnityEngine.Debug.Log(path);
         File.WriteAllBytes(path, bytes);
     }
 
-    private void AnnotateScreenshotRaycast(string path){
-        int width = Screen.width;
-        int height = Screen.height;
-
+    private NativeArray<RaycastHit> RaycastFromCamera(){
         Stopwatch sw = new Stopwatch();
         sw.Start(); // track raycast
 
@@ -118,7 +130,12 @@ public class ScreenShot : MonoBehaviour
             {
                 Vector3 screenPoint = new Vector3(x, y, 0);
                 Ray ray = mainCam.ScreenPointToRay(screenPoint);
-                raycastCommands[index] = new RaycastCommand(ray.origin, ray.direction, layerMask:Wheat.awnsLayerMask);
+                if (labelAwnsAsWheatHeads){
+                    raycastCommands[index] = new RaycastCommand(ray.origin, ray.direction);
+                } else {
+                    raycastCommands[index] = new RaycastCommand(ray.origin, ray.direction, layerMask:Wheat.awnsLayerMask);
+                }
+                
                 index++;
             }
         }
@@ -129,10 +146,20 @@ public class ScreenShot : MonoBehaviour
         // Complete the job handle
         handle.Complete();
 
+
+        raycastCommands.Dispose();
+
         sw.Stop();
-        float timeToRaycast = sw.ElapsedMilliseconds;
-        sw.Reset();
-        sw.Start(); // track time to get raycast results
+        UnityEngine.Debug.Log($"Time to raycast: {sw.ElapsedMilliseconds} ms");
+
+        return raycastResults;
+    }
+
+    private void AnnotateScreenshotRaycast(string path){
+        Stopwatch sw = new Stopwatch();
+        sw.Start(); // track raycast
+
+        NativeArray<RaycastHit> raycastResults = RaycastFromCamera();
 
         // // Create the texture and set pixels based on raycast results
         Texture2D screenShot = new Texture2D(width, height);
@@ -157,76 +184,196 @@ public class ScreenShot : MonoBehaviour
         File.WriteAllBytes(path, bytes);
 
         // Clean up
-        raycastCommands.Dispose();
         raycastResults.Dispose();
         UnityEngine.Object.Destroy(screenShot);
 
         sw.Stop();
-        float timeToEncode = sw.ElapsedMilliseconds;
-
-        UnityEngine.Debug.Log($"Time to raycast: {timeToRaycast} ms\nTime to encode to PNG: {timeToEncode} ms");
+        UnityEngine.Debug.Log($"Time to encode to PNG: {sw.ElapsedMilliseconds} ms");
 
         UnityEngine.Debug.Log("Screenshot saved to: " + path);
     }
 
+    private void AddBoundingBoxForImage(string imageName){
+        Stopwatch sw = new Stopwatch();
+        sw.Start(); // track raycast
 
-    // private IEnumerator AnnotateScreenshotShaderEnum(string name, int frameDelay, bool hideUIAfter){
-    //     for (int i = 0; i < frameDelay; i++){
-    //         yield return new WaitForEndOfFrame();
-    //     }
 
-    //     string path = getPath(name);
+        string boundingBoxPath = datasetDirectory + "bounding_boxes.csv";
 
-    //     // Create a temporary camera
-    //     Camera tempCamera = new GameObject("TempCamera").AddComponent<Camera>();
-    //     tempCamera.CopyFrom(mainCam);
-    //     tempCamera.clearFlags = CameraClearFlags.SolidColor;
-    //     tempCamera.backgroundColor = Color.black;
-    //     tempCamera.cullingMask = labelLayer;
+        // Create a stringbuilder to iteratively add to, for each image taken
+        StringBuilder newText = new StringBuilder();
 
-    //     // Render to a RenderTexture
-    //     RenderTexture rt = new RenderTexture(Screen.width, Screen.height, 24);
-    //     tempCamera.targetTexture = rt;
+        // If the bounding box file does not exist, create it and add the information row
+        if(!File.Exists(boundingBoxPath)){
+            using (FileStream fs = File.Create(boundingBoxPath))
+            {
+                newText.Append("image_name,BoxesString,domain\n");
+            }
+        }
 
-    //     // Create a custom pass volume
-    //     CustomPassVolume customPassVolume = tempCamera.gameObject.AddComponent<CustomPassVolume>();
-    //     customPassVolume.isGlobal = true;
-    //     customPassVolume.injectionPoint = CustomPassInjectionPoint.AfterOpaqueDepthAndNormal;
+        // Create a dictionary to record the bounding boxes for each object that is hit by the raycast
+        //Key: obj, Value: [x_min, y_min, x_max, y_max]
+        Dictionary<GameObject, List<int>> objectBoundingBoxDict = new Dictionary<GameObject, List<int>>();
+        
+        // Get raycast hits
+        NativeArray<RaycastHit> raycastResults = RaycastFromCamera();
 
-    //     // Create and configure the custom pass
-    //     LabelCustomPass labelPass = new LabelCustomPass {
-    //         name = "LabelPass",
-    //         material = labelMaterial,
-    //         labelLayer = labelLayer
-    //     };
+        // Simple method to get a new bounding box coordinate list based on new coordinates where the object is hit by raycasts
+        List<int> UpdateBoundingBoxCoordinates(List<int> coordinates, int x, int y){
+            // values: [x_min, y_min, x_max, y_max]
+            List<int> newValues = new List<int>(coordinates);
+            UnityEngine.Debug.Log(coordinates.Count);
+            UnityEngine.Debug.Log(newValues.Count);
+            if (coordinates[0] > x){
+                newValues[0] = x;
+            }
+            if (coordinates[1] > y){
+                newValues[1] = y;
+            }
+            if (coordinates[2] < x){
+                newValues[2] = x;
+            }
+            if (coordinates[3] < y){
+                newValues[3] = y;
+            }
+            return newValues;
+        }
 
-    //     customPassVolume.customPasses.Add(labelPass);
+        // Find bounding boxes using raycast results, saving them to objectBoundingBoxDict
+        for (int y = 0; y < height; y++){
+            for (int x = 0; x < width; x++){
+                RaycastHit hit = raycastResults[x + width*y];
+                GameObject obj = hit.transform ? hit.transform.gameObject : null;
+                if (obj != null && Wheat.IsWheat(obj, Wheat.Part.Head)){
+                    if (objectBoundingBoxDict.ContainsKey(obj)){
+                        List<int> coordinates = objectBoundingBoxDict[obj];
+                        objectBoundingBoxDict[obj] = UpdateBoundingBoxCoordinates(coordinates, x, y);
+                    }
+                    else {
+                        List<int> coordinates = new List<int>{x, y, x, y};
+                        objectBoundingBoxDict[obj] = coordinates;
+                    }
+                }
+            }
+        }
+        raycastResults.Dispose();
+    
+        // Add this image to the stringbuilder, with its bounding box results.
+        //  Image name
+        newText.Append($"{imageName},");
+        //  Bounding box coordinates
+        if (objectBoundingBoxDict.Values.Count != 0){
+            foreach (List<int> values in objectBoundingBoxDict.Values){
+                newText.Append($"{values[0]} {values[1]} {values[2]} {values[3]};");
+            }
+            newText.Length--; // Clear the semicolon in the last position
+        }
+        else {
+            newText.Append("no_box");
+        }
+        //  Domain name
+        newText.Append($",{domainName}\n");
 
-    //     // Render the label image
-    //     tempCamera.Render();
+        // Write the stringbuilder to the CSV
+        File.AppendAllText(boundingBoxPath, newText.ToString());
 
-    //     // Save the RenderTexture to a Texture2D
-    //     RenderTexture.active = rt;
-    //     Texture2D tex = new Texture2D(rt.width, rt.height, TextureFormat.RGB24, false);
-    //     tex.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0);
-    //     tex.Apply();
+        sw.Stop();
+        UnityEngine.Debug.Log($"Time to append bounding box: {sw.ElapsedMilliseconds} ms");
+    }
 
-    //     // Save the texture as a PNG (optional)
-    //     byte[] bytes = tex.EncodeToPNG();
-    //     System.IO.File.WriteAllBytes(Application.dataPath + "/../LabelImage.png", bytes);
 
-    //     // Cleanup
-    //     RenderTexture.active = null;
-    //     tempCamera.targetTexture = null;
-    //     Destroy(rt);
-    //     Destroy(tempCamera.gameObject);
+    private void InstanceSegmentLabel(){
+        Stopwatch sw = new Stopwatch();
+        sw.Start(); // track raycast
 
-    //     Debug.Log("Screenshot saved to: " + path);
+        // Get raycast hits
+        NativeArray<RaycastHit> raycastResults = RaycastFromCamera();
 
-    //     if (hideUIAfter){
-    //         HideUI();
-    //     } else {
-    //         ShowUI();
-    //     }
-    // }
+        // Get hit objects, and turn it into a dict mapping Object to the pixels it was hit at
+        Dictionary<GameObject, HashSet<int>> objectToPixels = new Dictionary<GameObject, HashSet<int>>();
+        for (int y = 0; y < height; y++){
+            for (int x = 0; x < width; x++){
+                RaycastHit hit = raycastResults[x + y*width];
+                GameObject obj = hit.transform ? hit.transform.gameObject : null;
+                if (obj != null && !objectToPixels.ContainsKey(obj)){
+                    objectToPixels[obj].Add(x + y*width);
+                }
+            }
+        }
+        raycastResults.Dispose();
+
+        int index = 1;
+
+        int[,] colors = new int[width*height, 3];
+        for (int i = 0; i < width*height; i++){
+            colors[i,0] = 0;
+            colors[i,1] = 0;
+            colors[i,2] = 0;
+        }
+
+        foreach (GameObject obj in objectToPixels.Keys){
+            int id = index;
+            index ++;
+
+            WheatData wheatData = obj.GetComponent<WheatData>();
+            Wheat.Part part = wheatData.part;
+            
+            int r = Wheat.partToFirstChannelValueDict[part];
+            int g = index % 255;
+            int b = index / 255;
+
+            foreach (int pos in objectToPixels[obj]){
+                colors[pos] = new Color(r, g, b);
+            }
+        };
+
+        sw.Stop();
+        UnityEngine.Debug.Log($"Time to save CSV: {sw.ElapsedMilliseconds} ms");
+    }
+
+
+
+    private byte[] EncodeToBMP(Texture2D texture)
+    {
+        int width = texture.width;
+        int height = texture.height;
+        Color32[] pixels = texture.GetPixels32();
+        int fileSize = 54 + (3 * width * height); // 54-byte header + pixel data
+
+        byte[] bmpBytes = new byte[fileSize];
+
+        // BMP Header
+        bmpBytes[0] = (byte)'B';
+        bmpBytes[1] = (byte)'M';
+        BitConverter.GetBytes(fileSize).CopyTo(bmpBytes, 2);
+        bmpBytes[10] = 54; // Pixel data offset
+
+        // DIB Header
+        bmpBytes[14] = 40; // DIB header size
+        BitConverter.GetBytes(width).CopyTo(bmpBytes, 18);
+        BitConverter.GetBytes(height).CopyTo(bmpBytes, 22);
+        bmpBytes[26] = 1; // Number of color planes
+        bmpBytes[28] = 24; // Bits per pixel
+
+        // Pixel Data
+        int offset = 54;
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                Color32 pixel = pixels[(y * width) + x];
+                bmpBytes[offset++] = pixel.b;
+                bmpBytes[offset++] = pixel.g;
+                bmpBytes[offset++] = pixel.r;
+            }
+        }
+
+        return bmpBytes;
+    }
+
+    public void SaveTextureToBMP(Texture2D texture, string path)
+    {
+        byte[] bmpBytes = EncodeToBMP(texture);
+        File.WriteAllBytes(path, bmpBytes);
+    }
 }
