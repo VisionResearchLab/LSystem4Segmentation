@@ -84,7 +84,6 @@ public class PositionFinder : MonoBehaviour
                 subBounds[i] = new Vector3[2];
                 subBounds[i][0] = new Vector3(basePosition.x, basePosition.y, basePosition.z + 2 * i * rowHeight);
                 subBounds[i][1] = new Vector3(endPosition.x, endPosition.y, basePosition.z + (2 * i + 1) * rowHeight);
-                Debug.Log(subBounds[i][0] + ", " + subBounds[i][1]);
             }
         }
 
