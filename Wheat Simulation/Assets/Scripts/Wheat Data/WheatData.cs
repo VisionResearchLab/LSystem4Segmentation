@@ -16,10 +16,6 @@ public class WheatData : MonoBehaviour
         get { return GetSlightlyRecoloredMaterial(gameObject.transform.GetComponent<Renderer>().material); }
     }
 
-    public Material annotationMaterial {
-        get { return Wheat.partAnnotationMaterials.GetValueOrDefault(part, originalMaterial); }
-    }
-
     public String materialName {
         get { return originalMaterial.name; }
     }
