@@ -33,10 +33,12 @@ public class ScreenShot : MonoBehaviour
     // Setting to decide whether awns should be labelled as wheat heads or passed through
     [SerializeField] private bool labelAwnsAsWheatHeads;
 
-
     // Screen width and height
     private int width;
     private int height;
+
+    // Get the InstanceLabels object which will overwrite the JSON after each image
+    private InstanceLabels instanceLabels = new InstanceLabels();
 
     // Define scripts with functions that need to be called
     private void Start(){
@@ -77,7 +79,7 @@ public class ScreenShot : MonoBehaviour
         // AnnotateScreenshotRaycast(labelPath);
         // AddBoundingBoxForImage(imageName);
         // TestBMPExport(getPath($"{dateTime}_label.bmp"), imageName);
-        InstanceSegment();
+        InstanceSegmentLabel();
         yield return new WaitForEndOfFrame();
         ShowUI();
     }
@@ -296,7 +298,12 @@ public class ScreenShot : MonoBehaviour
                 RaycastHit hit = raycastResults[x + y*width];
                 GameObject obj = hit.transform ? hit.transform.gameObject : null;
                 if (obj != null && !objectToPixels.ContainsKey(obj)){
-                    objectToPixels[obj].Add(x + y*width);
+                    HashSet<int> positions = new HashSet<int>();
+                    objectToPixels[obj] = positions;
+                    positions.Add(x + y*width);
+                } else if (obj != null){
+                    HashSet<int> positions = objectToPixels[obj];
+                    positions.Add(x + y*width);
                 }
             }
         }
@@ -304,11 +311,10 @@ public class ScreenShot : MonoBehaviour
 
         int index = 1;
 
-        int[,] colors = new int[width*height, 3];
+        // Initialize black color array of screen size
+        Color[] pixels = new Color[width*height];
         for (int i = 0; i < width*height; i++){
-            colors[i,0] = 0;
-            colors[i,1] = 0;
-            colors[i,2] = 0;
+            pixels[i] = Color.black;
         }
 
         foreach (GameObject obj in objectToPixels.Keys){
@@ -316,28 +322,31 @@ public class ScreenShot : MonoBehaviour
             index ++;
 
             WheatData wheatData = obj.GetComponent<WheatData>();
-            Wheat.Part part = wheatData.part;
-            
-            int r = Wheat.partToFirstChannelValueDict[part];
-            int g = index % 255;
-            int b = index / 255;
+            if (wheatData){
+                Wheat.Part part = wheatData.part;
+                
+                int r = Wheat.partToFirstChannelValueDict[part];
+                int g = index % 255;
+                int b = index / 255;
 
-            foreach (int pos in objectToPixels[obj]){
-                colors[pos] = new Color(r, g, b);
+                // Place each ID at each corresponding position in the array
+                foreach (int coordinate in objectToPixels[obj]){
+                    pixels[coordinate] = new Color(r/255f,g/255f,b/255f);
+                }
             }
         };
+        EncodeToBMP(pixels);
+        byte[] bmpBytes = EncodeToBMP(pixels);
+        File.WriteAllBytes(domainDirectory + "/test.bmp", bmpBytes);
 
         sw.Stop();
-        UnityEngine.Debug.Log($"Time to save CSV: {sw.ElapsedMilliseconds} ms");
+        UnityEngine.Debug.Log($"Time to save instance segmented label: {sw.ElapsedMilliseconds} ms");
     }
 
 
 
-    private byte[] EncodeToBMP(Texture2D texture)
+    private byte[] EncodeToBMP(Color[] pixels)
     {
-        int width = texture.width;
-        int height = texture.height;
-        Color32[] pixels = texture.GetPixels32();
         int fileSize = 54 + (3 * width * height); // 54-byte header + pixel data
 
         byte[] bmpBytes = new byte[fileSize];
@@ -373,7 +382,9 @@ public class ScreenShot : MonoBehaviour
 
     public void SaveTextureToBMP(Texture2D texture, string path)
     {
-        byte[] bmpBytes = EncodeToBMP(texture);
+        // Color32[] pixels = texture.GetPixels32();
+        Color[] pixels = texture.GetPixels();
+        byte[] bmpBytes = EncodeToBMP(pixels);
         File.WriteAllBytes(path, bmpBytes);
     }
 }
