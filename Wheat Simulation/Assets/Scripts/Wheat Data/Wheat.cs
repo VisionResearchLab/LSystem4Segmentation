@@ -56,10 +56,10 @@ public class Wheat : MonoBehaviour
     };
 
     public static Dictionary<Part, int> partToIDDict = new Dictionary<Part, int>(){
-        {Part.Head, 0},
-        {Part.Leaf, 1},
-        {Part.Stem, 2},
-        {Part.Awns, 3}
+        {Part.Head, 1},
+        {Part.Leaf, 2},
+        {Part.Stem, 3},
+        {Part.Awns, 4}
     };
 
     public static Part[] GetPartTypesToLabel(){
