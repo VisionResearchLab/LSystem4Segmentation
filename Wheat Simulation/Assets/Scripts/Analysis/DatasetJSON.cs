@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 
 [Serializable]
-public class AnnotationJSON
+public class DatasetJSON
 {
     public List<Image> images = new List<Image>();
+    public List<AnnotationMap> annotationMaps = new List<AnnotationMap>();
     public List<Annotation> annotations = new List<Annotation>();
     public List<Category> categories = new List<Category>();
 }
@@ -29,6 +29,21 @@ public class Image{
     }
 }
 
+[Serializable]
+public class AnnotationMap {
+    public int image_id;
+    public int width;
+    public int height;
+    public string file_name;
+
+    public AnnotationMap(int image_id, int width, int height, string file_name){
+        this.image_id = image_id;
+        this.width = width;
+        this.height = height;
+        this.file_name = file_name;
+    }
+}
+
 // Meant to represent leaf, wheat head, etc. as ints. Basically a dictionary.
 [Serializable]
 public class Category {
@@ -44,33 +59,18 @@ public class Category {
 
 [Serializable]
 public class Annotation {
+    public int id;
     public int image_id; // image id
     public int category_id; // part id
-    public Tuple<int, int>[] segmentation; // list of segmented pixels (pixel as int array with 2 values)
     public int area; // number of segmented pixels
     public int[] bbox; // xmin, ymin, xmax, ymax
     
     // constructor
-    public Annotation(int image_id, int category_id, List<int[]> pixels){
+    public Annotation(int id, int image_id, int category_id, int area, int[] bbox){
+        this.id = id;
         this.image_id = image_id;
         this.category_id = category_id;
-
-        // get segmentation (int[][]) from pixels (List<int[]>)
-        segmentation = new Tuple<int, int>[pixels.Count];
-        for (int i = 0; i < pixels.Count; i++){
-            segmentation[i] = new Tuple<int, int>(pixels[i][0], pixels[i][1]);
-        }
-
-        // get area
-        this.area = pixels.Count;
-
-        // get bounding box
-        HashSet<int> xValues = new HashSet<int>();
-        HashSet<int> yValues = new HashSet<int>();
-        foreach (int[] pixel in pixels){
-            xValues.Add(pixel[0]);
-            yValues.Add(pixel[1]);
-        }
-        this.bbox = new int[]{xValues.Min(), yValues.Min(), xValues.Max(), yValues.Max()};
+        this.area = area;
+        this.bbox = bbox;
     }
 }
