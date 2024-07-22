@@ -28,8 +28,8 @@ public class Wheat : MonoBehaviour
     public static int awnsLayer = 12;
 
     // Layermasks
-    public static int groundLayerMask = 1 << groundLayer;
-    public static int awnsLayerMask = ~(1 << awnsLayer); // Label should pass through awns
+    public static int groundLayerMask = 1 << groundLayer; // If passed: only hit ground
+    public static int awnsLayerMask = ~(1 << awnsLayer); // If passed: ignore awns
 
     public static Dictionary<Part, int> partToLayerDict = new Dictionary<Part, int> {
         {Part.Wheat, wheatLayer},

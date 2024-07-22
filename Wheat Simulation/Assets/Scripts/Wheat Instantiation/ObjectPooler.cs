@@ -10,30 +10,28 @@ public class ObjectPooler : MonoBehaviour
         Instance = this;
     }
 
-    private Dictionary<string, Queue<GameObject>> poolDictionary;
+    private Dictionary<string, Queue<GameObject>> poolDictionary = new Dictionary<string, Queue<GameObject>>();
 
-    public int expectedWheatCount = 5000; // Default size for each pool
+    public int expectedWheatCount; // Default size for each pool
+    public int expectedUnderbrushCount; // Default size for each pool
 
     void Start()
     {
-        poolDictionary = new Dictionary<string, Queue<GameObject>>();
-        InitializePools(); // now called from PrefabsFromMeshes
+        InitializePool(Wheat.GetAllWheatPrefabs(), expectedWheatCount);
+        // InitializePool(UnderbrushHandler.GetAllUnderbrushPrefabs(), expectedUnderbrushCount);
     }
 
-    public void InitializePools()
-    {
-        GameObject[] wheatPrefabs = Wheat.GetAllWheatPrefabs();
-
-        int poolSize = 25; // default
-        if (wheatPrefabs.Length != 0){
-            poolSize = expectedWheatCount / wheatPrefabs.Length;
+    public void InitializePool(GameObject[] allPrefabs, int expectedCount){
+        int instancesPerObject = 25; // default
+        if (allPrefabs.Length != 0){
+            instancesPerObject = expectedCount / allPrefabs.Length;
         }
 
-        foreach (GameObject prefab in wheatPrefabs)
+        foreach (GameObject prefab in allPrefabs)
         {
             Queue<GameObject> objectPool = new Queue<GameObject>();
 
-            for (int i = 0; i < poolSize; i++)
+            for (int i = 0; i < instancesPerObject; i++)
             {
                 GameObject obj = Instantiate(prefab);
                 obj.SetActive(false);
