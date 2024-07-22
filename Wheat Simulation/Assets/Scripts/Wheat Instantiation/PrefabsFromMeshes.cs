@@ -15,10 +15,10 @@ public class PrefabsFromMeshes : MonoBehaviour
 
     private void Start()
     {
-        GameObject[] allWheatModels = Resources.LoadAll<GameObject>(wheatMeshPath);
         DeleteAllFilesInDirectory(wheatPrefabPath);
 
-        foreach (GameObject wheatModel in Resources.LoadAll<GameObject>(wheatMeshPath)){
+        GameObject[] allWheatModels = Resources.LoadAll<GameObject>(wheatMeshPath);
+        foreach (GameObject wheatModel in allWheatModels){
             // Instantiate the model prefab
             GameObject instantiatedModel = Instantiate(wheatModel);
 
@@ -60,10 +60,6 @@ public class PrefabsFromMeshes : MonoBehaviour
             // Destroy the instantiated model
             Destroy(instantiatedModel);
         }
-        
-        // // Call on ObjectPooler to initialize pools, now that the prefabs exist
-        // objectPooler = objectPoolerGameObject.GetComponent<ObjectPooler>();
-        // objectPooler.InitializePools();
     }
 
     // Used to delete all the prefabs that do not have a corresponding mesh

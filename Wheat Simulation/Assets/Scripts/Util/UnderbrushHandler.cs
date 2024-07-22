@@ -9,6 +9,10 @@ using UnityEngine.UIElements;
 
 public class UnderbrushHandler : MonoBehaviour
 {
+    // HashSet of all underbrush objects in the scene
+    private static HashSet<GameObject> underbrushObjects = new HashSet<GameObject>();
+
+
     // Mesh to prefab conversion details
     static private string meshPath = "Meshes/Ground Cover Models";
     static private string prefabPath = "Prefabs/Ground Cover Models";
@@ -30,8 +34,13 @@ public class UnderbrushHandler : MonoBehaviour
 
 
     // Convert all meshes to prefabs before first frame
-    private void Start()
+    void Start()
     {
+        MeshesToPrefabs();
+    }
+
+    // Clear previously created prefabs and create new prefabs from meshes in assets/meshes/ground cover models
+    private void MeshesToPrefabs(){
         GameObject[] allModels = Resources.LoadAll<GameObject>(meshPath);
         DeleteAllFilesInDirectory(prefabFullPath);
 
@@ -49,6 +58,11 @@ public class UnderbrushHandler : MonoBehaviour
             // Destroy the instantiated model
             Destroy(instantiatedModel);
         }
+    }
+
+    // Get all prefabs
+    public static GameObject[] GetAllUnderbrushPrefabs(){
+        return Resources.LoadAll<GameObject>(prefabPath);
     }
 
     // Used to delete all the prefabs that do not have a corresponding mesh
@@ -85,7 +99,8 @@ public class UnderbrushHandler : MonoBehaviour
     public void InstantiateUnderbrush(Vector3 position, Quaternion rotation){
         GameObject prefab = getRandomPrefab();
         position += new Vector3(0f, Random.Range(yDifferenceMin, yDifferenceMax), 0f);
-        Instantiate(prefab, position, rotation, parentObject.transform);
+        // Instantiate a new object and add it to the hashset
+        underbrushObjects.Add(Instantiate(prefab, position, rotation, parentObject.transform));
     }
 
     // When called, create a new wheat object in a random position that is within the coordinates given above
@@ -101,4 +116,7 @@ public class UnderbrushHandler : MonoBehaviour
         }
     }
 
+    public static HashSet<GameObject> getAllUnderbrush(){
+        return underbrushObjects;
+    }
 }

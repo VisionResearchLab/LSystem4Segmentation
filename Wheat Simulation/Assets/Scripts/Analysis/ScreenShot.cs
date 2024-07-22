@@ -59,7 +59,7 @@ public class ScreenShot : MonoBehaviour
             // Also create a new JSON.
             if (!Directory.Exists(domainDirectory)){
                 Directory.CreateDirectory(domainDirectory);
-                datasetJSON = new DatasetJSON();
+                InitializeDatasetJSONWithCategories();
             } 
             // Try to load instanceLabels from the JSON if the domain was found
             else {
