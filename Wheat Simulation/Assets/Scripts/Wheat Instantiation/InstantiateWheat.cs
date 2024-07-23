@@ -46,13 +46,11 @@ public void TryGenerateWheat(
     if (numberOfWheatPrefabs > 0)
     {
         // Get the prefab, position, and rotation
-        int chosenWheatPrefabIndex = Random.Range(0, numberOfWheatPrefabs);
-        GameObject wheatPrefab = wheatPrefabs[chosenWheatPrefabIndex];
         Vector3 position = MoveDown(requestedPosition);
         Quaternion rotation = GetRandomRotation();
 
         // Instantiate the wheat
-        GameObject newWheat = ObjectPooler.Instance.SpawnFromPool(wheatPrefab.name, position, rotation);
+        GameObject newWheat = ObjectPooler.Instance.SpawnFromPoolOfType(ObjectPooler.PoolType.Wheat, position, rotation);
         newWheat.transform.SetParent(parent);
 
         if (remainingAttempts > 0 || !placeIfNoRemainingAttempts){

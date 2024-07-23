@@ -369,7 +369,7 @@ public class ScreenShot : MonoBehaviour
                 int category_id = Wheat.partToIDDict[part];
                 
                 // Get ID number
-                int id = datasetJSON.annotations.Count;
+                int id = datasetJSON.annotations.Count + 1;
 
                 // Add this object to the annotation
                 AddAnnotationToDataset(id, image_id, category_id, hitPixels);
@@ -390,6 +390,11 @@ public class ScreenShot : MonoBehaviour
     }
 
     private void AddAnnotationToDataset(int annotation_id, int image_id, int category_id, List<int[]> pixels){
+        // error check
+        if (annotation_id == 0){
+            UnityEngine.Debug.LogError("Should not annotate ground!");
+        }    
+    
         // get area
         int area = pixels.Count();
         

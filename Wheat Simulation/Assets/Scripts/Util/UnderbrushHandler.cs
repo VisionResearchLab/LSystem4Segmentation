@@ -6,6 +6,7 @@ using System.IO;
 using System.Xml.Schema;
 using System.Runtime.CompilerServices;
 using UnityEngine.UIElements;
+using UnityEditor.SearchService;
 
 public class UnderbrushHandler : MonoBehaviour
 {
@@ -32,25 +33,35 @@ public class UnderbrushHandler : MonoBehaviour
 
     [SerializeField] private PositionFinder positionFinder;
 
+    [SerializeField] private ObjectPooler objectPooler;
 
     // Convert all meshes to prefabs before first frame
     void Start()
     {
+        DeleteAllFilesInDirectory(prefabFullPath);
         MeshesToPrefabs();
     }
 
     // Clear previously created prefabs and create new prefabs from meshes in assets/meshes/ground cover models
     private void MeshesToPrefabs(){
         GameObject[] allModels = Resources.LoadAll<GameObject>(meshPath);
-        DeleteAllFilesInDirectory(prefabFullPath);
 
         // Make prefabs
         foreach (GameObject model in allModels){
             // Instantiate the model prefab
             GameObject instantiatedModel = Instantiate(model);
+            Transform transform = instantiatedModel.transform;
 
             // Adjust scale
-            instantiatedModel.transform.localScale = new Vector3(scaleModifier, scaleModifier, scaleModifier);
+            transform.localScale = new Vector3(scaleModifier, scaleModifier, scaleModifier);
+
+            // If a tag is found 
+            string name = transform.name;
+            foreach (string tag in UnityEditorInternal.InternalEditorUtility.tags){
+                if (name.ToLower().Contains(tag.ToLower())){
+                    transform.tag = tag;
+                }
+            }
 
             // Save the modified prefab
             PrefabUtility.SaveAsPrefabAsset(instantiatedModel, prefabFullPath + model.name + ".prefab");
@@ -97,10 +108,13 @@ public class UnderbrushHandler : MonoBehaviour
 
     // NOTE: in this function, the y transformation is applied
     public void InstantiateUnderbrush(Vector3 position, Quaternion rotation){
-        GameObject prefab = getRandomPrefab();
         position += new Vector3(0f, Random.Range(yDifferenceMin, yDifferenceMax), 0f);
+
         // Instantiate a new object and add it to the hashset
-        underbrushObjects.Add(Instantiate(prefab, position, rotation, parentObject.transform));
+        GameObject placedUnderbrush = objectPooler.SpawnFromPoolOfType(ObjectPooler.PoolType.Underbrush, position, rotation);
+        placedUnderbrush.transform.SetParent(parentObject.transform);
+
+        underbrushObjects.Add(placedUnderbrush);
     }
 
     // When called, create a new wheat object in a random position that is within the coordinates given above
