@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 27.687134, g: 26.220367, b: 28.024517, a: 1}
+  m_IndirectSpecularColor: {r: 27.683407, g: 26.212683, b: 28.016003, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -10313,11 +10313,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainCam: {fileID: 963194227}
   canvasGroup: {fileID: 830734411}
-  saveDirectory: C:/Users/xSkul/OneDrive/Documents/Projects/Wheat/wheat/Datasets/1024x1024-7/similar_to_train_Arvalis_1/
-  labelShader: {fileID: 0}
-  labelLayer:
-    serializedVersion: 2
-    m_Bits: 0
+  datasetsDirectory: C:/Users/xSkul/OneDrive/Documents/Projects/Wheat/wheat/Datasets
+  datasetName: 1024x1024-8
+  domainName: seconddomain
   labelAwnsAsWheatHeads: 0
 --- !u!114 &317227214
 MonoBehaviour:
@@ -10379,6 +10377,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   expectedWheatCount: 2000
+  expectedUnderbrushCount: 20000
 --- !u!114 &317227217
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10397,6 +10396,7 @@ MonoBehaviour:
   yDifferenceMax: 0.5
   parentObject: {fileID: 1697762590}
   positionFinder: {fileID: 317227218}
+  objectPooler: {fileID: 317227216}
 --- !u!114 &317227218
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14358,7 +14358,7 @@ GameObject:
   - component: {fileID: 419039604}
   m_Layer: 3
   m_Name: Terrain
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
@@ -25948,7 +25948,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6275
   m_UseColorTemperature: 1
-  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 7.78e-43}
+  m_BoundingSphereOverride: {x: 7.89e-43, y: NaN, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0

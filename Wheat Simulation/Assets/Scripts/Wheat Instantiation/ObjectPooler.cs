@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class ObjectPooler : MonoBehaviour
 {
@@ -10,24 +11,32 @@ public class ObjectPooler : MonoBehaviour
         Instance = this;
     }
 
-    private Dictionary<string, Queue<GameObject>> poolDictionary = new Dictionary<string, Queue<GameObject>>();
+    public enum PoolType {
+        Wheat = 0,
+        Underbrush = 1
+    }
+    
+    private Dictionary<PoolType, List<Queue<GameObject>>> poolsOfTypeDict = new Dictionary<PoolType, List<Queue<GameObject>>>();
 
     public int expectedWheatCount; // Default size for each pool
     public int expectedUnderbrushCount; // Default size for each pool
 
     void Start()
     {
-        InitializePool(Wheat.GetAllWheatPrefabs(), expectedWheatCount);
-        // InitializePool(UnderbrushHandler.GetAllUnderbrushPrefabs(), expectedUnderbrushCount);
+        InitializePool(PoolType.Wheat, Wheat.GetAllWheatPrefabs(), expectedWheatCount);
+        InitializePool(PoolType.Underbrush, UnderbrushHandler.GetAllUnderbrushPrefabs(), expectedUnderbrushCount);
     }
 
-    public void InitializePool(GameObject[] allPrefabs, int expectedCount){
+    public void InitializePool(PoolType poolType, GameObject[] poolPrefabs, int expectedInstanceCount){
+        List<Queue<GameObject>> pools = new List<Queue<GameObject>>();
+        poolsOfTypeDict[poolType] = pools;
+
         int instancesPerObject = 25; // default
-        if (allPrefabs.Length != 0){
-            instancesPerObject = expectedCount / allPrefabs.Length;
+        if (poolPrefabs.Length != 0){
+            instancesPerObject = expectedInstanceCount / poolPrefabs.Length;
         }
 
-        foreach (GameObject prefab in allPrefabs)
+        foreach (GameObject prefab in poolPrefabs)
         {
             Queue<GameObject> objectPool = new Queue<GameObject>();
 
@@ -38,25 +47,21 @@ public class ObjectPooler : MonoBehaviour
                 objectPool.Enqueue(obj);
             }
 
-            poolDictionary.Add(prefab.name, objectPool);
+            pools.Add(objectPool);
         }
     }
 
-    public GameObject SpawnFromPool(string tag, Vector3 position, Quaternion rotation)
+    public GameObject SpawnFromPoolOfType(PoolType poolType, Vector3 position, Quaternion rotation)
     {
-        if (!poolDictionary.ContainsKey(tag))
-        {
-            Debug.LogWarning("Pool with tag " + tag + " doesn't exist.");
-            return null;
-        }
-
-        GameObject objectToSpawn = poolDictionary[tag].Dequeue();
+        List<Queue<GameObject>> pools = poolsOfTypeDict[poolType];
+        Queue<GameObject> pool = pools[UnityEngine.Random.Range(0, pools.Count-1)];
+        GameObject objectToSpawn = pool.Dequeue();
 
         objectToSpawn.SetActive(true);
         objectToSpawn.transform.position = position;
         objectToSpawn.transform.rotation = rotation;
 
-        poolDictionary[tag].Enqueue(objectToSpawn);
+        pool.Enqueue(objectToSpawn);
 
         return objectToSpawn;
     }
