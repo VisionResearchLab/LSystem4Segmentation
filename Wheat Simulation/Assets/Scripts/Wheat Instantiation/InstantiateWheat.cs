@@ -40,41 +40,40 @@ public void TryGenerateWheat(
     Vector3 requestedPosition, 
     int remainingAttempts = 0, bool placeIfNoRemainingAttempts = true, // If remaining attempts > 0, it will retry placing if it collides, otherwise it just places the wheat.
     PositionFinder.FieldLayout retryPositionLayout = PositionFinder.FieldLayout.Uniform) 
-{;
-    if (ObjectPooler.GetNumberOfPoolsOfType(ObjectPooler.PoolType.Wheat) > 0)
     {
-        // Get the prefab, position, and rotation
-        Vector3 position = MoveDown(requestedPosition);
-        Quaternion rotation = GetRandomRotation();
+        if (ObjectPooler.GetNumberOfPoolsOfType(ObjectPooler.PoolType.Wheat) > 0)
+        {
+            // Get the prefab, position, and rotation
+            Vector3 position = MoveDown(requestedPosition);
+            Quaternion rotation = GetRandomRotation();
 
-        // Instantiate the wheat
-        GameObject newWheat = ObjectPooler.SpawnFromPoolOfType(ObjectPooler.PoolType.Wheat, position, rotation);
-        newWheat.transform.SetParent(parent);
+            // Instantiate the wheat
+            GameObject newWheat = ObjectPooler.SpawnFromPoolOfType(ObjectPooler.PoolType.Wheat, position, rotation);
+            newWheat.transform.SetParent(parent);
 
-        if (remainingAttempts > 0 || !placeIfNoRemainingAttempts){
-            bool overlapping = false;
-            foreach (WheatData wheatData in newWheat.GetComponentsInChildren<WheatData>())
-            {
-                if (wheatData.IsOverlappingWheat())
+            if (remainingAttempts > 0 || !placeIfNoRemainingAttempts){
+                bool overlapping = false;
+                foreach (WheatData wheatData in newWheat.GetComponentsInChildren<WheatData>())
                 {
-                    overlapping = true;
-                    newWheat.SetActive(false); // Instead of Destroy
-                    break;
+                    if (wheatData.IsOverlappingWheat())
+                    {
+                        overlapping = true;
+                        newWheat.SetActive(false); // Instead of Destroy
+                        break;
+                    }
+                }
+                if (overlapping && remainingAttempts > 0)
+                {
+                    TryGenerateWheat(positionFinder.GetPositionFromPattern(retryPositionLayout), 
+                        remainingAttempts-1, placeIfNoRemainingAttempts, retryPositionLayout);
                 }
             }
-            if (overlapping && remainingAttempts > 0)
-            {
-                TryGenerateWheat(positionFinder.GetPositionFromPattern(retryPositionLayout), 
-                    remainingAttempts-1, placeIfNoRemainingAttempts, retryPositionLayout);
-            }
-
+        }
+        else
+        {
+            Debug.Log("Error: No wheat prefabs found!");
         }
     }
-    else
-    {
-        Debug.Log("Error: No wheat prefabs found!");
-    }
-}
 
     private Vector3 MoveDown(Vector3 requestedPosition){
         float downTranslation = Random.Range(downTranslationMin, downTranslationMax);

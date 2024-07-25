@@ -27,10 +27,12 @@ public class Domain {
 
         // Create the wheat prefabs pool for this domain
         string wheatPrefabsDirectory = GetPrefabDirectory("Wheat Models", name);
+        Debug.Log("Trying to initialize pools from directory: " + wheatPrefabsDirectory);
         ObjectPooler.InitializePoolsFromDirectory(ObjectPooler.PoolType.Wheat, wheatPrefabsDirectory, wheatCount);
 
         // Create the underbrush prefabs pool for this domain
         string underbrushPrefabsDirectory = GetPrefabDirectory("Ground Cover Models", name);
+        Debug.Log("Trying to initialize pools from directory: " + underbrushPrefabsDirectory);
         ObjectPooler.InitializePoolsFromDirectory(ObjectPooler.PoolType.Underbrush, underbrushPrefabsDirectory, underbrushCount);
 
         // Instantiate the wheat

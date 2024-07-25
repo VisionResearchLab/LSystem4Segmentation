@@ -40,20 +40,21 @@ public class ObjectPooler : MonoBehaviour
 
     // Same as InitializePools but accepts path to the prefabs instead of a prefab array
     public static void InitializePoolsFromDirectory(PoolType poolType, string prefabsPath, int expectedInstanceCount){
-        GameObject[] poolPrefabs = Resources.LoadAll<GameObject>(prefabsPath);
+        string relativePath = prefabsPath.Replace("\\", "/").Split(new[] { "Assets/Resources/" }, System.StringSplitOptions.None)[1];
+        GameObject[] poolPrefabs = Resources.LoadAll<GameObject>(relativePath);
         InitializePools(poolType, poolPrefabs, expectedInstanceCount);
     }
 
-    // Same as InitializePools but gets prefabs from a list of prefab directory paths
-    public static void InitializePoolsFromDirectories(PoolType poolType, string[] prefabsPaths, int expectedInstanceCount){
-        int numberOfPrefabsPaths = prefabsPaths.Length;
-        List<GameObject> poolPrefabsList = new List<GameObject>();
-        foreach (string prefabsPath in prefabsPaths){
-            poolPrefabsList.AddRange(Resources.LoadAll<GameObject>(prefabsPath));
-        }
-        GameObject[] poolPrefabs = poolPrefabsList.ToArray();
-        InitializePools(poolType, poolPrefabs, expectedInstanceCount / numberOfPrefabsPaths);
-    }
+    // // Same as InitializePools but gets prefabs from a list of prefab directory paths
+    // public static void InitializePoolsFromDirectories(PoolType poolType, string[] prefabsPaths, int expectedInstanceCount){
+    //     int numberOfPrefabsPaths = prefabsPaths.Length;
+    //     List<GameObject> poolPrefabsList = new List<GameObject>();
+    //     foreach (string prefabsPath in prefabsPaths){
+    //         poolPrefabsList.AddRange(Resources.LoadAll<GameObject>(prefabsPath));
+    //     }
+    //     GameObject[] poolPrefabs = poolPrefabsList.ToArray();
+    //     InitializePools(poolType, poolPrefabs, expectedInstanceCount / numberOfPrefabsPaths);
+    // }
 
     public static GameObject SpawnFromPoolOfType(PoolType poolType, Vector3 position, Quaternion rotation)
     {

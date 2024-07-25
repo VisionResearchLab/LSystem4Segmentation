@@ -22,9 +22,10 @@ public class Scheduler : MonoBehaviour {
 
     public void TestWithDomain(){
         // Test with domain greenishWheat
-        Domain greenishWheatDomain = new Domain("greenishWheat");
-        StartCoroutine(ScheduleWithImageLimit(greenishWheatDomain, 100));
-        StartCoroutine(ScheduleWithTimeLimit(greenishWheatDomain, 100));
+        Domain greenishWheatDomain = new Domain("greenishWheat", PositionFinder.FieldLayout.EightRows, 100, 1000);
+        LoadDomain(greenishWheatDomain);
+        // StartCoroutine(ScheduleWithImageLimit(greenishWheatDomain, 100));
+        // StartCoroutine(ScheduleWithTimeLimit(greenishWheatDomain, 100));
     }
 
     public IEnumerator ScheduleWithTimeLimit(Domain domain, int minutesLimit=int.MaxValue){
@@ -141,8 +142,10 @@ public class Scheduler : MonoBehaviour {
 
     //  Load the next Domain in the domains list.
     private void LoadDomain(Domain domain){
-        currentDomain = domain;
-        currentDomain.Build();
+        if (currentDomain != domain){
+            currentDomain = domain;
+            currentDomain.Build();
+        }
     }
 
     //  Light source handling
