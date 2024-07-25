@@ -98,10 +98,4 @@ public class Wheat : MonoBehaviour
         }
         return wheats;
     }
-
-    // Get all wheat prefabs
-    public static GameObject[] GetAllWheatPrefabs(){
-        string wheatPrefabPath = "Prefabs/Wheat Models";
-        return Resources.LoadAll<GameObject>(wheatPrefabPath);
-    }
 }

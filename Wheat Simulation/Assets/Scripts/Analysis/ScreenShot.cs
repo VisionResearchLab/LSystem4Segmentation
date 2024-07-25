@@ -8,7 +8,6 @@ using Unity.Collections;
 using System.Diagnostics;
 using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Xml;
 using System.Linq;
 
 public class ScreenShot : MonoBehaviour
@@ -24,7 +23,7 @@ public class ScreenShot : MonoBehaviour
     // Save directory
     [SerializeField] private string datasetsDirectory;
     [SerializeField] private string datasetName;
-    [SerializeField] private string domainName;
+    private string domainName => scheduler.currentDomain.name;
     private string datasetDirectory => $"{datasetsDirectory}/{datasetName}/";
     private string domainDirectory => $"{datasetsDirectory}/{datasetName}/{domainName}/";
     private string datasetJSONPath => $"{datasetsDirectory}/{datasetName}/{domainName}/annotations.json";
@@ -38,19 +37,22 @@ public class ScreenShot : MonoBehaviour
 
     // Get the InstanceLabels object which will overwrite the JSON after each image
     private DatasetJSON datasetJSON;
+    [SerializeField] private Scheduler scheduler;
 
 
     // Define scripts with functions that need to be called
     private void Start(){
         ShowUI();
 
+        
+    }
+
+    public bool DirectoryIsValid(){
         // Check if the dataset and domain fields are filled in
-        if (
-            datasetDirectory == "" || datasetDirectory == null
-            || datasetName == "" || datasetName == null
-            || domainName == "" || domainName == null)
+        if (domainName == null || domainName == "" ||  datasetDirectory == null || datasetDirectory == "" ||  domainDirectory == null  || domainDirectory == "")
             {
                 UnityEngine.Debug.LogError("The dataset and domain directories must be declared before generating a dataset.");
+                return false;
             }
 
         // Check if the DATASETS directory exists. If it does, proceed.
@@ -60,19 +62,23 @@ public class ScreenShot : MonoBehaviour
             if (!Directory.Exists(domainDirectory)){
                 Directory.CreateDirectory(domainDirectory);
                 InitializeDatasetJSONWithCategories();
+                return true;
             } 
             // Try to load instanceLabels from the JSON if the domain was found
             else {
                 if (File.Exists(datasetJSONPath)){
                     string jsonContent = File.ReadAllText(datasetJSONPath);
                     datasetJSON = JsonConvert.DeserializeObject<DatasetJSON>(jsonContent);
+                    return true;
                 } else {
                     InitializeDatasetJSONWithCategories();
+                    return true;
                 }
             }
         }
         else {
             UnityEngine.Debug.LogError("The datasets directory could not be found.");
+            return false;
         }
     }
 
@@ -83,32 +89,36 @@ public class ScreenShot : MonoBehaviour
     }
 
     public IEnumerator ScreenshotSequenceEnum(float secondsDelay){
-        DateTime dateTimeNow = DateTime.Now;
-        string dateTime = dateTimeNow.ToString("yyyy-MM-dd_HH-mm-ss");
-        string dateTimeJSONFormatting = dateTimeNow.ToString("yyyy-MM-dd HH:mm:ss");
+        if(DirectoryIsValid()){
+            DateTime dateTimeNow = DateTime.Now;
+            string dateTime = dateTimeNow.ToString("yyyy-MM-dd_HH-mm-ss");
+            string dateTimeJSONFormatting = dateTimeNow.ToString("yyyy-MM-dd HH:mm:ss");
 
-        string imageName = dateTime + "_image" + ".png";
-        string imagePath = GetUniqueAssetPathInDomain(imageName);
+            string imageName = dateTime + "_image" + ".png";
+            string imagePath = GetUniqueAssetPathInDomain(imageName);
 
-        string labelName = dateTime + "_label" + ".png";
-        string labelPath = GetUniqueAssetPathInDomain(labelName);
+            string labelName = dateTime + "_label" + ".png";
+            string labelPath = GetUniqueAssetPathInDomain(labelName);
 
-        HideUI();
-        yield return new WaitForSeconds(secondsDelay);
+            HideUI();
+            yield return new WaitForSeconds(secondsDelay);
 
-        // Create the image, assign it an ID, then add it to the JSON
-        StartCoroutine(ImageScreenshot(imagePath));
-        int imageID = datasetJSON.images.Count;
-        AddImageToDataset(imageID, imageName, dateTimeJSONFormatting);
+            // Create the image, assign it an ID, then add it to the JSON
+            StartCoroutine(ImageScreenshot(imagePath));
+            int imageID = datasetJSON.images.Count;
+            AddImageToDataset(imageID, imageName, dateTimeJSONFormatting);
 
-        // Use raycasts to create a BMP of annotation IDs for the current image, then add them to the JSON
-        Annotate(imageID, labelName, labelPath);
+            // Use raycasts to create a BMP of annotation IDs for the current image, then add them to the JSON
+            Annotate(imageID, labelName, labelPath);
 
-        // Update the JSON so prior changes are included
-        UpdateJSONFile();
+            // Update the JSON so prior changes are included
+            UpdateJSONFile();
 
-        yield return new WaitForEndOfFrame();
-        ShowUI();
+            yield return new WaitForEndOfFrame();
+            ShowUI();
+        } else {
+            UnityEngine.Debug.LogError("One or more directories are invalid.");
+        }
     }
 
     // Returns a unique filepath in the screenshots folder based on the given name
