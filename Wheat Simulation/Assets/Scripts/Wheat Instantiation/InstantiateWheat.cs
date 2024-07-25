@@ -40,17 +40,15 @@ public void TryGenerateWheat(
     Vector3 requestedPosition, 
     int remainingAttempts = 0, bool placeIfNoRemainingAttempts = true, // If remaining attempts > 0, it will retry placing if it collides, otherwise it just places the wheat.
     PositionFinder.FieldLayout retryPositionLayout = PositionFinder.FieldLayout.Uniform) 
-{
-    GameObject[] wheatPrefabs = Wheat.GetAllWheatPrefabs();
-    int numberOfWheatPrefabs = wheatPrefabs.Length;
-    if (numberOfWheatPrefabs > 0)
+{;
+    if (ObjectPooler.GetNumberOfPoolsOfType(ObjectPooler.PoolType.Wheat) > 0)
     {
         // Get the prefab, position, and rotation
         Vector3 position = MoveDown(requestedPosition);
         Quaternion rotation = GetRandomRotation();
 
         // Instantiate the wheat
-        GameObject newWheat = ObjectPooler.Instance.SpawnFromPoolOfType(ObjectPooler.PoolType.Wheat, position, rotation);
+        GameObject newWheat = ObjectPooler.SpawnFromPoolOfType(ObjectPooler.PoolType.Wheat, position, rotation);
         newWheat.transform.SetParent(parent);
 
         if (remainingAttempts > 0 || !placeIfNoRemainingAttempts){
@@ -92,12 +90,9 @@ public void TryGenerateWheat(
         return rotation;
     }
 
-    public void LoopAddWheat(PositionFinder.FieldLayout shape = PositionFinder.FieldLayout.Uniform)
+    public void LoopAddWheat(int quantity, PositionFinder.FieldLayout shape = PositionFinder.FieldLayout.Uniform)
     {
-        // Get the amount of wheat to place from the user input
-        int quantityToPlace = int.Parse(quantityToPlaceInputField.GetComponent<TMPro.TMP_InputField>().text);
-
-        for (int i = 0; i < quantityToPlace; i++){
+        for (int i = 0; i < quantity; i++){
             // Place in a position obtained from GetPositionInWheatBounds, or retry if that position is occupied
             Vector3 position = positionFinder.GetPositionFromPattern(shape);
             TryGenerateWheat(position, numberOfPlaceAttempts, retryPositionLayout:shape);

@@ -12,9 +12,6 @@ public class InputHandler : MonoBehaviour
     // Mouse Over Wheat
     [SerializeField] private MouseOverWheatHandler mouseOverWheatHandler;
 
-    // Scan Wheat
-    [SerializeField] private ScanScene scanScene;
-
     // Place Wheat at Cursor
     [SerializeField] private PlaceAtCursor placeAtCursor;
 
@@ -22,7 +19,7 @@ public class InputHandler : MonoBehaviour
     [SerializeField] private ScreenShot screenShot;
     
     // Auto orbit scanning script
-    [SerializeField] private AutoOrbitScan autoOrbitScan;
+    [SerializeField] private OrbitHandler autoOrbitScan;
 
     // Place underbrush objects script
     [SerializeField] private UnderbrushHandler underbrushHandler;
@@ -32,6 +29,8 @@ public class InputHandler : MonoBehaviour
 
     // Map KeyCodes to Actions
     Dictionary<KeyCode, Action> keyMap = new Dictionary<KeyCode, Action>();
+    
+    [SerializeField] private Scheduler scheduler;
     
     void Start(){
         // Maps keybinds to functions in other scripts
@@ -43,8 +42,8 @@ public class InputHandler : MonoBehaviour
         keyMap[KeyCode.Alpha3] = AddManyUnderbrushUniformLayout;
         keyMap[KeyCode.Alpha4] = AddManyUnderbrushRowLayout;
         keyMap[KeyCode.T] = TakeScreenShot;
-        keyMap[KeyCode.Y] = BeginOrbiting;
-        keyMap[KeyCode.U] = EndOrbiting;
+        keyMap[KeyCode.Y] = RunSchedule;
+        keyMap[KeyCode.U] = InterruptSchedule;
     }
 
     // Update is called once per frame
@@ -62,15 +61,6 @@ public class InputHandler : MonoBehaviour
     private void DetectWheatPart(){
         mouseOverWheatHandler.DetectWheatPart();
     }
-    
-    // Print the appr. number of each part that are on screen, and as a percent of total
-    private void ScanWheat(){
-        scanScene.ScanWheat();
-    }
-
-    // private void PlaceObjectsAtCursor(){
-    //     placeAtCursor.PlaceObjectsAtCursor();
-    // }
 
     // Take a screen shot
     private void TakeScreenShot(){
@@ -78,27 +68,27 @@ public class InputHandler : MonoBehaviour
     }
 
     // Auto orbit camera and take screenshots of scene
-    private void BeginOrbiting(){
-        StartCoroutine(autoOrbitScan.BeginOrbiting());
+    private void RunSchedule(){
+        scheduler.TestWithDomain();
     }
 
-    private void EndOrbiting(){
-        autoOrbitScan.EndOrbiting();
+    private void InterruptSchedule(){
+        scheduler.Interrupt();
     }
 
     private void AddManyWheatUniformLayout(){
-        instantiateWheat.LoopAddWheat(PositionFinder.FieldLayout.Uniform);
+        instantiateWheat.LoopAddWheat(100, PositionFinder.FieldLayout.Uniform);
     }
 
     private void AddManyWheatRowLayout(){
-        instantiateWheat.LoopAddWheat(PositionFinder.FieldLayout.EightRows);
+        instantiateWheat.LoopAddWheat(100, PositionFinder.FieldLayout.EightRows);
     }
 
     private void AddManyUnderbrushUniformLayout(){
-        underbrushHandler.LoopInstantiateUnderbrushInBounds(PositionFinder.FieldLayout.Uniform);
+        underbrushHandler.LoopInstantiateUnderbrushInBounds(1000, PositionFinder.FieldLayout.Uniform);
     }
 
     private void AddManyUnderbrushRowLayout(){
-        underbrushHandler.LoopInstantiateUnderbrushInBounds(PositionFinder.FieldLayout.EightRows);
+        underbrushHandler.LoopInstantiateUnderbrushInBounds(1000, PositionFinder.FieldLayout.EightRows);
     }
 }
