@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
-using System.IO;
 using System.Collections;
 using System;
+using System.Text;
 
-public class Scheduler : MonoBehaviour {
+public class ScheduleInterpreter : MonoBehaviour {
     public Domain currentDomain;
 
     private EventDictionary eventDictionary = new EventDictionary();
@@ -20,43 +20,70 @@ public class Scheduler : MonoBehaviour {
         eventDictionary.AddEvent(moveTerrainPosition, 15);
     }
 
-    public void TestWithDomain(){
-        // Test with domain greenishWheat
-        Domain greenishWheatDomain = new Domain("greenishWheat", PositionFinder.FieldLayout.EightRows, 100, 1000);
-        LoadDomain(greenishWheatDomain);
-        // StartCoroutine(ScheduleWithImageLimit(greenishWheatDomain, 100));
-        // StartCoroutine(ScheduleWithTimeLimit(greenishWheatDomain, 100));
+    public IEnumerator RunSchedule(Schedule schedule){
+        List<Domain> domains = schedule.domains;
+        List<Order> orders = schedule.orders;
+
+        Domain GetDomainForOrder(Order order){
+            foreach (Domain domain in domains){
+                if (domain.name == order.domainName) { return domain; }
+            }
+            return null;
+        }
+
+        foreach (Order order in orders){
+            Domain domain = GetDomainForOrder(order);
+            yield return StartCoroutine(InterpretOrder(order, domain));
+        }
     }
 
-    public IEnumerator ScheduleWithTimeLimit(Domain domain, int minutesLimit=int.MaxValue){
+    public IEnumerator InterpretOrder(Order order, Domain domain){
         LoadDomain(domain);
+
         DateTime initialTime = DateTime.Now;
-        int currentIteration = 0;
+        int minutesLimit = order.minutesLimit;
 
-        while (!interrupt && (DateTime.Now - initialTime).TotalMinutes < minutesLimit){
-            // Orbit the camera. Take a picture.
+        int currentIteration = 0;
+        int imagesLimit = order.imagesLimit;
+
+        bool timeIsValid(){
+            // Check if there is a time limit
+            if (minutesLimit == -1){
+                return true;
+            }
+            // If there is a time limit, check if the time has passed
+            if ((DateTime.Now - initialTime).TotalMinutes < minutesLimit){
+                return true;
+            }
+            return false;
+        }
+
+        bool imageCountIsValid(){
+            // Check if there is a image count limit
+            if (imagesLimit == -1){
+                return true;
+            }
+            // Return true if there are less images than the image limit
+            if (currentIteration < imagesLimit){
+                return true;
+            }
+            return false;
+        }
+
+        while (!interrupt && timeIsValid() && imageCountIsValid()){
+            yield return null; // Wait a frame to allow the user to see changes
+
+            // Run iteration: Check events, move camera, take picture.
             yield return StartCoroutine(RunIteration(currentIteration));
-            currentIteration += 1;
             
-            // Log remaining time
-            Debug.Log($"Remaining time: {minutesLimit - (DateTime.Now - initialTime).TotalMinutes} min");
-        }
-        if (interrupt){
-            interrupt = false;
-        }
-    }
-
-    public IEnumerator ScheduleWithImageLimit(Domain domain, int imagesLimit=int.MaxValue){
-        LoadDomain(domain);
-        int currentIteration = 0;
-
-        while (!interrupt && currentIteration < imagesLimit){
-            // Orbit the camera. Take a picture.
-            yield return StartCoroutine(RunIteration(currentIteration));
+            // Print a progress message
+            StringBuilder progress = new StringBuilder();
+            if (imageCountIsValid()){
+                progress.Append($"{currentIteration + 1}/{imagesLimit} images created.\n");
+            } if (timeIsValid()){
+                progress.Append($"Up to {minutesLimit - (DateTime.Now - initialTime).TotalMinutes} minutes remaining");
+            }
             currentIteration += 1;
-
-            // Log remaining images
-            Debug.Log($"{currentIteration}/{imagesLimit} images taken.");
         }
         if (interrupt){
             interrupt = false;
@@ -64,12 +91,16 @@ public class Scheduler : MonoBehaviour {
     }
 
     private IEnumerator RunIteration(int currentIteration){
+
         // Run each event in the EventDictionary for this iteration, in no particular order.
+        MoveCamera();
+        yield return new WaitForSeconds(1.0f); // TEST, delete this later
+        
         float waitTime = eventDictionary.RunEventsForIteration(currentIteration);
+        // Debug.Log($"Wait time: {waitTime}");
         yield return new WaitForSeconds(waitTime);
 
         // Take the screenshots
-        MoveCamera();
         yield return StartCoroutine(TakePicture());
     }
 

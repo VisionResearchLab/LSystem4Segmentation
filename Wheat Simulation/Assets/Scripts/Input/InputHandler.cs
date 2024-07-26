@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using OpenCover.Framework.Model;
 using Unity.VisualScripting;
 using UnityEngine;
+using Newtonsoft.Json;
+using UnityEditor.Build;
+using System.IO;
 
 public class InputHandler : MonoBehaviour
 {
@@ -30,7 +33,7 @@ public class InputHandler : MonoBehaviour
     // Map KeyCodes to Actions
     Dictionary<KeyCode, Action> keyMap = new Dictionary<KeyCode, Action>();
     
-    [SerializeField] private Scheduler scheduler;
+    [SerializeField] private ScheduleInterpreter scheduleInterpreter;
     
     void Start(){
         // Maps keybinds to functions in other scripts
@@ -42,7 +45,8 @@ public class InputHandler : MonoBehaviour
         keyMap[KeyCode.Alpha3] = AddManyUnderbrushUniformLayout;
         keyMap[KeyCode.Alpha4] = AddManyUnderbrushRowLayout;
         keyMap[KeyCode.T] = TakeScreenShot;
-        keyMap[KeyCode.Y] = RunSchedule;
+        keyMap[KeyCode.R] = CreateTestSchedule;
+        keyMap[KeyCode.Y] = RunTestSchedule;
         keyMap[KeyCode.U] = InterruptSchedule;
     }
 
@@ -67,13 +71,43 @@ public class InputHandler : MonoBehaviour
         screenShot.TakeScreenShot();
     }
 
-    // Auto orbit camera and take screenshots of scene
-    private void RunSchedule(){
-        scheduler.TestWithDomain();
+    private void CreateTestSchedule(){
+        // Create the domain and order
+        string domainName = "greenishWheat";
+        int imagesLimit = 15;
+        int timeLimit = 5;
+        Domain domain = new Domain(domainName, PositionFinder.FieldLayout.EightRows, 4000, 40000);
+        Order order = new Order(domainName, imagesLimit, timeLimit);
+
+        // Create the schedule
+        Schedule schedule = new Schedule();
+        schedule.domains.Add(domain);
+        schedule.orders.Add(order);
+
+        string testScheduleName = "sched";
+        string fullPath = Path.GetFullPath($"Assets/Schedules/{testScheduleName}.json");
+        JsonConvert.SerializeObject(fullPath);
+    }
+
+    // Create a test schedule and run it.
+    private void RunTestSchedule(){
+        string testSched = "sched";
+        Schedule schedule = LoadScheduleByName(testSched);
+
+        RunSchedule(schedule);
+    }
+
+    private void RunSchedule(Schedule schedule){
+        StartCoroutine(scheduleInterpreter.RunSchedule(schedule));
+    }
+
+    private Schedule LoadScheduleByName(string name){
+        string fullPath = Path.GetFullPath($"Assets/Schedules/{name}.json");
+        return JsonConvert.DeserializeObject<Schedule>(fullPath);
     }
 
     private void InterruptSchedule(){
-        scheduler.Interrupt();
+        scheduleInterpreter.Interrupt();
     }
 
     private void AddManyWheatUniformLayout(){
