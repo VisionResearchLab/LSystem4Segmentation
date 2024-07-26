@@ -23,7 +23,7 @@ public class ScreenShot : MonoBehaviour
     // Save directory
     [SerializeField] private string datasetsDirectory;
     [SerializeField] private string datasetName;
-    private string domainName => scheduler.currentDomain.name;
+    private string domainName => scheduleInterpreter.currentDomain.name;
     private string datasetDirectory => $"{datasetsDirectory}/{datasetName}/";
     private string domainDirectory => $"{datasetsDirectory}/{datasetName}/{domainName}/";
     private string datasetJSONPath => $"{datasetsDirectory}/{datasetName}/{domainName}/annotations.json";
@@ -37,7 +37,7 @@ public class ScreenShot : MonoBehaviour
 
     // Get the InstanceLabels object which will overwrite the JSON after each image
     private DatasetJSON datasetJSON;
-    [SerializeField] private Scheduler scheduler;
+    [SerializeField] private ScheduleInterpreter scheduleInterpreter;
 
 
     // Define scripts with functions that need to be called

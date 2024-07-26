@@ -15,7 +15,10 @@ public class OrbitHandler : MonoBehaviour
     private Quaternion initialCameraRotation;
     
     // Local variables for camera movement
-    private Vector3 cameraOrbitFocus;
+    private Vector3 focus => GetCameraOrbitFocus();
+    private Vector3[] bounds => GetCameraOrbitBounds();
+    private Vector3 bound0 => bounds[0];
+    private Vector3 bound1 => bounds[1];
 
     // Adjustable variables
     [SerializeField] private float minCameraHeight;
@@ -24,7 +27,6 @@ public class OrbitHandler : MonoBehaviour
     void Start(){
         initialCameraPosition = cam.transform.position;
         initialCameraRotation = cam.transform.rotation;
-        cameraOrbitFocus = GetCameraOrbitFocus();
     }
 
     private Vector3 GetCameraOrbitFocus(){
@@ -63,22 +65,18 @@ public class OrbitHandler : MonoBehaviour
     }
 
     public void MoveCameraRandomly(){
-        Vector3 center = GetCameraOrbitFocus();
-        Vector3 bound0 = GetCameraOrbitBounds()[0];
-        Vector3 bound1 = GetCameraOrbitBounds()[1];
-
         float x_diff = bound0.x - bound1.x;
         float z_diff = bound0.z - bound1.z;
         float pos_variance = 0.4f; // How much the camera can move around within the orbit bounds
 
-        float x_pos = cameraOrbitFocus.x + Random.Range(-pos_variance * x_diff, pos_variance * x_diff);
-        float y_pos = cameraOrbitFocus.y + Random.Range(minCameraHeight, minCameraHeight + maxCameraHeight); // Wheat is 6 units tall
-        float z_pos = cameraOrbitFocus.z + Random.Range(-pos_variance * z_diff, pos_variance * z_diff);
+        float x_pos = focus.x + Random.Range(-pos_variance * x_diff, pos_variance * x_diff);
+        float y_pos = focus.y + Random.Range(minCameraHeight, minCameraHeight + maxCameraHeight); // Wheat is 6 units tall
+        float z_pos = focus.z + Random.Range(-pos_variance * z_diff, pos_variance * z_diff);
 
         Vector3 cam_pos = new Vector3(x_pos, y_pos, z_pos);
 
         cam.transform.SetPositionAndRotation(cam_pos, cam.transform.rotation);
-        cam.transform.LookAt(center);
+        cam.transform.LookAt(focus);
         
         // Lower camera angle if its angle is too high and might see background
         if (cam.transform.rotation.x < 40f){

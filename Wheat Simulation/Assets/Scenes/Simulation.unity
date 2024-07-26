@@ -10040,7 +10040,7 @@ MonoBehaviour:
   autoOrbitScan: {fileID: 317227214}
   underbrushHandler: {fileID: 317227217}
   instantiateWheat: {fileID: 317227208}
-  scheduler: {fileID: 317227219}
+  scheduleInterpreter: {fileID: 317227219}
 --- !u!114 &317227211
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10082,7 +10082,7 @@ MonoBehaviour:
   datasetsDirectory: C:/Users/xSkul/OneDrive/Documents/Projects/Wheat/wheat/Datasets
   datasetName: 1024x1024-test
   labelAwnsAsWheatHeads: 0
-  scheduler: {fileID: 317227219}
+  scheduleInterpreter: {fileID: 317227219}
 --- !u!114 &317227214
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10172,6 +10172,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06eea37298d4297429327303a0e192d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentDomain:
+    name: 
+    arrangement: 0
+    wheatCount: 0
+    underbrushCount: 0
 --- !u!1001 &318005699
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -25707,7 +25712,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6275
   m_UseColorTemperature: 1
-  m_BoundingSphereOverride: {x: 2.020381e-39, y: 9.1835e-41, z: 0, w: 1.0609465e+31}
+  m_BoundingSphereOverride: {x: 1.02e-43, y: 1.8e-44, z: 4.7838e-41, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0

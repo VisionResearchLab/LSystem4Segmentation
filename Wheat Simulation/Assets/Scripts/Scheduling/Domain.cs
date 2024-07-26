@@ -1,57 +1,60 @@
-using UnityEditor;
-using UnityEngine;
-using System.IO;
+// using UnityEditor;
+// using UnityEngine;
+// using System.IO;
+// using System.Runtime.InteropServices;
 
-public class Domain {
-    public string name;
-    public PositionFinder.FieldLayout arrangement;
-    public int wheatCount;
-    public int underbrushCount;
+// public class Domain {
+//     public string name;
+//     public PositionFinder.FieldLayout arrangement;
+//     public int wheatCount;
+//     public int underbrushCount;
 
-    // Inputs
-    public Domain(
-        string name,
-        PositionFinder.FieldLayout arrangement  = PositionFinder.FieldLayout.Uniform, 
-        int wheatCount                          = 2000, 
-        int underbrushCount                     = 20000)
-        {
-            this.name = name;
-            this.arrangement = arrangement;
-            this.wheatCount = wheatCount;
-            this.underbrushCount = underbrushCount;
-        }
+//     // Inputs
+//     public Domain(
+//         string name,
+//         PositionFinder.FieldLayout arrangement  = PositionFinder.FieldLayout.Uniform, 
+//         int wheatCount                          = 2000, 
+//         int underbrushCount                     = 20000
+//         )
+//         {
+//             this.name = name;
+//             this.arrangement = arrangement;
+//             this.wheatCount = wheatCount;
+//             this.underbrushCount = underbrushCount;
+//         }
 
-    public void Build(){
-        // Clear previous domain
-        ObjectPooler.ClearAllPools();
+//     public void Build(){
+//         // Clear previous domain
+//         ObjectPooler.ClearAllPools();
 
-        // Create the wheat prefabs pool for this domain
-        string wheatPrefabsDirectory = GetPrefabDirectory("Wheat Models", name);
-        Debug.Log("Trying to initialize pools from directory: " + wheatPrefabsDirectory);
-        ObjectPooler.InitializePoolsFromDirectory(ObjectPooler.PoolType.Wheat, wheatPrefabsDirectory, wheatCount);
+//         // Create the wheat prefabs pool for this domain
+//         string wheatPrefabsDirectory = GetPrefabDirectory("Wheat Models", name);
+//         // Debug.Log("Trying to initialize pools from directory: " + wheatPrefabsDirectory);
+//         ObjectPooler.InitializePoolsFromDirectory(ObjectPooler.PoolType.Wheat, wheatPrefabsDirectory, wheatCount);
 
-        // Create the underbrush prefabs pool for this domain
-        string underbrushPrefabsDirectory = GetPrefabDirectory("Ground Cover Models", name);
-        Debug.Log("Trying to initialize pools from directory: " + underbrushPrefabsDirectory);
-        ObjectPooler.InitializePoolsFromDirectory(ObjectPooler.PoolType.Underbrush, underbrushPrefabsDirectory, underbrushCount);
+//         // Create the underbrush prefabs pool for this domain
+//         string underbrushPrefabsDirectory = GetPrefabDirectory("Ground Cover Models", name);
+//         // Debug.Log("Trying to initialize pools from directory: " + underbrushPrefabsDirectory);
+//         ObjectPooler.InitializePoolsFromDirectory(ObjectPooler.PoolType.Underbrush, underbrushPrefabsDirectory, underbrushCount);
 
-        // Instantiate the wheat
-        InstantiateWheat instantiateWheat = Object.FindObjectOfType<InstantiateWheat>();
-        instantiateWheat.LoopAddWheat(wheatCount, arrangement);
+//         // Instantiate the wheat
+//         InstantiateWheat instantiateWheat = Object.FindObjectOfType<InstantiateWheat>();
+//         instantiateWheat.LoopAddWheat(wheatCount, arrangement, 5);
+//         // Debug.Log(arrangement.ToString());
 
-        // Instantiate underbrush
-        UnderbrushHandler underbrushHandler = Object.FindObjectOfType<UnderbrushHandler>();
-        underbrushHandler.LoopInstantiateUnderbrushInBounds(underbrushCount, arrangement);
-    }
+//         // Instantiate underbrush
+//         UnderbrushHandler underbrushHandler = Object.FindObjectOfType<UnderbrushHandler>();
+//         underbrushHandler.LoopInstantiateUnderbrushInBounds(underbrushCount, arrangement);
+//     }
 
-    static private string GetPrefabDirectory(string prefabType, string domainName){
-        string relativePath = $"Assets/Resources/Prefabs/{prefabType}/{domainName}";
-        string fullPath = Path.GetFullPath(relativePath);
-        if (Directory.Exists(fullPath))
-            return fullPath;
-        else {
-            Debug.LogError("Could not find the domain path.");
-            return null;
-        }
-    }
-}
+//     static private string GetPrefabDirectory(string prefabType, string domainName){
+//         string relativePath = $"Assets/Resources/Prefabs/{prefabType}/{domainName}";
+//         string fullPath = Path.GetFullPath(relativePath);
+//         if (Directory.Exists(fullPath))
+//             return fullPath;
+//         else {
+//             Debug.LogError("Could not find the domain path.");
+//             return null;
+//         }
+//     }
+// }

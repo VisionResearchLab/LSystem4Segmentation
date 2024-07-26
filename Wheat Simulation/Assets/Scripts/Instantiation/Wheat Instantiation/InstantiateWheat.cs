@@ -17,9 +17,6 @@ public class InstantiateWheat : MonoBehaviour
     // Parent object of the instantiated wheats
     public Transform parent;
 
-    // Number of times to attempt placing in a unique position before just placing the wheat
-    private int numberOfPlaceAttempts = 3;
-
     // UI text field that sets the amount of wheat objects to place when placing large amounts of wheat
     public TMPro.TMP_InputField quantityToPlaceInputField;
 
@@ -89,12 +86,12 @@ public void TryGenerateWheat(
         return rotation;
     }
 
-    public void LoopAddWheat(int quantity, PositionFinder.FieldLayout shape = PositionFinder.FieldLayout.Uniform)
+    public void LoopAddWheat(int quantity, PositionFinder.FieldLayout shape = PositionFinder.FieldLayout.Uniform, int maxPlaceAttempts = 3)
     {
         for (int i = 0; i < quantity; i++){
             // Place in a position obtained from GetPositionInWheatBounds, or retry if that position is occupied
             Vector3 position = positionFinder.GetPositionFromPattern(shape);
-            TryGenerateWheat(position, numberOfPlaceAttempts, retryPositionLayout:shape);
+            TryGenerateWheat(position, maxPlaceAttempts, retryPositionLayout:shape);
         }
     }
 }
