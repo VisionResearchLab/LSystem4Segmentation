@@ -10,11 +10,11 @@ public class LightSourceHandler : MonoBehaviour {
     public void SwapLightSource(){
         activeLightSource = lightSources[Random.Range(0, lightSources.Count - 1)];
 
-        // Set the active light source to the new light source.
-        activeLightSource.SetActive(true);
-
         // Disable all other light sources.
         DisableAllOtherLightSources(activeLightSource);
+
+        // Set the active light source to the new light source.
+        activeLightSource.SetActive(true);
     }
 
     public void ResetLightSource(){
