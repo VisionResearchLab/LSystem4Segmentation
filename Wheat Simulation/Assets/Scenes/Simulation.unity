@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 27.682983, g: 26.213434, b: 28.017525, a: 1}
+  m_IndirectSpecularColor: {r: 27.719349, g: 26.258915, b: 28.098515, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -9980,6 +9980,8 @@ GameObject:
   - component: {fileID: 317227218}
   - component: {fileID: 317227217}
   - component: {fileID: 317227219}
+  - component: {fileID: 317227221}
+  - component: {fileID: 317227220}
   m_Layer: 0
   m_Name: Singletons
   m_TagString: Untagged
@@ -10079,8 +10081,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainCam: {fileID: 963194227}
   canvasGroup: {fileID: 830734411}
-  datasetsDirectory: C:/Users/xSkul/OneDrive/Documents/Projects/Wheat/wheat/Datasets
-  datasetName: 1024x1024-test
+  datasetsDirectory: K:/Users/Skull/Downloads/temp_datasets
+  datasetName: instanceSeg1
   labelAwnsAsWheatHeads: 0
   scheduleInterpreter: {fileID: 317227219}
 --- !u!114 &317227214
@@ -10140,7 +10142,7 @@ MonoBehaviour:
   scaleModifier: 20
   quantityToPlaceInputField: {fileID: 782437343}
   yDifferenceMin: 0
-  yDifferenceMax: 0.5
+  yDifferenceMax: 1
   parentObject: {fileID: 1697762590}
   positionFinder: {fileID: 317227218}
   objectPooler: {fileID: 317227216}
@@ -10177,6 +10179,41 @@ MonoBehaviour:
     arrangement: 0
     wheatCount: 0
     underbrushCount: 0
+--- !u!114 &317227220
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 317227207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a5943362c024604ea8e28c308a7b4ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultSun: {fileID: 705507993}
+  lightSources:
+  - {fileID: 1713073767}
+  - {fileID: 2074630692}
+  - {fileID: 901684290}
+  - {fileID: 680475488}
+  - {fileID: 625413411}
+  - {fileID: 954122457}
+  - {fileID: 1979964370}
+  - {fileID: 924720639}
+--- !u!114 &317227221
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 317227207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 976264e452f617b4b91dcca92a1b5629, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxMove: 10
 --- !u!1001 &318005699
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -25712,7 +25749,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6275
   m_UseColorTemperature: 1
-  m_BoundingSphereOverride: {x: 1.02e-43, y: 1.8e-44, z: 4.7838e-41, w: 0}
+  m_BoundingSphereOverride: {x: 0, y: 6e-44, z: 1.8e-44, w: 2.30271e-40}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0

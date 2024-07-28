@@ -16,8 +16,8 @@ public class ScheduleInterpreter : MonoBehaviour {
         Event swapLightSource = new Event("Switch Sky", 4.0f, SwapLightSource);
         eventDictionary.AddEvent(swapLightSource, 20);
 
-        Event moveTerrainPosition = new Event("Move Terrain Position", 0.5f, MoveTerrain);
-        eventDictionary.AddEvent(moveTerrainPosition, 15);
+        // Event moveTerrainPosition = new Event("Move Terrain Position", 0.5f, MoveTerrain);
+        // eventDictionary.AddEvent(moveTerrainPosition, 15);
     }
 
     public IEnumerator RunSchedule(Schedule schedule){
@@ -78,11 +78,13 @@ public class ScheduleInterpreter : MonoBehaviour {
             
             // Print a progress message
             StringBuilder progress = new StringBuilder();
+                progress.Append($"Domain name: {domain.name}\n");
             if (imageCountIsValid()){
                 progress.Append($"{currentIteration + 1}/{imagesLimit} images created.\n");
             } if (timeIsValid()){
                 progress.Append($"Up to {minutesLimit - (DateTime.Now - initialTime).TotalMinutes} minutes remaining");
             }
+            Debug.Log(progress.ToString());
             currentIteration += 1;
         }
         if (interrupt){
@@ -135,7 +137,7 @@ public class ScheduleInterpreter : MonoBehaviour {
                     }
                 }
             }
-           
+            
             // Execute events and sum wait times
             if (events.Count > 0){
                 // Add up their wait times
