@@ -68,6 +68,15 @@ public class Domain {
     }
 }
 
+
+[Serializable]
+public class EventSchedule {
+    public EventSchedule(string name, List<string> terrainLayerNames){
+        public string name;
+        public Dictionary<Event, int> eventToFrequency;
+    }
+}
+
 [Serializable]
 public class Order {
     public string domainName;

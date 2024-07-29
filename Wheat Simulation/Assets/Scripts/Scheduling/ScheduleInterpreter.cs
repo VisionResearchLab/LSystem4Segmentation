@@ -9,6 +9,16 @@ public class ScheduleInterpreter : MonoBehaviour {
 
     private EventDictionary eventDictionary = new EventDictionary();
 
+    private Dictionary<EventEnum, Action> eventToAction = new Dictionary<EventEnum, Action>(){ 
+        [EventEnum.ChangeSky] = ChangeSky;
+    }
+
+    public enum EventEnum {
+        ChangeSky = 0,
+        MoveGround = 1,
+        ChangeGround
+    }
+
     private bool interrupt = false; // Used to stop the schedule via a key input.
 
 
