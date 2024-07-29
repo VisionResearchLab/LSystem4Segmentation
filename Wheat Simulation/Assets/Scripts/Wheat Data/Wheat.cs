@@ -16,13 +16,6 @@ public class Wheat : MonoBehaviour
         Awns = 4
     }
 
-    // Maps each Part to a color material for annotating data
-    public static Dictionary<Part, Material> partAnnotationMaterials = new Dictionary<Part, Material> {
-        {Part.Head, new Material(Shader.Find("Standard")) { color = Color.red }},
-        {Part.Stem, new Material(Shader.Find("Standard")) { color = Color.blue }},
-        {Part.Leaf, new Material(Shader.Find("Standard")) { color = Color.green }}
-    };
-
     // Track whether wheat objects are currently annotated (materials are simplified colors) or not
     public static bool wheatIsAnnotated = false;
 
@@ -35,8 +28,8 @@ public class Wheat : MonoBehaviour
     public static int awnsLayer = 12;
 
     // Layermasks
-    public static int groundLayerMask = 1 << groundLayer;
-    public static int awnsLayerMask = ~(1 << awnsLayer); // Label should pass through awns
+    public static int groundLayerMask = 1 << groundLayer; // If passed: only hit ground
+    public static int awnsLayerMask = ~(1 << awnsLayer); // If passed: ignore awns
 
     public static Dictionary<Part, int> partToLayerDict = new Dictionary<Part, int> {
         {Part.Wheat, wheatLayer},
@@ -54,16 +47,28 @@ public class Wheat : MonoBehaviour
         {"Awns", Part.Awns}
     };
 
-    public static Dictionary<Part, int> partToFirstChannelValueDict = new Dictionary<Part, int>(){
-        {Part.Wheat, 50},
-        {Part.Head, 250},
-        {Part.Stem, 100},
-        {Part.Leaf, 150},
-        {Part.Awns, 200}
+    public static Dictionary<Part, string> partToNameDict = new Dictionary<Part, string>(){
+        {Part.Wheat, "Wheat"},
+        {Part.Head, "Head"},
+        {Part.Leaf, "Leaf"},
+        {Part.Awns, "Awns"},
+        {Part.Stem, "Stem"}
     };
 
-    public static Dictionary<Part, string> partToNameDict = nameToPartDict.ToDictionary((i) => i.Value, (i) => i.Key);
+    public static Dictionary<Part, int> partToIDDict = new Dictionary<Part, int>(){
+        {Part.Head, 1},
+        {Part.Leaf, 2},
+        {Part.Stem, 3},
+        {Part.Awns, 4}
+    };
 
+    public static Part[] GetPartTypesToLabel(){
+        return new Part[]{Part.Head, Part.Leaf, Part.Awns, Part.Stem};
+    }
+
+    public static string GetPartName(Wheat.Part part){
+        return partToNameDict[part];
+    }
 
     // Check if an obj is a wheat. If there is a second argument, also check if the obj is of the same part as the parameter.
     public static bool IsWheat(GameObject obj, Part part = Part.Wheat){
@@ -92,11 +97,5 @@ public class Wheat : MonoBehaviour
             }
         }
         return wheats;
-    }
-
-    // Get all wheat prefabs
-    public static GameObject[] GetAllWheatPrefabs(){
-        string wheatPrefabPath = "Prefabs/Wheat Models";
-        return Resources.LoadAll<GameObject>(wheatPrefabPath);
     }
 }
