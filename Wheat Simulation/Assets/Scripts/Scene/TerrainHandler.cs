@@ -1,21 +1,29 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 public class TerrainHandler : MonoBehaviour {
     [SerializeField] private GameObject terrainObject;
     public float maxMove = 10f;
     private TerrainLayer[] activeTerrainLayers => terrainObject.GetComponent<Terrain>().terrainData.terrainLayers;
     [SerializeField] private List<TerrainLayer> terrainLayers = new List<TerrainLayer>();
-    private Vector3 initialPosition;
-    private Quaternion initialRotation;
+    
 
+    public enum TerrainType {
+        dimRedCoarse = 0,
+        darkBrownMulch = 1,
+        brightDryMud = 2,
+        dimBrownGrass = 3,
+        brightDryStraw = 4
+    }
+
+    private Vector3 initialPosition;
     void Start(){
         initialPosition = terrainObject.transform.position;
-        initialRotation = terrainObject.transform.rotation;
     }
 
     public void ResetTerrainPosition(){
-        terrainObject.transform.SetPositionAndRotation(initialPosition, initialRotation);
+        terrainObject.transform.position = initialPosition;
     }
 
     public void MoveTerrainPosition(){

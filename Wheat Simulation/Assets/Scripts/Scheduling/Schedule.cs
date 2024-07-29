@@ -3,10 +3,12 @@ using System.IO;
 using System.Collections.Generic;
 using System;
 using Object = UnityEngine.Object;
+using System.Diagnostics.Tracing;
 
 [Serializable]
 public class Schedule {
     public List<Domain> domains = new List<Domain>();
+    public List<Event> events = new List<Event>();
     public List<Order> orders = new List<Order>();
 }
 
@@ -70,8 +72,14 @@ public class Domain {
 
 
 [Serializable]
-public class EventSchedule {
-    public EventSchedule(string name, List<string> terrainLayerNames){
+public class Event {
+    public Event(
+        string name, int frequency, string actionName, 
+        /*optional*/ 
+        List<LightSourceHandler.LightsourceType> lightsourceTypes = null, 
+        List<TerrainHandler.TerrainType> terrainTypes = null
+        )
+        {
         public string name;
         public Dictionary<Event, int> eventToFrequency;
     }
@@ -80,10 +88,11 @@ public class EventSchedule {
 [Serializable]
 public class Order {
     public string domainName;
+    public List<string> eventNames;
     public int imagesLimit; // -1 represents no limit
     public int minutesLimit; // -1 represents no limit
 
-    public Order(string domainName, int imagesLimit = -1, int minutesLimit = -1) 
+    public Order(string domainName, List<string> eventNames, int imagesLimit = -1, int minutesLimit = -1) 
     {
         this.domainName = domainName;
         this.imagesLimit = imagesLimit;

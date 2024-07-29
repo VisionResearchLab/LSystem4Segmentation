@@ -7,6 +7,12 @@ public class LightSourceHandler : MonoBehaviour {
     [SerializeField] private List<GameObject> lightSources = new List<GameObject>();
     private GameObject activeLightSource;
 
+    public enum LightsourceType {
+        Bright = 0,
+        Dim = 1,
+        Dark = 2
+    }
+
     public void SwapLightSource(){
         activeLightSource = lightSources[Random.Range(0, lightSources.Count - 1)];
 
