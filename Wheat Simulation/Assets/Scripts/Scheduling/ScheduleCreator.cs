@@ -71,13 +71,13 @@ public class ScheduleCreator : MonoBehaviour {
         Event swapToRandomBrightOrDimLightsource = new SwapLightSourceEvent("swapToRandomBrightLightsource", 5, 3f, new List<LightSourceHandler.LightsourceType>(){LightSourceHandler.LightsourceType.bright, LightSourceHandler.LightsourceType.dim});
 
         // Defining fields
-        Field testField = new Field("test", PositionFinder.FieldLayout.Uniform, 2000, 20000);
-        Field golden_inrowsField = new Field("golden_inrows", PositionFinder.FieldLayout.EightRows, 2000, 20000);
+        Field testField = new Field("test", PositionFinder.FieldLayout.Uniform, 500, 5000);
+        Field golden_inrowsField = new Field("golden_inrows", PositionFinder.FieldLayout.EightRows, 500, 5000);
 
         // Defining domains
-        Domain testDomain = new Domain("test", new List<string>(){"swapToRandomDarkGroundTexture", "swapToRandomDarkLightsource"}, 15, 5);
+        // Domain testDomain = new Domain("test", new List<string>(){"swapToRandomDarkGroundTexture", "swapToRandomDarkLightsource"}, 15, 5);
         Domain golden_inrowsDomain = new Domain("golden_inrows", new List<string>(){"swapToRandomBrightGroundTexture", "swapToRandomBrightOrDimLightsource"}, 15, 5);
-        Domain golden_inrowsDomain2 = new Domain("golden_inrows", new List<string>(){"swapToWetGroundTexture", "swapToRandomBrightOrDimLightsource"}, 15, 5);
+        // Domain golden_inrowsDomain2 = new Domain("golden_inrows", new List<string>(){"swapToWetGroundTexture", "swapToRandomBrightOrDimLightsource"}, 15, 5);
 
         // Creating the schedule
         Schedule schedule = new Schedule();
@@ -91,9 +91,9 @@ public class ScheduleCreator : MonoBehaviour {
         schedule.fields.Add(testField);
         schedule.fields.Add(golden_inrowsField);
 
-        schedule.domains.Add(testDomain);
+        // schedule.domains.Add(testDomain);
         schedule.domains.Add(golden_inrowsDomain);
-        schedule.domains.Add(golden_inrowsDomain2);
+        // schedule.domains.Add(golden_inrowsDomain2);
 
         SaveScheduleWithName(schedule, "TestSchedule");
     }

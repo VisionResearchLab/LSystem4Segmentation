@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 public class ScheduleInterpreter : MonoBehaviour {
     public Field currentField;
-
+    [SerializeField] private bool disablePythonProcessing;
     private bool interrupt = false; // Used to stop the schedule via a key input.
 
     // JSON deserialize settings
@@ -26,7 +26,6 @@ public class ScheduleInterpreter : MonoBehaviour {
             Debug.LogError("JSON not found at path: " + fullPath);
             return null;
         }
-        
     }
 
     public IEnumerator InterpretSchedule(Schedule schedule){
@@ -55,6 +54,13 @@ public class ScheduleInterpreter : MonoBehaviour {
             Field fieldForDomain = GetFieldForDomain(domain);
             List<Event> eventsForDomain = GetEventsForDomain(domain);
             yield return StartCoroutine(InterpretDomain(domain, fieldForDomain, eventsForDomain));
+        }
+
+        // Run the Python script to fix coco annotations (add polygon segmentations and a few other things)
+        if (!disablePythonProcessing){
+            PythonRunner pythonRunner = FindObjectOfType<PythonRunner>();
+            ScreenShot screenShot = FindObjectOfType<ScreenShot>();
+            pythonRunner.RunPythonScript(screenShot.datasetDirectory);
         }
     }
 
