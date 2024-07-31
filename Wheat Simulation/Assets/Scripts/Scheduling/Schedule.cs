@@ -3,7 +3,6 @@ using System.IO;
 using System.Collections.Generic;
 using System;
 using Object = UnityEngine.Object;
-using System.Diagnostics.Tracing;
 
 [Serializable]
 public class Schedule {
@@ -72,16 +71,64 @@ public class Domain {
 
 
 [Serializable]
-public class Event {
-    public Event(
-        string name, int frequency, string actionName, 
-        /*optional*/ 
-        List<LightSourceHandler.LightsourceType> lightsourceTypes = null, 
-        List<TerrainHandler.TerrainType> terrainTypes = null
-        )
-        {
-        public string name;
-        public Dictionary<Event, int> eventToFrequency;
+public abstract class Event {
+    public string name;
+    public int frequency;
+    public float timeToExecute;
+
+    // Inputs
+    public Event(string name, int frequency, float timeToExecute) 
+    {
+        this.name = name;
+        this.frequency = frequency;
+        this.timeToExecute = timeToExecute;
+    }
+
+    public bool CheckEventForIteration(int iteration){
+        if (iteration != 0 && iteration % frequency == 0){
+            RunEvent();
+            return true;
+        }
+        return false;
+    }
+
+    public abstract void RunEvent();
+}
+
+[Serializable]
+public class SwapLightSourceEvent : Event {
+    public List<LightSourceHandler.LightsourceType> lightsourceTypes;
+
+    public SwapLightSourceEvent(string name, int frequency, float timeToExecute, List<LightSourceHandler.LightsourceType> lightsourceTypes = null)
+    : base (name, frequency, timeToExecute)
+    {
+        this.lightsourceTypes = lightsourceTypes;
+    }
+
+    public void RunEvent(){
+        
+    }
+}
+
+[Serializable]
+public class SwapGroundTextureEvent : Event {
+    public List<TerrainHandler.TerrainType> terrainTypes;
+
+    public SwapGroundTextureEvent(string name, int frequency, float timeToExecute, List<TerrainHandler.TerrainType> terrainTypes = null)
+    : base (name, frequency, timeToExecute)
+    {
+        this.terrainTypes = terrainTypes;
+    }
+}
+
+[Serializable]
+public class MoveGroundEvent : Event {
+    public int distanceToMoveTerrain;
+
+    public MoveGroundEvent(string name, int frequency, float timeToExecute, int distanceToMoveTerrain = -1)
+    : base (name, frequency, timeToExecute)
+    {
+        this.distanceToMoveTerrain = distanceToMoveTerrain;
     }
 }
 
