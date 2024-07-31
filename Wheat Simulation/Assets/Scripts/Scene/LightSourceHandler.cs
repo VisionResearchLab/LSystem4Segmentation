@@ -3,17 +3,43 @@ using UnityEngine;
 
 public class LightSourceHandler : MonoBehaviour {
     [SerializeField] private GameObject defaultSun;
-
-    [SerializeField] private List<GameObject> lightSources = new List<GameObject>();
     private GameObject activeLightSource;
 
+    [SerializeField] private List<GameObject> darkLightSources = new List<GameObject>();
+    [SerializeField] private List<GameObject> dimLightSources = new List<GameObject>();
+    [SerializeField] private List<GameObject> brightLightSources = new List<GameObject>();
+
     public enum LightsourceType {
-        Bright = 0,
-        Dim = 1,
-        Dark = 2
+        dark = 0,
+        dim = 1,
+        bright = 2
+    }
+    private List<GameObject> GetAvailableLightsources(List<LightsourceType> availableLightsourceTypes){
+        List<GameObject> availableLightsources = new List<GameObject>();
+        if (availableLightsourceTypes.Contains(LightsourceType.dark)){
+            availableLightsources.AddRange(darkLightSources);
+        }
+        if (availableLightsourceTypes.Contains(LightsourceType.dim)){
+            availableLightsources.AddRange(dimLightSources);
+        }
+        if (availableLightsourceTypes.Contains(LightsourceType.bright)){
+            availableLightsources.AddRange(brightLightSources);
+        }
+        return availableLightsources;
+    }
+    private List<GameObject> GetAllLightsources(){
+        List<GameObject> availableLightsources = new List<GameObject>();
+
+        availableLightsources.AddRange(darkLightSources);
+        availableLightsources.AddRange(dimLightSources);
+        availableLightsources.AddRange(brightLightSources);
+
+        return availableLightsources;
+        
     }
 
-    public void SwapLightSource(){
+    public void SwapLightSource(List<LightsourceType> availableLightsourceTypes){
+        List<GameObject> lightSources = GetAvailableLightsources(availableLightsourceTypes);
         activeLightSource = lightSources[Random.Range(0, lightSources.Count - 1)];
 
         // Disable all other light sources.
@@ -35,7 +61,7 @@ public class LightSourceHandler : MonoBehaviour {
         }
 
         // Disable everything else
-        foreach (GameObject lightSource in lightSources){
+        foreach (GameObject lightSource in GetAllLightsources()){
             if (lightSource != exception){
                 lightSource.SetActive(false);
             }

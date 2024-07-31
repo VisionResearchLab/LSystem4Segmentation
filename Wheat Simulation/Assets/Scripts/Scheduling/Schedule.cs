@@ -6,59 +6,59 @@ using Object = UnityEngine.Object;
 
 [Serializable]
 public class Schedule {
-    public List<Domain> domains = new List<Domain>();
+    public List<Field> fields = new List<Field>();
     public List<Event> events = new List<Event>();
-    public List<Order> orders = new List<Order>();
+    public List<Domain> domains = new List<Domain>();
 }
 
 [Serializable]
-public class Domain {
+public class Field {
     public string name;
-    public PositionFinder.FieldLayout arrangement;
+    public PositionFinder.FieldLayout layout;
     public int wheatCount;
     public int underbrushCount;
 
 
     // Inputs
-    public Domain(
+    public Field(
         string name,
-        PositionFinder.FieldLayout arrangement  = PositionFinder.FieldLayout.Uniform, 
+        PositionFinder.FieldLayout layout  = PositionFinder.FieldLayout.Uniform, 
         int wheatCount                          = 2000, 
         int underbrushCount                     = 20000
         )
         {
             this.name = name;
-            this.arrangement = arrangement;
+            this.layout = layout;
             this.wheatCount = wheatCount;
             this.underbrushCount = underbrushCount;
         }
 
     public void Build(){
-        // Clear previous domain
+        // Clear previous layout
         ObjectPooler.ClearAllPools();
 
-        // Create the wheat prefabs pool for this domain
+        // Create the wheat prefabs pool for this layout
         string wheatPrefabsDirectory = GetPrefabDirectory("Wheat Models", name);
         // Debug.Log("Trying to initialize pools from directory: " + wheatPrefabsDirectory);
         ObjectPooler.InitializePoolsFromDirectory(ObjectPooler.PoolType.Wheat, wheatPrefabsDirectory, wheatCount);
 
-        // Create the underbrush prefabs pool for this domain
+        // Create the underbrush prefabs pool for this layout
         string underbrushPrefabsDirectory = GetPrefabDirectory("Ground Cover Models", name);
         // Debug.Log("Trying to initialize pools from directory: " + underbrushPrefabsDirectory);
         ObjectPooler.InitializePoolsFromDirectory(ObjectPooler.PoolType.Underbrush, underbrushPrefabsDirectory, underbrushCount);
 
         // Instantiate the wheat
         InstantiateWheat instantiateWheat = Object.FindObjectOfType<InstantiateWheat>();
-        instantiateWheat.LoopAddWheat(wheatCount, arrangement, 5);
+        instantiateWheat.LoopAddWheat(wheatCount, layout, 5);
         // Debug.Log(arrangement.ToString());
 
         // Instantiate underbrush
         UnderbrushHandler underbrushHandler = Object.FindObjectOfType<UnderbrushHandler>();
-        underbrushHandler.LoopInstantiateUnderbrushInBounds(underbrushCount, arrangement);
+        underbrushHandler.LoopInstantiateUnderbrushInBounds(underbrushCount, layout);
     }
 
-    static private string GetPrefabDirectory(string prefabType, string domainName){
-        string relativePath = $"Assets/Resources/Prefabs/{prefabType}/{domainName}";
+    static private string GetPrefabDirectory(string prefabType, string fieldName){
+        string relativePath = $"Assets/Resources/Prefabs/{prefabType}/{fieldName}";
         string fullPath = Path.GetFullPath(relativePath);
         if (Directory.Exists(fullPath))
             return fullPath;
@@ -84,12 +84,13 @@ public abstract class Event {
         this.timeToExecute = timeToExecute;
     }
 
-    public bool CheckEventForIteration(int iteration){
-        if (iteration != 0 && iteration % frequency == 0){
+    // Returns the time to execute if the event occurs on this iteration
+    public float RunEventForIteration(int iteration){
+        if (iteration % frequency == 0){
             RunEvent();
-            return true;
+            return timeToExecute;
         }
-        return false;
+        return 0f;
     }
 
     public abstract void RunEvent();
@@ -99,14 +100,15 @@ public abstract class Event {
 public class SwapLightSourceEvent : Event {
     public List<LightSourceHandler.LightsourceType> lightsourceTypes;
 
-    public SwapLightSourceEvent(string name, int frequency, float timeToExecute, List<LightSourceHandler.LightsourceType> lightsourceTypes = null)
+    public SwapLightSourceEvent(string name, int frequency, float timeToExecute, List<LightSourceHandler.LightsourceType> lightsourceTypes)
     : base (name, frequency, timeToExecute)
     {
         this.lightsourceTypes = lightsourceTypes;
     }
 
-    public void RunEvent(){
-        
+    public override void RunEvent(){
+        LightSourceHandler lightSourceHandler = Object.FindObjectOfType<LightSourceHandler>();
+        lightSourceHandler.SwapLightSource(lightsourceTypes);
     }
 }
 
@@ -114,34 +116,45 @@ public class SwapLightSourceEvent : Event {
 public class SwapGroundTextureEvent : Event {
     public List<TerrainHandler.TerrainType> terrainTypes;
 
-    public SwapGroundTextureEvent(string name, int frequency, float timeToExecute, List<TerrainHandler.TerrainType> terrainTypes = null)
+    public SwapGroundTextureEvent(string name, int frequency, float timeToExecute, List<TerrainHandler.TerrainType> terrainTypes)
     : base (name, frequency, timeToExecute)
     {
         this.terrainTypes = terrainTypes;
+    }
+
+    public override void RunEvent(){
+        TerrainHandler terrainHandler = Object.FindObjectOfType<TerrainHandler>();
+        terrainHandler.SwapGroundTextures(terrainTypes);
     }
 }
 
 [Serializable]
 public class MoveGroundEvent : Event {
-    public int distanceToMoveTerrain;
+    public int maxMoveDistance;
 
-    public MoveGroundEvent(string name, int frequency, float timeToExecute, int distanceToMoveTerrain = -1)
+    public MoveGroundEvent(string name, int frequency, float timeToExecute, int maxMoveDistance)
     : base (name, frequency, timeToExecute)
     {
-        this.distanceToMoveTerrain = distanceToMoveTerrain;
+        this.maxMoveDistance = maxMoveDistance;
+    }
+
+    public override void RunEvent(){
+        TerrainHandler terrainHandler = Object.FindObjectOfType<TerrainHandler>();
+        terrainHandler.MoveTerrainPosition(maxMoveDistance);
     }
 }
 
 [Serializable]
-public class Order {
-    public string domainName;
+public class Domain {
+    public string fieldName;
     public List<string> eventNames;
     public int imagesLimit; // -1 represents no limit
     public int minutesLimit; // -1 represents no limit
 
-    public Order(string domainName, List<string> eventNames, int imagesLimit = -1, int minutesLimit = -1) 
+    public Domain(string fieldName, List<string> eventNames, int imagesLimit = -1, int minutesLimit = -1) 
     {
-        this.domainName = domainName;
+        this.fieldName = fieldName;
+        this.eventNames = eventNames;
         this.imagesLimit = imagesLimit;
         this.minutesLimit = minutesLimit;
     }

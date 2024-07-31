@@ -3,46 +3,69 @@ using UnityEngine;
 using System.Collections;
 using System;
 using System.Text;
+using System.IO;
+using Newtonsoft.Json;
 
 public class ScheduleInterpreter : MonoBehaviour {
-    public Domain currentDomain;
+    public Field currentField;
 
     private bool interrupt = false; // Used to stop the schedule via a key input.
 
+    // JSON deserialize settings
+    private JsonSerializerSettings settings = new JsonSerializerSettings{
+        TypeNameHandling = TypeNameHandling.All
+    };
 
-    void Start(){
-        Event swapLightSource = new Event("Switch Sky", 4.0f, SwapLightSource);
-        eventDictionary.AddEvent(swapLightSource, 20);
-
-        // Event moveTerrainPosition = new Event("Move Terrain Position", 0.5f, MoveTerrain);
-        // eventDictionary.AddEvent(moveTerrainPosition, 15);
+    // Deserialize and return the JSON with the given name
+    public Schedule LoadScheduleByName(string name){
+        string fullPath = Path.GetFullPath($"Assets/Schedules/{name}.json");
+        if (File.Exists(fullPath)){
+            string jsonText = File.ReadAllText(fullPath);
+            return JsonConvert.DeserializeObject<Schedule>(jsonText, settings:settings);
+        } else {
+            Debug.LogError("JSON not found at path: " + fullPath);
+            return null;
+        }
+        
     }
 
-    public IEnumerator RunSchedule(Schedule schedule){
+    public IEnumerator InterpretSchedule(Schedule schedule){
+        List<Field> fields = schedule.fields;
         List<Domain> domains = schedule.domains;
-        List<Order> orders = schedule.orders;
+        List<Event> events = schedule.events;
 
-        Domain GetDomainForOrder(Order order){
-            foreach (Domain domain in domains){
-                if (domain.name == order.domainName) { return domain; }
+        Field GetFieldForDomain(Domain domain){
+            foreach (Field field in fields){
+                if (field.name == domain.fieldName) { return field; }
             }
             return null;
         }
 
-        foreach (Order order in orders){
-            Domain domain = GetDomainForOrder(order);
-            yield return StartCoroutine(InterpretOrder(order, domain));
+        List<Event> GetEventsForDomain(Domain domain){
+            List<Event> eventsForDomain = new List<Event>();
+            foreach (Event ev in events){
+                if (domain.eventNames.Contains(ev.name)){
+                    eventsForDomain.Add(ev);
+                }
+            }
+            return eventsForDomain;
+        }
+
+        foreach (Domain domain in domains){
+            Field fieldForDomain = GetFieldForDomain(domain);
+            List<Event> eventsForDomain = GetEventsForDomain(domain);
+            yield return StartCoroutine(InterpretDomain(domain, fieldForDomain, eventsForDomain));
         }
     }
 
-    public IEnumerator InterpretOrder(Order order, Domain domain){
-        LoadDomain(domain);
+    public IEnumerator InterpretDomain(Domain domain, Field field, List<Event> events){
+        LoadField(field);
 
         DateTime initialTime = DateTime.Now;
-        int minutesLimit = order.minutesLimit;
+        int minutesLimit = domain.minutesLimit;
 
         int currentIteration = 0;
-        int imagesLimit = order.imagesLimit;
+        int imagesLimit = domain.imagesLimit;
 
         bool timeIsValid(){
             // Check if there is a time limit
@@ -72,11 +95,19 @@ public class ScheduleInterpreter : MonoBehaviour {
             yield return null; // Wait a frame to allow the user to see changes
 
             // Run iteration: Check events, move camera, take picture.
-            yield return StartCoroutine(RunIteration(currentIteration));
+            yield return StartCoroutine(InterpretEvents(currentIteration, events));
             
             // Print a progress message
             StringBuilder progress = new StringBuilder();
-                progress.Append($"Domain name: {domain.name}\n");
+            progress.Append($"Field: {field.name}\n");
+            StringBuilder evSB = new StringBuilder();
+            if (events.Count > 0){
+                foreach (Event ev in events){
+                    evSB.Append($"'{ev.name}', ");
+                }
+                evSB.Length = evSB.Length - 2; // remove trailing ", "
+            }
+            progress.Append($"Events: {evSB}\n");
             if (imageCountIsValid()){
                 progress.Append($"{currentIteration + 1}/{imagesLimit} images created.\n");
             } if (timeIsValid()){
@@ -90,99 +121,26 @@ public class ScheduleInterpreter : MonoBehaviour {
         }
     }
 
-    private IEnumerator RunIteration(int currentIteration){
-
-        // Run each event in the EventDictionary for this iteration, in no particular order.
+    private IEnumerator InterpretEvents(int currentIteration, List<Event> events){
         MoveCamera();
-        yield return new WaitForSeconds(1.0f); // TEST, delete this later
+
+        float waitTime = 1f; // Base wait time
+        foreach (Event ev in events){
+            waitTime += ev.RunEventForIteration(currentIteration);
+        }
         
-        float waitTime = eventDictionary.RunEventsForIteration(currentIteration);
-        // Debug.Log($"Wait time: {waitTime}");
         yield return new WaitForSeconds(waitTime);
 
         // Take the screenshots
         yield return StartCoroutine(TakePicture());
     }
 
-    private class EventDictionary {
-        Dictionary<Event, int> iterationsBetweenEvent = new Dictionary<Event, int>();
-
-        public EventDictionary(Dictionary<Event, int> iterationsBetweenEvent = null){
-            if (iterationsBetweenEvent != null){
-                this.iterationsBetweenEvent = iterationsBetweenEvent;
-            }
-        }
-
-        public void AddEvent(Event ev, int iterationsBetweenEvent){
-            this.iterationsBetweenEvent[ev] = iterationsBetweenEvent;
-        }
-
-        public void RemoveEvent(Event ev){
-            iterationsBetweenEvent.Remove(ev);
-        }
-
-        public float RunEventsForIteration(int currentIteration){
-            // Define events list and wait time sum
-            List<Event> events = new List<Event>();
-            float waitTime = 0f;
-
-            // Skip iteration 0
-            if (currentIteration != 0){
-                // Get events for this iteration by modulus
-                foreach (Event thisEvent in iterationsBetweenEvent.Keys){
-                    if (currentIteration % iterationsBetweenEvent[thisEvent] == 0){
-                        events.Add(thisEvent);
-                    }
-                }
-            }
-            
-            // Execute events and sum wait times
-            if (events.Count > 0){
-                // Add up their wait times
-                foreach (Event ev in events){
-                    ev.Execute();
-                    waitTime += ev.timeToExecute;
-                }
-            }
-
-            return waitTime;
-        }
-
-        public static EventDictionary emptyEventDictionary = new EventDictionary(new Dictionary<Event, int>());
-    }
-
-    private class Event {
-        public string name;
-        public float timeToExecute;
-        public Action function;
-
-        public Event(string name, float timeToExecute, Action function){
-            this.name = name;
-            this.timeToExecute = timeToExecute;
-            this.function = function;
-        }
-
-        public void Execute(){
-            if (function != null){
-                function();
-            }
-        }
-    }
-
-    // Functions for events
-
     //  Load the next Domain in the domains list.
-    private void LoadDomain(Domain domain){
-        if (currentDomain != domain){
-            currentDomain = domain;
-            currentDomain.Build();
+    private void LoadField(Field field){
+        if (currentField != field){
+            currentField = field;
+            currentField.Build();
         }
-    }
-
-    //  Light source handling
-    private void SwapLightSource(){
-        LightSourceHandler lightSourceHandler = FindObjectOfType<LightSourceHandler>();
-        lightSourceHandler.SwapLightSource();
     }
 
     //  Move camera using OrbitHandler
@@ -196,11 +154,6 @@ public class ScheduleInterpreter : MonoBehaviour {
         float timeToWait = 0.1f;
         yield return StartCoroutine(screenShot.ScreenshotSequenceEnum(timeToWait));
         yield return null;
-    }
-
-    private void MoveTerrain(){
-        TerrainHandler terrainHandler = FindObjectOfType<TerrainHandler>();
-        terrainHandler.MoveTerrainPosition();
     }
 
     public void Interrupt(){
