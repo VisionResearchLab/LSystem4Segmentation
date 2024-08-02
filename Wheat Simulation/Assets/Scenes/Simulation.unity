@@ -24,7 +24,7 @@ RenderSettings:
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
-  m_AmbientMode: 0
+  m_AmbientMode: 4
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
   m_SkyboxMaterial: {fileID: 0}
   m_HaloStrength: 0.5
@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 27.701418, g: 26.24268, b: 28.059351, a: 1}
+  m_IndirectSpecularColor: {r: 27.695084, g: 26.231972, b: 28.041576, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -590,13 +590,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06eea37298d4297429327303a0e192d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentField:
+  currentDomain:
     name: 
-    layout: 0
-    weedTypes: 
-    wheatCount: 0
-    underbrushCount: 0
-    weedCount: 0
+    fieldName: 
+    eventNames: []
+    imagesLimit: 0
+    minutesLimit: 0
   disablePythonProcessing: 0
 --- !u!114 &317227220
 MonoBehaviour:
@@ -2866,7 +2865,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6275
   m_UseColorTemperature: 1
-  m_BoundingSphereOverride: {x: 1.02e-43, y: 1.1e-44, z: 1.0619e-41, w: 0}
+  m_BoundingSphereOverride: {x: 0, y: 5.6e-44, z: 1.4e-44, w: 1.6114932e-38}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
@@ -4853,7 +4852,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1085993164
 Transform:
   m_ObjectHideFlags: 0
