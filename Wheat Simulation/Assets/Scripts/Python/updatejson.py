@@ -16,14 +16,14 @@ def json_copy(input_json_path, output_json_path, only_wheat=False):
     with open(input_json_path, 'r') as f:
         data = json.load(f)
 
-    # Filter annotations
-    if not only_wheat:
-        filtered_annotations = [anno for anno in data['annotations']]
-    else:
+    if only_wheat:
+        # Filter annotations
         filtered_annotations = [anno for anno in data['annotations'] if anno['category_id'] == 1]
+        data['annotations'] = filtered_annotations
 
-    # Update the data dictionary
-    data['annotations'] = filtered_annotations
+        # Filter categories
+        filtered_categories = [cat for cat in data['categories'] if (cat['name'] == "Ground" or cat['name'] == "Head")]
+        data['categories'] = filtered_categories
 
     # Write the new JSON file
     with open(output_json_path, 'w') as f:
@@ -35,18 +35,18 @@ def reorganize_dataset(domain_path):
     if os.path.exists(domain_path):
         # Make dir for the release dataset
         domain_path = domain_path.rstrip('/\\')
-        new_directory_path = f"{domain_path}_seg"
-        if not os.path.exists(new_directory_path):
-            os.mkdir(new_directory_path)
+        new_domain_path = f"{domain_path}_seg"
+        if not os.path.exists(new_domain_path):
+            os.mkdir(new_domain_path)
 
         # Copy the JSON into the new directory
         json_copy(f"{domain_path}/coco_annotations.json",
-                  f"{new_directory_path}/coco_annotations.json")
+                  f"{new_domain_path}/coco_annotations.json")
         json_copy(f"{domain_path}/coco_annotations.json",
-                  f"{new_directory_path}/coco_annotations_onlywheatheads.json", True)
-
+                  f"{new_domain_path}/coco_annotations_onlywheatheads.json", True)
+        
         # Copy the images into the new directory images sub-folder
-        new_images_path = f"{new_directory_path}/images"
+        new_images_path = f"{new_domain_path}/images"
         os.mkdir(new_images_path)
         images = [image for image in glob.glob(f"{domain_path}/*_image.png")]
         for image in images:
@@ -58,7 +58,7 @@ def reorganize_dataset(domain_path):
 
 
 # Main code
-def get_segmentation_from_masks(domain_path):
+def process_data(domain_path):
     if os.path.exists(domain_path):
         # Make dir for the release dataset
         domain_path = domain_path.rstrip('/\\')
@@ -123,7 +123,13 @@ def get_segmentation_from_masks(domain_path):
             if annotation_id in segmentations:
                 annotation['segmentation'] = segmentations[annotation_id]
 
-        # Test with standard JSON module
+        # Fix the bounding boxes and add "iscrowd=0"
+        coco_data = add_is_crowd_and_fix_bbox(coco_data)
+
+        # Clear invalid segmentations
+        coco_data = clear_invalid_segmentations(coco_data)
+
+        # Save with standard JSON module
         standard_json_file_path = os.path.join(domain_path, 'coco_annotations.json')
         try:
             with open(standard_json_file_path, 'w') as f:
@@ -133,62 +139,51 @@ def get_segmentation_from_masks(domain_path):
             print(f"Error saving JSON file with standard json module: {e}")
 
 
-# Copy a JSON file to a new location. Categories can be excluded from the final result by passing a list of ints.
-def add_is_crowd_and_fix_bbox(domain_path):
-    json_path = f"{domain_path}_seg/coco_annotations.json"
-
-    # Load the existing JSON file
-    with open(json_path, 'r') as f:
-        data = json.load(f)
-
-    # Remove unused categories
-    filtered_categories = [cat for cat in data['categories'] if (cat['name'] == "Ground" or cat['name'] == "Head")]
-    data['categories'] = filtered_categories
-
+def add_is_crowd_and_fix_bbox(data):
     resolution = 1024
+
     # Fix the bounding box format and add iscrowd
     for annotation in data['annotations']:
+        # Calculate new bbox
         bounding_box = annotation['bbox']
-        bl_x = bounding_box[0]
-        bl_y = bounding_box[1]
+        bl_x = bounding_box[0] # bottom left x value
+        bl_y = bounding_box[1] # bottom left y value
         tr_x = bounding_box[2]
         tr_y = bounding_box[3]
 
-        width = tr_x - bl_x
+        width = tr_x - bl_x # save as [top left pixel x, top left pixel y, width, height]
         height = tr_y - bl_y
 
         annotation['bbox'] = [bl_x, resolution - tr_y, width, height]
         annotation['iscrowd'] = 0
 
-    # Write the new JSON file
-    with open(json_path, 'w') as f:
-        json.dump(data, f, indent=2)
+    return data
+
+def clear_invalid_segmentations(data):
+    # For each annotation, remove invalid segmentations (polygons with less than three vertices)
+    for annotation in data['annotations']:
+        annotation['segmentation'] = [segmentation for segmentation in annotation['segmentation'] if len(segmentation) >= 6]
+    
+    # Remove any annotation that has no valid segmentations
+    data['annotations'] = [annotation for annotation in data['annotations'] if len(annotation['segmentation']) > 0]
+
+    return data
 
 
 if sys.argv[1] is not None:
     dataset_path = sys.argv[1]
     domain_paths = glob.glob(f"{dataset_path}/*/")
-    print(f"Domain paths found: {domain_paths}")
+
     if len(domain_paths) > 0:
+        print(f"Domain paths found: {domain_paths}")
         for domain_path in domain_paths:
             domain_path = domain_path.rstrip("/\\")
 
-            # Create a new json in the same place as the original, updated with segmentations
-            get_segmentation_from_masks(domain_path)
+            # Copy the original "annotations.json", process to add polygon segmentation, save as "coco_annotations.json" in the same directory
+            process_data(domain_path)
 
-            # Move the files to another directory without anything unnecessary
+            # Create a new directory with a different name, organized with images in one folder and two annotation files (one for all objects and one for only wheat)
             reorganize_dataset(domain_path)
 
-            # Fix some issues with the annotation
-            add_is_crowd_and_fix_bbox(domain_path)
-    else:  # If the path given is for a domain rather than a dataset
-        # Create a new json in the same place as the original, updated with segmentations
-        get_segmentation_from_masks(dataset_path)
-
-        # Move the files to another directory without anything unnecessary
-        reorganize_dataset(dataset_path)
-
-        # Fix some issues with the annotation
-        add_is_crowd_and_fix_bbox(dataset_path)
-else:
-    print("arg 1: dataset_path, arg 2: domain_name")
+    else:
+        print("Error: No domain paths found under dataset directory.")
