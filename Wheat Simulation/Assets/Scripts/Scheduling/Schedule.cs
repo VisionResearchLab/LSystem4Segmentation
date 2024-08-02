@@ -1,8 +1,10 @@
-using UnityEngine;
 using System.IO;
 using System.Collections.Generic;
 using System;
 using Object = UnityEngine.Object;
+using Debug = UnityEngine.Debug;
+using System.Diagnostics;
+using UnityEngine;
 
 [Serializable]
 public class Schedule {
@@ -15,25 +17,34 @@ public class Schedule {
 public class Field {
     public string name;
     public PositionFinder.FieldLayout layout;
+    public List<WeedHandler.WeedType> weedTypes;
     public int wheatCount;
     public int underbrushCount;
+    public int weedCount;
 
 
     // Inputs
     public Field(
         string name,
         PositionFinder.FieldLayout layout  = PositionFinder.FieldLayout.Uniform, 
+        List<WeedHandler.WeedType> weedTypes = null,
         int wheatCount                          = 2000, 
-        int underbrushCount                     = 20000
+        int underbrushCount                     = 20000, 
+        int weedCount                           = 1000
         )
         {
             this.name = name;
             this.layout = layout;
+            this.weedTypes = weedTypes;
             this.wheatCount = wheatCount;
             this.underbrushCount = underbrushCount;
+            this.weedCount = weedCount;
         }
 
     public void Build(){
+        Stopwatch sw = new Stopwatch();
+        sw.Start();
+
         // Clear previous layout
         ObjectPooler.ClearAllPools();
 
@@ -47,14 +58,25 @@ public class Field {
         // Debug.Log("Trying to initialize pools from directory: " + underbrushPrefabsDirectory);
         ObjectPooler.InitializePoolsFromDirectory(ObjectPooler.PoolType.Underbrush, underbrushPrefabsDirectory, underbrushCount);
 
+        // Create the weed prefabs pool from the given WeedTypes parameter
+        WeedHandler weedHandler = Object.FindObjectOfType<WeedHandler>();
+        if (weedTypes != null && weedCount > 0){
+            ObjectPooler.InitializePools(ObjectPooler.PoolType.Weeds, weedHandler.GetAvailableWeeds(weedTypes).ToArray(), weedCount);
+        }
+
         // Instantiate the wheat
         InstantiateWheat instantiateWheat = Object.FindObjectOfType<InstantiateWheat>();
         instantiateWheat.LoopAddWheat(wheatCount, layout, 5);
-        // Debug.Log(arrangement.ToString());
 
         // Instantiate underbrush
         UnderbrushHandler underbrushHandler = Object.FindObjectOfType<UnderbrushHandler>();
         underbrushHandler.LoopInstantiateUnderbrushInBounds(underbrushCount, layout);
+
+        // Instantiate weeds
+        weedHandler.LoopInstantiateWeedsInBounds(weedCount);
+
+        sw.Stop();
+        Debug.Log($"Time to load new domain: {sw.ElapsedMilliseconds} ms");
     }
 
     static private string GetPrefabDirectory(string prefabType, string fieldName){
@@ -146,13 +168,15 @@ public class MoveGroundEvent : Event {
 
 [Serializable]
 public class Domain {
+    public string name;
     public string fieldName;
     public List<string> eventNames;
     public int imagesLimit; // -1 represents no limit
     public int minutesLimit; // -1 represents no limit
 
-    public Domain(string fieldName, List<string> eventNames, int imagesLimit = -1, int minutesLimit = -1) 
+    public Domain(string name, string fieldName, List<string> eventNames, int imagesLimit = -1, int minutesLimit = -1) 
     {
+        this.name = name;
         this.fieldName = fieldName;
         this.eventNames = eventNames;
         this.imagesLimit = imagesLimit;

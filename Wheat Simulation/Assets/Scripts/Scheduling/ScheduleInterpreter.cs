@@ -5,9 +5,11 @@ using System;
 using System.Text;
 using System.IO;
 using Newtonsoft.Json;
+using System.Diagnostics;
+using Debug = UnityEngine.Debug;
 
 public class ScheduleInterpreter : MonoBehaviour {
-    public Field currentField;
+    public Domain currentDomain;
     [SerializeField] private bool disablePythonProcessing;
     private bool interrupt = false; // Used to stop the schedule via a key input.
 
@@ -29,6 +31,9 @@ public class ScheduleInterpreter : MonoBehaviour {
     }
 
     public IEnumerator InterpretSchedule(Schedule schedule){
+        Stopwatch sw = new Stopwatch();
+        sw.Start();
+        
         List<Field> fields = schedule.fields;
         List<Domain> domains = schedule.domains;
         List<Event> events = schedule.events;
@@ -62,10 +67,13 @@ public class ScheduleInterpreter : MonoBehaviour {
             ScreenShot screenShot = FindObjectOfType<ScreenShot>();
             pythonRunner.RunPythonScript(screenShot.datasetDirectory);
         }
+
+        sw.Stop();
+        Debug.Log($"Finished generating dataset in {sw.ElapsedMilliseconds/1000f/60f} minutes.");
     }
 
     public IEnumerator InterpretDomain(Domain domain, Field field, List<Event> events){
-        LoadField(field);
+        LoadNewDomain(domain, field);
 
         DateTime initialTime = DateTime.Now;
         int minutesLimit = domain.minutesLimit;
@@ -142,11 +150,14 @@ public class ScheduleInterpreter : MonoBehaviour {
     }
 
     //  Load the next Domain in the domains list.
-    private void LoadField(Field field){
-        if (currentField != field){
-            currentField = field;
-            currentField.Build();
+    private void LoadNewDomain(Domain newDomain, Field newField){
+        // Build the field if it is not the same as the previous field
+        if (newField.name != currentDomain.fieldName){
+            newField.Build();
         }
+
+        // Update the domain
+        currentDomain = newDomain;
     }
 
     //  Move camera using OrbitHandler
