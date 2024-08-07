@@ -169,7 +169,7 @@ def clear_invalid_segmentations(data):
 
     return data
 
-
+# Call the other functions using the argument given
 if sys.argv[1] is not None:
     dataset_path = sys.argv[1]
     domain_paths = glob.glob(f"{dataset_path}/*/")
