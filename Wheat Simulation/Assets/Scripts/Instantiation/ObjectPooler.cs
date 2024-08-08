@@ -41,8 +41,10 @@ public class ObjectPooler : MonoBehaviour
     // Same as InitializePools but accepts path to the prefabs instead of a prefab array
     public static void InitializePoolsFromDirectory(PoolType poolType, string prefabsPath, int expectedInstanceCount){
         string relativePath = prefabsPath.Replace("\\", "/").Split(new[] { "Assets/Resources/" }, System.StringSplitOptions.None)[1];
-        GameObject[] poolPrefabs = Resources.LoadAll<GameObject>(relativePath);
-        InitializePools(poolType, poolPrefabs, expectedInstanceCount);
+        if (expectedInstanceCount > 0){
+            GameObject[] poolPrefabs = Resources.LoadAll<GameObject>(relativePath);
+            InitializePools(poolType, poolPrefabs, expectedInstanceCount);
+        }
     }
 
     // // Same as InitializePools but gets prefabs from a list of prefab directory paths

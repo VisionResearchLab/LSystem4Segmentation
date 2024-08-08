@@ -61,15 +61,21 @@ public class ScheduleInterpreter : MonoBehaviour {
             yield return StartCoroutine(InterpretDomain(domain, fieldForDomain, eventsForDomain));
         }
 
+        sw.Stop();
+        Debug.Log($"Finished generating dataset in {sw.ElapsedMilliseconds/1000f/60f} minutes. Now working on the python script.");
+
+        sw.Reset();
+        sw.Start();
+
         // Run the Python script to fix coco annotations (add polygon segmentations and a few other things)
         if (!disablePythonProcessing){
             PythonRunner pythonRunner = FindObjectOfType<PythonRunner>();
             ScreenShot screenShot = FindObjectOfType<ScreenShot>();
             pythonRunner.RunPythonScript(screenShot.datasetDirectory);
         }
-
+        
         sw.Stop();
-        Debug.Log($"Finished generating dataset in {sw.ElapsedMilliseconds/1000f/60f} minutes.");
+        Debug.Log($"Finished running python script {sw.ElapsedMilliseconds/1000f/60f} minutes.");
     }
 
     public IEnumerator InterpretDomain(Domain domain, Field field, List<Event> events){

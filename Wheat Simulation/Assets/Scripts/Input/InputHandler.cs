@@ -53,7 +53,7 @@ public class InputHandler : MonoBehaviour
 
     // Run the build schedule command from ScheduleCreator
     private void CreateSchedule(){
-        scheduleCreator.BuildTestSchedule();
+        scheduleCreator.BuildInstanceSeg2();
     }
 
     // Run the schedule given in the editor input

@@ -86,7 +86,7 @@ public void TryGenerateWheat(
         return rotation;
     }
 
-    public void LoopAddWheat(int quantity, PositionFinder.FieldLayout shape = PositionFinder.FieldLayout.Uniform, int maxPlaceAttempts = 3)
+    public void LoopAddWheat(int quantity, PositionFinder.FieldLayout shape = PositionFinder.FieldLayout.Uniform, int maxPlaceAttempts = 5)
     {
         for (int i = 0; i < quantity; i++){
             // Place in a position obtained from GetPositionInWheatBounds, or retry if that position is occupied
