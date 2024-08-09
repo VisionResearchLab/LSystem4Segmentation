@@ -49,51 +49,36 @@ public class Field {
         // Clear previous layout
         ObjectPooler.ClearAllPools();
 
-        // Create the wheat prefabs pool for this layout
+        // Get wheat prefabs directory. If not found, set wheat count to 0.
         string wheatPrefabsDirectory = GetPrefabDirectory("Wheat Models", name);
-
         if(wheatPrefabsDirectory == null){ // Need to do something similar for weeds
             Debug.Log("Wheat prefab directory not found at " + wheatPrefabsDirectory);
             wheatCount = 0;
-            Debug.Log("Step6");
         }
-        Debug.Log("Step7");
-
+        // Instantiate wheat
         if (wheatCount > 0){
             ObjectPooler.InitializePoolsFromDirectory(ObjectPooler.PoolType.Wheat, wheatPrefabsDirectory, wheatCount);
+            InstantiateWheat instantiateWheat = Object.FindObjectOfType<InstantiateWheat>();
+            instantiateWheat.LoopAddWheat(wheatCount, layout, 5);
         }
-        Debug.Log("Step8");
 
-        // Create the underbrush prefabs pool for this layout
+        // Get underbrush prefabs directory. If not found, set underbrush count to 0.
         string underbrushPrefabsDirectory = GetPrefabDirectory("Ground Cover Models", name);
+        if(underbrushPrefabsDirectory == null){ // Need to do something similar for weeds
+            Debug.Log("Underbrush prefab directory not found at " + underbrushPrefabsDirectory);
+            underbrushCount = 0;
+        }
+        // Instantiate underbrush
         if (underbrushCount > 0){
             ObjectPooler.InitializePoolsFromDirectory(ObjectPooler.PoolType.Underbrush, underbrushPrefabsDirectory, underbrushCount);
+            UnderbrushHandler underbrushHandler = Object.FindObjectOfType<UnderbrushHandler>();
+            underbrushHandler.LoopInstantiateUnderbrushInBounds(underbrushCount, layout);
         }
 
         // Create the weed prefabs pool from the given WeedTypes parameter
         WeedHandler weedHandler = Object.FindObjectOfType<WeedHandler>();
         if (weedTypes != null && weedCount > 0){
             ObjectPooler.InitializePools(ObjectPooler.PoolType.Weeds, weedHandler.GetAvailableWeeds(weedTypes).ToArray(), weedCount);
-        }
-
-        Debug.Log("Step9");
-        // Instantiate the wheat
-        if (wheatCount > 0){
-            Debug.Log("Step9.1");
-            InstantiateWheat instantiateWheat = Object.FindObjectOfType<InstantiateWheat>();
-            instantiateWheat.LoopAddWheat(wheatCount, layout, 5);
-        }
-        Debug.Log("Step10");
-        
-
-        // Instantiate underbrush
-        if (underbrushCount > 0){
-            UnderbrushHandler underbrushHandler = Object.FindObjectOfType<UnderbrushHandler>();
-            underbrushHandler.LoopInstantiateUnderbrushInBounds(underbrushCount, layout);
-        }
-        
-        // Instantiate weeds
-        if (weedCount > 0){
             weedHandler.LoopInstantiateWeedsInBounds(weedCount);
         }
 
