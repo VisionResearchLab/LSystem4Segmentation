@@ -161,31 +161,33 @@ public class ScheduleCreator : MonoBehaviour {
         Event swapToRandomBrightGroundTexture = new SwapGroundTextureEvent("swapToRandomBrightGroundTexture", 10, 1f, new List<TerrainHandler.TerrainType>(){TerrainHandler.TerrainType.bright});
         Event swapToDryGroundTexture = new SwapGroundTextureEvent("swapToDryGroundTexture", 10, 1f, new List<TerrainHandler.TerrainType>(){TerrainHandler.TerrainType.dry});
         Event swapToWetGroundTexture = new SwapGroundTextureEvent("swapToWetGroundTexture", 10, 1f, new List<TerrainHandler.TerrainType>(){TerrainHandler.TerrainType.wet});
+        Event swapToAnyGroundTexture = new SwapGroundTextureEvent("swapToAnyGroundTexture", 10, 1f, new List<TerrainHandler.TerrainType>(){TerrainHandler.TerrainType.dark, TerrainHandler.TerrainType.dim, TerrainHandler.TerrainType.bright, TerrainHandler.TerrainType.dry, TerrainHandler.TerrainType.wet});
 
         Event swapToRandomDarkLightsource = new SwapLightSourceEvent("swapToRandomDarkLightsource", 25, 3f, new List<LightSourceHandler.LightsourceType>(){LightSourceHandler.LightsourceType.dark});
         Event swapToRandomBrightOrDimLightsource = new SwapLightSourceEvent("swapToRandomBrightOrDimLightsource", 25, 3f, new List<LightSourceHandler.LightsourceType>(){LightSourceHandler.LightsourceType.bright, LightSourceHandler.LightsourceType.dim});
         Event swapToRandomDimLightsource = new SwapLightSourceEvent("swapToRandomDimLightsource", 25, 3f, new List<LightSourceHandler.LightsourceType>(){LightSourceHandler.LightsourceType.dim});
         Event swapToRandomBrightLightsource = new SwapLightSourceEvent("swapToRandomBrightLightsource", 25, 3f, new List<LightSourceHandler.LightsourceType>(){LightSourceHandler.LightsourceType.bright});
+        Event swapToAnyLightsource = new SwapLightSourceEvent("swapToAnyLightsource", 25, 3f, new List<LightSourceHandler.LightsourceType>(){LightSourceHandler.LightsourceType.dark, LightSourceHandler.LightsourceType.dim, LightSourceHandler.LightsourceType.bright});
 
         // Defining fields
         Field golden = new Field("golden", PositionFinder.FieldLayout.Uniform, new List<WeedHandler.WeedType>(){WeedHandler.WeedType.wildGrass}, 2000, 15000, 1000);
         Field golden_longawns = new Field("golden_longawns", PositionFinder.FieldLayout.Uniform, new List<WeedHandler.WeedType>(){WeedHandler.WeedType.wildGrass}, 1500, 10000, 1200);
         Field green_inrows = new Field("green_inrows", PositionFinder.FieldLayout.EightRows, new List<WeedHandler.WeedType>(){WeedHandler.WeedType.dryGrass, WeedHandler.WeedType.wildGrass}, 1500, 12000, 500);
         Field green_young_longheads = new Field("green_young_longheads", PositionFinder.FieldLayout.Uniform, new List<WeedHandler.WeedType>(){WeedHandler.WeedType.dryGrass, WeedHandler.WeedType.wildGrass}, 2000, 20000, 1200);
-        Field green_young_longheads_inrows = new Field("green_young_longheads_inrows", PositionFinder.FieldLayout.EightRows, new List<WeedHandler.WeedType>(){WeedHandler.WeedType.dryGrass, WeedHandler.WeedType.wildGrass}, 1500, 15000, 1500);
+        Field green_young_longheads_inrows = new Field("green_young_longheads_inrows", PositionFinder.FieldLayout.EightRows, new List<WeedHandler.WeedType>(){WeedHandler.WeedType.dryGrass, WeedHandler.WeedType.wildGrass}, 1500, 13000, 1500);
         Field yellow_longheads = new Field("yellow_longheads", PositionFinder.FieldLayout.Uniform, new List<WeedHandler.WeedType>(){WeedHandler.WeedType.dryGrass, WeedHandler.WeedType.wildGrass}, 1200, 12000, 800);
         Field yellowishgreen_longawns = new Field("yellowishgreen_longawns", PositionFinder.FieldLayout.Uniform, new List<WeedHandler.WeedType>(){WeedHandler.WeedType.dryGrass, WeedHandler.WeedType.wildGrass}, 1400, 12000, 800);
         Field yellowishgreen_longheads = new Field("yellowishgreen_longheads", PositionFinder.FieldLayout.Uniform, new List<WeedHandler.WeedType>(){WeedHandler.WeedType.dryGrass, WeedHandler.WeedType.wildGrass}, 1800, 12000, 500);
-        Field yellowishgreen_smallawns = new Field("yellowishgreen_smallawns", PositionFinder.FieldLayout.Uniform, new List<WeedHandler.WeedType>(){WeedHandler.WeedType.wildGrass}, 2000, 15000, 1000);
-        Field empty = new Field("golden", PositionFinder.FieldLayout.Uniform, new List<WeedHandler.WeedType>(){WeedHandler.WeedType.wildGrass, WeedHandler.WeedType.dryGrass}, 0, 2500, 400);
+        Field yellowishgreen_smallawns = new Field("yellowishgreen_smallawns", PositionFinder.FieldLayout.Uniform, new List<WeedHandler.WeedType>(){WeedHandler.WeedType.wildGrass}, 800, 8000, 400);
+        Field empty = new Field("empty", PositionFinder.FieldLayout.Uniform, new List<WeedHandler.WeedType>(){WeedHandler.WeedType.wildGrass, WeedHandler.WeedType.dryGrass}, 0, 0, 1500);
 
         // Global variables
-        int domainCount = 10;
+        int domainCount = 1;
 
-        int totalImagesAvailable = 10000;
+        int totalImagesAvailable = 800;
         int maxImagesPerDomain = totalImagesAvailable / domainCount;
 
-        int totalHoursAvailable = 8;
+        int totalHoursAvailable = 1;
         int minutesAvailablePerDomain = totalHoursAvailable * 60 / domainCount;
 
         // Defining domains
@@ -198,45 +200,47 @@ public class ScheduleCreator : MonoBehaviour {
         Domain yellowishgreen_longawnsDomain = new Domain("yellowishgreen_longawns", "yellowishgreen_longawns", new List<string>(){"swapToWetGroundTexture", "swapToRandomBrightOrDimLightsource", "swapToRandomDarkLightsource"}, maxImagesPerDomain, minutesAvailablePerDomain);
         Domain yellowishgreen_longheadsDomain = new Domain("yellowishgreen_longheads", "yellowishgreen_longheads", new List<string>(){"swapToRandomBrightGroundTexture", "swapToRandomBrightOrDimLightsource", "swapToRandomDarkLightsource"}, maxImagesPerDomain, minutesAvailablePerDomain);
         Domain yellowishgreen_smallawnsDomain = new Domain("yellowishgreen_smallawns", "yellowishgreen_smallawns", new List<string>(){"swapToRandomBrightGroundTexture", "swapToRandomBrightOrDimLightsource", "swapToRandomDarkLightsource"}, maxImagesPerDomain, minutesAvailablePerDomain);
-        Domain emptyDomain = new Domain("empty", "empty", new List<string>(){"swapToWetGroundTexture", "swapToRandomBrightOrDimLightsource"}, maxImagesPerDomain, minutesAvailablePerDomain);
+        Domain emptyDomain = new Domain("empty", "empty", new List<string>(){"swapToAnyGroundTexture", "swapToAnyLightsource"}, maxImagesPerDomain, minutesAvailablePerDomain);
 
         // Creating the schedule
         Schedule schedule = new Schedule();
 
-        schedule.events.Add(swapToRandomDarkGroundTexture);
-        schedule.events.Add(swapToDimGroundTexture);
-        schedule.events.Add(swapToRandomBrightGroundTexture);
-        schedule.events.Add(swapToDryGroundTexture);
-        schedule.events.Add(swapToWetGroundTexture);
-        schedule.events.Add(swapToRandomDarkLightsource);
-        schedule.events.Add(swapToRandomBrightOrDimLightsource);
-        schedule.events.Add(swapToRandomDimLightsource);
-        schedule.events.Add(swapToRandomBrightLightsource);
+        // schedule.events.Add(swapToRandomDarkGroundTexture);
+        // schedule.events.Add(swapToDimGroundTexture);
+        // schedule.events.Add(swapToRandomBrightGroundTexture);
+        // schedule.events.Add(swapToDryGroundTexture);
+        // schedule.events.Add(swapToWetGroundTexture);
+        schedule.events.Add(swapToAnyGroundTexture);
+        // schedule.events.Add(swapToRandomDarkLightsource);
+        // schedule.events.Add(swapToRandomBrightOrDimLightsource);
+        schedule.events.Add(swapToAnyLightsource);
+        // schedule.events.Add(swapToRandomDimLightsource);
+        // schedule.events.Add(swapToRandomBrightLightsource);
 
-        schedule.fields.Add(golden);
-        schedule.fields.Add(golden_longawns);
-        schedule.fields.Add(green_inrows);
-        schedule.fields.Add(green_young_longheads);
-        schedule.fields.Add(green_young_longheads_inrows);
-        schedule.fields.Add(yellow_longheads);
-        schedule.fields.Add(yellowishgreen_longawns);
-        schedule.fields.Add(yellowishgreen_longheads);
-        schedule.fields.Add(yellowishgreen_smallawns);
+        // schedule.fields.Add(golden);
+        // schedule.fields.Add(golden_longawns);
+        // schedule.fields.Add(green_inrows);
+        // schedule.fields.Add(green_young_longheads);
+        // schedule.fields.Add(green_young_longheads_inrows);
+        // schedule.fields.Add(yellow_longheads);
+        // schedule.fields.Add(yellowishgreen_longawns);
+        // schedule.fields.Add(yellowishgreen_longheads);
+        // schedule.fields.Add(yellowishgreen_smallawns);
         schedule.fields.Add(empty);
 
         // schedule.domains.Add(testDomain);
-        schedule.domains.Add(goldenDomain);
-        schedule.domains.Add(golden_longawnsDomain);
-        schedule.domains.Add(green_inrowsDomain);
-        schedule.domains.Add(green_young_longheadsDomain);
-        schedule.domains.Add(green_young_longheads_inrowsDomain);
-        schedule.domains.Add(yellow_longheadsDomain);
-        schedule.domains.Add(yellowishgreen_longawnsDomain);
-        schedule.domains.Add(yellowishgreen_longheadsDomain);
-        schedule.domains.Add(yellowishgreen_smallawnsDomain);
+        // schedule.domains.Add(goldenDomain);
+        // schedule.domains.Add(golden_longawnsDomain);
+        // schedule.domains.Add(green_inrowsDomain);
+        // schedule.domains.Add(green_young_longheadsDomain);
+        // schedule.domains.Add(green_young_longheads_inrowsDomain);
+        // schedule.domains.Add(yellow_longheadsDomain);
+        // schedule.domains.Add(yellowishgreen_longawnsDomain);
+        // schedule.domains.Add(yellowishgreen_longheadsDomain);
+        // schedule.domains.Add(yellowishgreen_smallawnsDomain);
         schedule.domains.Add(emptyDomain);
 
-        SaveScheduleWithName(schedule, "InstanceSeg2Test");
+        SaveScheduleWithName(schedule, "InstanceSeg2");
     }
 
 

@@ -5,6 +5,7 @@ using Object = UnityEngine.Object;
 using Debug = UnityEngine.Debug;
 using System.Diagnostics;
 using UnityEngine;
+using UnityEditor.Build;
 
 [Serializable]
 public class Schedule {
@@ -50,13 +51,24 @@ public class Field {
 
         // Create the wheat prefabs pool for this layout
         string wheatPrefabsDirectory = GetPrefabDirectory("Wheat Models", name);
-        // Debug.Log("Trying to initialize pools from directory: " + wheatPrefabsDirectory);
-        ObjectPooler.InitializePoolsFromDirectory(ObjectPooler.PoolType.Wheat, wheatPrefabsDirectory, wheatCount);
+
+        if(wheatPrefabsDirectory == null){ // Need to do something similar for weeds
+            Debug.Log("Wheat prefab directory not found at " + wheatPrefabsDirectory);
+            wheatCount = 0;
+            Debug.Log("Step6");
+        }
+        Debug.Log("Step7");
+
+        if (wheatCount > 0){
+            ObjectPooler.InitializePoolsFromDirectory(ObjectPooler.PoolType.Wheat, wheatPrefabsDirectory, wheatCount);
+        }
+        Debug.Log("Step8");
 
         // Create the underbrush prefabs pool for this layout
         string underbrushPrefabsDirectory = GetPrefabDirectory("Ground Cover Models", name);
-        // Debug.Log("Trying to initialize pools from directory: " + underbrushPrefabsDirectory);
-        ObjectPooler.InitializePoolsFromDirectory(ObjectPooler.PoolType.Underbrush, underbrushPrefabsDirectory, underbrushCount);
+        if (underbrushCount > 0){
+            ObjectPooler.InitializePoolsFromDirectory(ObjectPooler.PoolType.Underbrush, underbrushPrefabsDirectory, underbrushCount);
+        }
 
         // Create the weed prefabs pool from the given WeedTypes parameter
         WeedHandler weedHandler = Object.FindObjectOfType<WeedHandler>();
@@ -64,16 +76,26 @@ public class Field {
             ObjectPooler.InitializePools(ObjectPooler.PoolType.Weeds, weedHandler.GetAvailableWeeds(weedTypes).ToArray(), weedCount);
         }
 
+        Debug.Log("Step9");
         // Instantiate the wheat
-        InstantiateWheat instantiateWheat = Object.FindObjectOfType<InstantiateWheat>();
-        instantiateWheat.LoopAddWheat(wheatCount, layout, 5);
+        if (wheatCount > 0){
+            Debug.Log("Step9.1");
+            InstantiateWheat instantiateWheat = Object.FindObjectOfType<InstantiateWheat>();
+            instantiateWheat.LoopAddWheat(wheatCount, layout, 5);
+        }
+        Debug.Log("Step10");
+        
 
         // Instantiate underbrush
-        UnderbrushHandler underbrushHandler = Object.FindObjectOfType<UnderbrushHandler>();
-        underbrushHandler.LoopInstantiateUnderbrushInBounds(underbrushCount, layout);
-
+        if (underbrushCount > 0){
+            UnderbrushHandler underbrushHandler = Object.FindObjectOfType<UnderbrushHandler>();
+            underbrushHandler.LoopInstantiateUnderbrushInBounds(underbrushCount, layout);
+        }
+        
         // Instantiate weeds
-        weedHandler.LoopInstantiateWeedsInBounds(weedCount);
+        if (weedCount > 0){
+            weedHandler.LoopInstantiateWeedsInBounds(weedCount);
+        }
 
         sw.Stop();
         Debug.Log($"Time to load new domain: {sw.ElapsedMilliseconds} ms");
@@ -110,6 +132,7 @@ public abstract class Event {
     public float RunEventForIteration(int iteration){
         if (iteration % frequency == 0){
             RunEvent();
+            Debug.Log("Ran event: " + name);
             return timeToExecute;
         }
         return 0f;

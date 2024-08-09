@@ -1,5 +1,3 @@
-
-
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -26,6 +24,9 @@ public class WeedHandler : MonoBehaviour {
         if (availableWeedTypes.Contains(WeedType.dryGrass)){
             availableWeeds.AddRange(dryGrass);
         }
+        if (availableWeedTypes.Contains(WeedType.wildGrass)){
+            availableWeeds.AddRange(wildGrass);
+        }
         return availableWeeds;
     }
 
@@ -33,6 +34,7 @@ public class WeedHandler : MonoBehaviour {
         List<GameObject> availableWeeds = new List<GameObject>();
 
         availableWeeds.AddRange(dryGrass);
+        availableWeeds.AddRange(wildGrass);
 
         return availableWeeds;
     }

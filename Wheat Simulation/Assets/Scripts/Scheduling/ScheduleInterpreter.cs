@@ -31,6 +31,7 @@ public class ScheduleInterpreter : MonoBehaviour {
     }
 
     public IEnumerator InterpretSchedule(Schedule schedule){
+        Debug.Log("Interpreting schedule...");
         Stopwatch sw = new Stopwatch();
         sw.Start();
         
@@ -42,6 +43,7 @@ public class ScheduleInterpreter : MonoBehaviour {
             foreach (Field field in fields){
                 if (field.name == domain.fieldName) { return field; }
             }
+            Debug.LogError("Error: No field found for domain " + domain.name);
             return null;
         }
 
@@ -58,6 +60,7 @@ public class ScheduleInterpreter : MonoBehaviour {
         foreach (Domain domain in domains){
             Field fieldForDomain = GetFieldForDomain(domain);
             List<Event> eventsForDomain = GetEventsForDomain(domain);
+            Debug.Log("Starting coroutine for domain " + domain.name);
             yield return StartCoroutine(InterpretDomain(domain, fieldForDomain, eventsForDomain));
         }
 
@@ -79,7 +82,10 @@ public class ScheduleInterpreter : MonoBehaviour {
     }
 
     public IEnumerator InterpretDomain(Domain domain, Field field, List<Event> events){
+        Debug.Log("Step0");
         LoadNewDomain(domain, field);
+        Debug.Log("Step1");
+        yield return new WaitForSeconds(2.0f);
 
         DateTime initialTime = DateTime.Now;
         int minutesLimit = domain.minutesLimit;
@@ -110,7 +116,8 @@ public class ScheduleInterpreter : MonoBehaviour {
             }
             return false;
         }
-
+        
+        Debug.Log("Step2");
         while (!interrupt && timeIsValid() && imageCountIsValid()){
             yield return null; // Wait a frame to allow the user to see changes
 
@@ -136,9 +143,6 @@ public class ScheduleInterpreter : MonoBehaviour {
             Debug.Log(progress.ToString());
             currentIteration += 1;
         }
-        if (interrupt){
-            interrupt = false;
-        }
     }
 
     private IEnumerator InterpretEvents(int currentIteration, List<Event> events){
@@ -158,6 +162,7 @@ public class ScheduleInterpreter : MonoBehaviour {
     //  Load the next Domain in the domains list.
     private void LoadNewDomain(Domain newDomain, Field newField){
         // Build the field if it is not the same as the previous field
+        Debug.Log("Loading new domain");
         if (newField.name != currentDomain.fieldName){
             newField.Build();
         }

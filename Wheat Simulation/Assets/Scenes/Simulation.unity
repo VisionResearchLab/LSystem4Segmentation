@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 27.72527, g: 26.265049, b: 28.1142, a: 1}
+  m_IndirectSpecularColor: {r: 27.726582, g: 26.263233, b: 28.087254, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -458,7 +458,7 @@ MonoBehaviour:
   instantiateWheat: {fileID: 317227208}
   scheduleInterpreter: {fileID: 317227219}
   scheduleCreator: {fileID: 317227222}
-  nameOfScheduleToRun: InstanceSeg2Test
+  nameOfScheduleToRun: InstanceSeg2
 --- !u!114 &317227211
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -498,7 +498,7 @@ MonoBehaviour:
   mainCam: {fileID: 963194227}
   canvasGroup: {fileID: 830734411}
   datasetsDirectory: K:/Users/Skull/Downloads/tempDatasets
-  datasetName: InstanceSeg2Test
+  datasetName: InstanceSeg2
   labelAwnsAsWheatHeads: 0
   scheduleInterpreter: {fileID: 317227219}
 --- !u!114 &317227214
@@ -515,8 +515,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   positionFinder: {fileID: 317227218}
   cam: {fileID: 963194227}
-  minCameraHeight: 3.2
-  maxCameraHeight: 4
+  minCameraHeight: 2
+  maxCameraHeight: 4.5
 --- !u!114 &317227215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2865,7 +2865,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6275
   m_UseColorTemperature: 1
-  m_BoundingSphereOverride: {x: -1, y: 8, z: 9, w: -10}
+  m_BoundingSphereOverride: {x: 1.02e-43, y: 3e-45, z: 9.382e-42, w: 1.6502e-41}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
