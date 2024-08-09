@@ -21,8 +21,9 @@ public class ScreenShot : MonoBehaviour
 
 
     // Save directory
-    [SerializeField] private string datasetsDirectory;
-    [SerializeField] private string datasetName;
+    DirectoryManager dm;
+    private string datasetsDirectory => dm.currentDatasetDirectory;
+    private string datasetName => dm.currentDatasetName;
     private string domainName => scheduleInterpreter.currentDomain.name;
     [HideInInspector] public string datasetDirectory => $"{datasetsDirectory}/{datasetName}/";
     private string domainDirectory => $"{datasetsDirectory}/{datasetName}/{domainName}/";
@@ -42,6 +43,7 @@ public class ScreenShot : MonoBehaviour
 
     // Define scripts with functions that need to be called
     private void Start(){
+        dm = FindObjectOfType<DirectoryManager>();
         // ShowUI();
         HideUI();
     }

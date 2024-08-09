@@ -6,12 +6,40 @@ using Debug = UnityEngine.Debug;
 using System.Diagnostics;
 using UnityEngine;
 using UnityEditor.Build;
+using System.Linq;
+
 
 [Serializable]
 public class Schedule {
     public List<Field> fields = new List<Field>();
     public List<Event> events = new List<Event>();
     public List<Domain> domains = new List<Domain>();
+
+    public void add(object item) {
+        if (item is Event event_){
+            events.Add(event_);
+        }
+        else if (item is Field field){
+            fields.Add(field);
+        }
+        else if (item is Domain domain){
+            domains.Add(domain);
+
+            // Check that event exists
+            List<string> eventNames = events.Select(ev => ev.name).ToList();
+            foreach (string domainEventName in domain.eventNames){
+                if (!eventNames.Contains(domainEventName)){
+                    Debug.LogError($"Possible error: Could not find event by name '{domainEventName}' in existing event names: '{eventNames}'");
+                }
+            }
+            
+            // Check that field exists
+            List<string> fieldNames = fields.Select(field => field.name).ToList();
+            if (!fieldNames.Contains(domain.fieldName)){
+                Debug.LogError($"Possible error: Could not find field by name '{domain.fieldName}' in existing field names: '{fieldNames}'");
+            }
+        }
+    }
 }
 
 [Serializable]

@@ -15,6 +15,10 @@ public class LightSourceHandler : MonoBehaviour {
         bright = 2
     }
 
+    public static List<LightsourceType> GetAllLightsourceTypes(){
+        return new List<LightsourceType>(){LightsourceType.dark, LightsourceType.dim, LightsourceType.bright};
+    }
+
     private List<GameObject> GetAvailableLightsources(List<LightsourceType> availableLightsourceTypes){
         List<GameObject> availableLightsources = new List<GameObject>();
         if (availableLightsourceTypes.Contains(LightsourceType.dark)){

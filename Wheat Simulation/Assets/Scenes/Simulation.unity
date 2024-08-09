@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 27.726582, g: 26.263233, b: 28.087254, a: 1}
+  m_IndirectSpecularColor: {r: 27.685413, g: 26.22744, b: 28.05636, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -382,6 +382,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 317227209}
+  - component: {fileID: 317227225}
   - component: {fileID: 317227210}
   - component: {fileID: 317227208}
   - component: {fileID: 317227212}
@@ -458,7 +459,6 @@ MonoBehaviour:
   instantiateWheat: {fileID: 317227208}
   scheduleInterpreter: {fileID: 317227219}
   scheduleCreator: {fileID: 317227222}
-  nameOfScheduleToRun: InstanceSeg2
 --- !u!114 &317227211
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -497,8 +497,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainCam: {fileID: 963194227}
   canvasGroup: {fileID: 830734411}
-  datasetsDirectory: K:/Users/Skull/Downloads/tempDatasets
-  datasetName: InstanceSeg2
   labelAwnsAsWheatHeads: 0
   scheduleInterpreter: {fileID: 317227219}
 --- !u!114 &317227214
@@ -722,6 +720,21 @@ MonoBehaviour:
   parentObject: {fileID: 1085993163}
   positionFinder: {fileID: 317227218}
   objectPooler: {fileID: 317227216}
+--- !u!114 &317227225
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 317227207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bf069777611860438f6f094fbf98f11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  profileChoiceDropdown: 1
+  currentDatasetName: InstanceSeg3
+  currentScheduleName: InstanceSeg3
 --- !u!1 &329793927
 GameObject:
   m_ObjectHideFlags: 0
@@ -2865,7 +2878,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6275
   m_UseColorTemperature: 1
-  m_BoundingSphereOverride: {x: 1.02e-43, y: 3e-45, z: 9.382e-42, w: 1.6502e-41}
+  m_BoundingSphereOverride: {x: 1.02e-43, y: 3e-45, z: 1.2715e-41, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0

@@ -9,7 +9,7 @@ using System.Diagnostics;
 using Debug = UnityEngine.Debug;
 
 public class ScheduleInterpreter : MonoBehaviour {
-    public Domain currentDomain;
+    [HideInInspector] public Domain currentDomain;
     [SerializeField] private bool disablePythonProcessing;
     private bool interrupt = false; // Used to stop the schedule via a key input.
 

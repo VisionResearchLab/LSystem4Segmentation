@@ -31,6 +31,10 @@ public class TerrainHandler : MonoBehaviour {
         wet = 4
     }
 
+    public static List<TerrainType> GetAllTerrainTypes(){
+        return new List<TerrainType>(){TerrainType.dark, TerrainType.dim, TerrainType.bright, TerrainType.dry, TerrainType.wet};
+    }
+
     private List<TerrainLayer> GetAvailableTerrainLayers(List<TerrainType> availableTerrainTypes){
         List<TerrainLayer> availableTerrainLayers = new List<TerrainLayer>();
         if (availableTerrainTypes.Contains(TerrainType.dark)){
