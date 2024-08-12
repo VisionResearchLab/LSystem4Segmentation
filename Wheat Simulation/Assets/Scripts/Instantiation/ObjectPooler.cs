@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using Unity.VisualScripting;
 
 public class ObjectPooler : MonoBehaviour
 {
     public enum PoolType {
         Wheat = 0,
-        Underbrush = 1
+        Underbrush = 1,
+        Weeds = 2
     }
     
     private static Dictionary<PoolType, List<Queue<GameObject>>> poolsOfTypeDict = new Dictionary<PoolType, List<Queue<GameObject>>>();
@@ -41,8 +41,10 @@ public class ObjectPooler : MonoBehaviour
     // Same as InitializePools but accepts path to the prefabs instead of a prefab array
     public static void InitializePoolsFromDirectory(PoolType poolType, string prefabsPath, int expectedInstanceCount){
         string relativePath = prefabsPath.Replace("\\", "/").Split(new[] { "Assets/Resources/" }, System.StringSplitOptions.None)[1];
-        GameObject[] poolPrefabs = Resources.LoadAll<GameObject>(relativePath);
-        InitializePools(poolType, poolPrefabs, expectedInstanceCount);
+        if (expectedInstanceCount > 0){
+            GameObject[] poolPrefabs = Resources.LoadAll<GameObject>(relativePath);
+            InitializePools(poolType, poolPrefabs, expectedInstanceCount);
+        }
     }
 
     // // Same as InitializePools but gets prefabs from a list of prefab directory paths
@@ -95,8 +97,9 @@ public class ObjectPooler : MonoBehaviour
     }
 
     public static void ClearAllPools(){
-        ClearPoolsOfType(PoolType.Wheat);
-        ClearPoolsOfType(PoolType.Underbrush);
+        foreach (PoolType poolType in (PoolType[]) Enum.GetValues(typeof(PoolType))){
+            ClearPoolsOfType(poolType);
+        }
     }
 
     public static int GetNumberOfPoolsOfType(PoolType type){

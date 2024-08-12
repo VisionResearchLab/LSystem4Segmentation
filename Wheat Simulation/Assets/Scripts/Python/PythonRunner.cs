@@ -5,8 +5,15 @@ public class PythonRunner : MonoBehaviour
 {
     public void RunPythonScript(string argument)
     {
-        string pythonPath = @"C:\Users\xSkul\AppData\Local\Programs\Python\Python311\python.exe"; // Python exe path
-        string scriptPath = @"C:\Users\xSkul\OneDrive\Documents\Projects\Wheat\wheat\Wheat Simulation\Assets\Scripts\Python\updatejson.py"; // Script path
+        // string pythonPath = @"C:\Users\xSkul\AppData\Local\Programs\Python\Python311\python.exe"; // Python exe path
+        // string scriptPath = @"C:\Users\xSkul\OneDrive\Documents\Projects\Wheat\wheat\Wheat Simulation\Assets\Scripts\Python\updatejson.py"; // Script path
+
+        // string pythonPath = @"C:\Users\Skull\AppData\Local\Programs\Python\Python311\python.exe"; // Python exe path
+        // string scriptPath = @"C:\Users\Skull\UnityProjects\Wheat\wheat\Wheat Simulation\Assets\Scripts\Python\updatejson.py"; // Script path
+        DirectoryManager dm = FindObjectOfType<DirectoryManager>();
+        string pythonPath = dm.currentProfile.pythonPath;
+        string scriptPath = "Assets/Scripts/Python/updatejson.py";
+
         string args = $"\"{scriptPath}\" \"{argument}\"";
 
         ProcessStartInfo startInfo = new ProcessStartInfo

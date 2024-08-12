@@ -8,6 +8,7 @@ import os
 import sys
 from tqdm import tqdm
 from imantics import Mask
+import pycocotools
 
 
 # Copy a JSON file to a new location. Categories can be excluded from the final result by passing a list of ints.
@@ -58,7 +59,7 @@ def reorganize_dataset(domain_path):
 
 
 # Main code
-def get_segmentation_from_masks(domain_path):
+def get_polygon_segmentation_from_masks(domain_path):
     if os.path.exists(domain_path):
         # Make dir for the release dataset
         domain_path = domain_path.rstrip('/\\')
@@ -132,6 +133,80 @@ def get_segmentation_from_masks(domain_path):
         except Exception as e:
             print(f"Error saving JSON file with standard json module: {e}")
 
+def get_rle_segmentation_from_masks(domain_path):
+    if os.path.exists(domain_path):
+        # Make dir for the release dataset
+        domain_path = domain_path.rstrip('/\\')
+        # Load the existing JSON file
+        json_file_path = os.path.join(domain_path, 'annotations.json')
+        with open(json_file_path, 'r') as f:
+            coco_data = json.load(f)
+
+        # Remove the "annotationMaps" section
+        annotation_maps = coco_data.pop('annotationMaps', [])
+
+        print(f"Total annotation maps: {len(annotation_maps)}")
+
+        # Dictionary to hold segmentation data
+        segmentations = defaultdict(list)
+
+        # Process each annotation map with a progress bar
+        for annotation_map in tqdm(annotation_maps, desc="Processing annotation maps"):
+            annotation_file = annotation_map['file_name']
+
+            # Construct the full path to the annotation PNG file
+            annotation_file_path = os.path.join(domain_path, annotation_file)
+
+            # Read the annotation PNG file, collapse the four channels to a 32-bit integer
+            annotation_img = cv2.imread(annotation_file_path, cv2.IMREAD_UNCHANGED)
+            if annotation_img.shape[2] == 4:
+                # Extract each channel
+                r_channel = annotation_img[:, :, 2]  # Red channel
+                g_channel = annotation_img[:, :, 1]  # Green channel
+                b_channel = annotation_img[:, :, 0]  # Blue channel
+                a_channel = annotation_img[:, :, 3]  # Alpha channel
+
+                # Combine channels into a single 32-bit integer
+                annotation_img = (r_channel.astype(np.uint32) << 24) | \
+                                 (g_channel.astype(np.uint32) << 16) | \
+                                 (b_channel.astype(np.uint32) << 8) | \
+                                 (a_channel.astype(np.uint32))
+
+            if annotation_img is None:
+                print(f"Failed to load annotation image: {annotation_file_path}")
+                continue
+
+            # Convert the annotation image to unique object IDs
+            unique_ids = np.unique(annotation_img)
+
+            for obj_id in unique_ids:
+                if obj_id == 0:
+                    continue  # Skip the background
+                # print(obj_id)
+
+                # Create a binary mask for the current object ID
+                binary_mask = annotation_img == obj_id
+
+                polygons = Mask(binary_mask).polygons() # add the new seg method here
+
+                for polygon in polygons:
+                    segmentations[obj_id].append(polygon.tolist())
+
+        # Update the annotations in the COCO data with the segmentation data
+        for annotation in tqdm(coco_data['annotations'], desc="Updating Annotations"):
+            annotation_id = annotation['id']
+            if annotation_id in segmentations:
+                annotation['segmentation'] = segmentations[annotation_id]
+
+        # Test with standard JSON module
+        standard_json_file_path = os.path.join(domain_path, 'coco_annotations.json')
+        try:
+            with open(standard_json_file_path, 'w') as f:
+                json.dump(coco_data, f, indent=2)
+            print(f"Standard JSON serialized and saved to {standard_json_file_path}")
+        except Exception as e:
+            print(f"Error saving JSON file with standard json module: {e}")
+
 
 # Copy a JSON file to a new location. Categories can be excluded from the final result by passing a list of ints.
 def add_is_crowd_and_fix_bbox(domain_path):
@@ -165,30 +240,40 @@ def add_is_crowd_and_fix_bbox(domain_path):
         json.dump(data, f, indent=2)
 
 
-if sys.argv[1] is not None:
+if sys.argv[1] is not None and sys.argv[2] is not None:
     dataset_path = sys.argv[1]
     domain_paths = glob.glob(f"{dataset_path}/*/")
     print(f"Domain paths found: {domain_paths}")
-    if len(domain_paths) > 0:
+
+    segment_type = sys.argv[2]
+    if segment_type.lower is not "polygons" and segment_type.lower is not "polygon" and segment_type.lower is not "rle":
+        print("Error: Could not find type")
+    elif len(domain_paths) > 0:
         for domain_path in domain_paths:
             domain_path = domain_path.rstrip("/\\")
 
             # Create a new json in the same place as the original, updated with segmentations
-            get_segmentation_from_masks(domain_path)
+            if segment_type.lower == "polygon" or segment_type.lower == "polygons":
+                # polygon encoding segmentation
+                get_polygon_segmentation_from_masks(domain_path)
 
-            # Move the files to another directory without anything unnecessary
-            reorganize_dataset(domain_path)
+                # Move the files to another directory without anything unnecessary
+                reorganize_dataset(domain_path)
 
-            # Fix some issues with the annotation
-            add_is_crowd_and_fix_bbox(domain_path)
-    else:  # If the path given is for a domain rather than a dataset
-        # Create a new json in the same place as the original, updated with segmentations
-        get_segmentation_from_masks(dataset_path)
+                # Fix some issues with the annotation
+                add_is_crowd_and_fix_bbox(domain_path)
+            elif segment_type.lower == "rle":
+                # run-length encoding segmentation
+                get_rle_segmentation_from_masks(domain_path)
 
-        # Move the files to another directory without anything unnecessary
-        reorganize_dataset(dataset_path)
+                # Move the files to another directory without anything unnecessary
+                reorganize_dataset(domain_path)
 
-        # Fix some issues with the annotation
-        add_is_crowd_and_fix_bbox(dataset_path)
+                # Fix some issues with the annotation
+                add_is_crowd_and_fix_bbox(domain_path)
+            else:
+                print("Error: Segment type argument is invalid.")
+    else:
+        print("Error: could not find any domain paths in dataset path")
 else:
-    print("arg 1: dataset_path, arg 2: domain_name")
+    print("arg 1: dataset path (not domain path), arg 2: 'polygons' or 'RLE'")

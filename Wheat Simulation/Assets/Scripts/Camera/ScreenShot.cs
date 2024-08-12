@@ -21,9 +21,10 @@ public class ScreenShot : MonoBehaviour
 
 
     // Save directory
-    [SerializeField] private string datasetsDirectory;
-    [SerializeField] private string datasetName;
-    private string domainName => scheduleInterpreter.currentField.name;
+    DirectoryManager dm;
+    private string datasetsDirectory => dm.currentDatasetDirectory;
+    private string datasetName => dm.currentDatasetName;
+    private string domainName => scheduleInterpreter.currentDomain.name;
     [HideInInspector] public string datasetDirectory => $"{datasetsDirectory}/{datasetName}/";
     private string domainDirectory => $"{datasetsDirectory}/{datasetName}/{domainName}/";
     private string datasetJSONPath => $"{datasetsDirectory}/{datasetName}/{domainName}/annotations.json";
@@ -42,9 +43,9 @@ public class ScreenShot : MonoBehaviour
 
     // Define scripts with functions that need to be called
     private void Start(){
-        ShowUI();
-
-        
+        dm = FindObjectOfType<DirectoryManager>();
+        // ShowUI();
+        HideUI();
     }
 
     public bool DirectoryIsValid(){
@@ -115,7 +116,7 @@ public class ScreenShot : MonoBehaviour
             UpdateJSONFile();
 
             yield return new WaitForEndOfFrame();
-            ShowUI();
+            // ShowUI();
         } else {
             UnityEngine.Debug.LogError("One or more directories are invalid.");
         }

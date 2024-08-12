@@ -5,9 +5,11 @@ using System;
 using System.Text;
 using System.IO;
 using Newtonsoft.Json;
+using System.Diagnostics;
+using Debug = UnityEngine.Debug;
 
 public class ScheduleInterpreter : MonoBehaviour {
-    public Field currentField;
+    [HideInInspector] public Domain currentDomain;
     [SerializeField] private bool disablePythonProcessing;
     private bool interrupt = false; // Used to stop the schedule via a key input.
 
@@ -29,6 +31,10 @@ public class ScheduleInterpreter : MonoBehaviour {
     }
 
     public IEnumerator InterpretSchedule(Schedule schedule){
+        Debug.Log("Interpreting schedule...");
+        Stopwatch sw = new Stopwatch();
+        sw.Start();
+        
         List<Field> fields = schedule.fields;
         List<Domain> domains = schedule.domains;
         List<Event> events = schedule.events;
@@ -37,6 +43,7 @@ public class ScheduleInterpreter : MonoBehaviour {
             foreach (Field field in fields){
                 if (field.name == domain.fieldName) { return field; }
             }
+            Debug.LogError("Error: No field found for domain " + domain.name);
             return null;
         }
 
@@ -53,8 +60,15 @@ public class ScheduleInterpreter : MonoBehaviour {
         foreach (Domain domain in domains){
             Field fieldForDomain = GetFieldForDomain(domain);
             List<Event> eventsForDomain = GetEventsForDomain(domain);
+            Debug.Log("Starting coroutine for domain " + domain.name);
             yield return StartCoroutine(InterpretDomain(domain, fieldForDomain, eventsForDomain));
         }
+
+        sw.Stop();
+        Debug.Log($"Finished generating dataset in {sw.ElapsedMilliseconds/1000f/60f} minutes. Now working on the python script.");
+
+        sw.Reset();
+        sw.Start();
 
         // Run the Python script to fix coco annotations (add polygon segmentations and a few other things)
         if (!disablePythonProcessing){
@@ -62,10 +76,16 @@ public class ScheduleInterpreter : MonoBehaviour {
             ScreenShot screenShot = FindObjectOfType<ScreenShot>();
             pythonRunner.RunPythonScript(screenShot.datasetDirectory);
         }
+        
+        sw.Stop();
+        Debug.Log($"Finished running python script {sw.ElapsedMilliseconds/1000f/60f} minutes.");
     }
 
     public IEnumerator InterpretDomain(Domain domain, Field field, List<Event> events){
-        LoadField(field);
+        Debug.Log("Step0");
+        LoadNewDomain(domain, field);
+        Debug.Log("Step1");
+        yield return new WaitForSeconds(2.0f);
 
         DateTime initialTime = DateTime.Now;
         int minutesLimit = domain.minutesLimit;
@@ -96,7 +116,8 @@ public class ScheduleInterpreter : MonoBehaviour {
             }
             return false;
         }
-
+        
+        Debug.Log("Step2");
         while (!interrupt && timeIsValid() && imageCountIsValid()){
             yield return null; // Wait a frame to allow the user to see changes
 
@@ -122,9 +143,6 @@ public class ScheduleInterpreter : MonoBehaviour {
             Debug.Log(progress.ToString());
             currentIteration += 1;
         }
-        if (interrupt){
-            interrupt = false;
-        }
     }
 
     private IEnumerator InterpretEvents(int currentIteration, List<Event> events){
@@ -142,11 +160,15 @@ public class ScheduleInterpreter : MonoBehaviour {
     }
 
     //  Load the next Domain in the domains list.
-    private void LoadField(Field field){
-        if (currentField != field){
-            currentField = field;
-            currentField.Build();
+    private void LoadNewDomain(Domain newDomain, Field newField){
+        // Build the field if it is not the same as the previous field
+        Debug.Log("Loading new domain");
+        if (newField.name != currentDomain.fieldName){
+            newField.Build();
         }
+
+        // Update the domain
+        currentDomain = newDomain;
     }
 
     //  Move camera using OrbitHandler

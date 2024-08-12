@@ -17,9 +17,6 @@ public class InputHandler : MonoBehaviour
     // Map KeyCodes to Actions
     Dictionary<KeyCode, Action> keyMap = new Dictionary<KeyCode, Action>();
     
-    // Schedule to run on button press
-    [SerializeField] private string nameOfScheduleToRun;
-    
     void Start(){
         // Maps keybinds to functions in other scripts
 
@@ -53,12 +50,13 @@ public class InputHandler : MonoBehaviour
 
     // Run the build schedule command from ScheduleCreator
     private void CreateSchedule(){
-        scheduleCreator.BuildTestSchedule();
+        scheduleCreator.BuildSchedule();
     }
 
     // Run the schedule given in the editor input
     private void RunSchedule(){
-        Schedule schedule = scheduleInterpreter.LoadScheduleByName(nameOfScheduleToRun);
+        string scheduleName = FindObjectOfType<DirectoryManager>().currentScheduleName;
+        Schedule schedule = scheduleInterpreter.LoadScheduleByName(scheduleName);
         StartCoroutine(scheduleInterpreter.InterpretSchedule(schedule));
     }
 

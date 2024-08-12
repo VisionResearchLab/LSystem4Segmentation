@@ -7,15 +7,30 @@
         "$type": "Field, Assembly-CSharp",
         "name": "test",
         "layout": 0,
+        "weedTypes": {
+          "$type": "System.Collections.Generic.List`1[[WeedHandler+WeedType, Assembly-CSharp]], mscorlib",
+          "$values": [
+            0
+          ]
+        },
         "wheatCount": 500,
-        "underbrushCount": 5000
+        "underbrushCount": 5000,
+        "weedCount": 500
       },
       {
         "$type": "Field, Assembly-CSharp",
         "name": "golden_inrows",
         "layout": 1,
+        "weedTypes": {
+          "$type": "System.Collections.Generic.List`1[[WeedHandler+WeedType, Assembly-CSharp]], mscorlib",
+          "$values": [
+            0,
+            1
+          ]
+        },
         "wheatCount": 500,
-        "underbrushCount": 5000
+        "underbrushCount": 5000,
+        "weedCount": 500
       }
     ]
   },
@@ -90,11 +105,26 @@
     "$values": [
       {
         "$type": "Domain, Assembly-CSharp",
+        "name": "domain1",
         "fieldName": "golden_inrows",
         "eventNames": {
           "$type": "System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib",
           "$values": [
             "swapToRandomBrightGroundTexture",
+            "swapToRandomBrightOrDimLightsource"
+          ]
+        },
+        "imagesLimit": 15,
+        "minutesLimit": 5
+      },
+      {
+        "$type": "Domain, Assembly-CSharp",
+        "name": "domain2",
+        "fieldName": "golden_inrows",
+        "eventNames": {
+          "$type": "System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib",
+          "$values": [
+            "swapToWetGroundTexture",
             "swapToRandomBrightOrDimLightsource"
           ]
         },

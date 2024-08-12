@@ -1,60 +1,117 @@
-using UnityEngine;
 using System.IO;
 using System.Collections.Generic;
 using System;
 using Object = UnityEngine.Object;
+using Debug = UnityEngine.Debug;
+using System.Diagnostics;
+using UnityEngine;
+using UnityEditor.Build;
+using System.Linq;
+
 
 [Serializable]
 public class Schedule {
     public List<Field> fields = new List<Field>();
     public List<Event> events = new List<Event>();
     public List<Domain> domains = new List<Domain>();
+
+    public void add(object item) {
+        if (item is Event event_){
+            events.Add(event_);
+        }
+        else if (item is Field field){
+            fields.Add(field);
+        }
+        else if (item is Domain domain){
+            domains.Add(domain);
+
+            // Check that event exists
+            List<string> eventNames = events.Select(ev => ev.name).ToList();
+            foreach (string domainEventName in domain.eventNames){
+                if (!eventNames.Contains(domainEventName)){
+                    Debug.LogError($"Possible error: Could not find event by name '{domainEventName}' in existing event names: '{eventNames}'");
+                }
+            }
+            
+            // Check that field exists
+            List<string> fieldNames = fields.Select(field => field.name).ToList();
+            if (!fieldNames.Contains(domain.fieldName)){
+                Debug.LogError($"Possible error: Could not find field by name '{domain.fieldName}' in existing field names: '{fieldNames}'");
+            }
+        }
+    }
 }
 
 [Serializable]
 public class Field {
     public string name;
     public PositionFinder.FieldLayout layout;
+    public List<WeedHandler.WeedType> weedTypes;
     public int wheatCount;
     public int underbrushCount;
+    public int weedCount;
 
 
     // Inputs
     public Field(
         string name,
         PositionFinder.FieldLayout layout  = PositionFinder.FieldLayout.Uniform, 
+        List<WeedHandler.WeedType> weedTypes = null,
         int wheatCount                          = 2000, 
-        int underbrushCount                     = 20000
+        int underbrushCount                     = 20000, 
+        int weedCount                           = 1000
         )
         {
             this.name = name;
             this.layout = layout;
+            this.weedTypes = weedTypes;
             this.wheatCount = wheatCount;
             this.underbrushCount = underbrushCount;
+            this.weedCount = weedCount;
         }
 
     public void Build(){
+        Stopwatch sw = new Stopwatch();
+        sw.Start();
+
         // Clear previous layout
         ObjectPooler.ClearAllPools();
 
-        // Create the wheat prefabs pool for this layout
+        // Get wheat prefabs directory. If not found, set wheat count to 0.
         string wheatPrefabsDirectory = GetPrefabDirectory("Wheat Models", name);
-        // Debug.Log("Trying to initialize pools from directory: " + wheatPrefabsDirectory);
-        ObjectPooler.InitializePoolsFromDirectory(ObjectPooler.PoolType.Wheat, wheatPrefabsDirectory, wheatCount);
+        if(wheatPrefabsDirectory == null){ // Need to do something similar for weeds
+            Debug.Log("Wheat prefab directory not found at " + wheatPrefabsDirectory);
+            wheatCount = 0;
+        }
+        // Instantiate wheat
+        if (wheatCount > 0){
+            ObjectPooler.InitializePoolsFromDirectory(ObjectPooler.PoolType.Wheat, wheatPrefabsDirectory, wheatCount);
+            InstantiateWheat instantiateWheat = Object.FindObjectOfType<InstantiateWheat>();
+            instantiateWheat.LoopAddWheat(wheatCount, layout, 5);
+        }
 
-        // Create the underbrush prefabs pool for this layout
+        // Get underbrush prefabs directory. If not found, set underbrush count to 0.
         string underbrushPrefabsDirectory = GetPrefabDirectory("Ground Cover Models", name);
-        // Debug.Log("Trying to initialize pools from directory: " + underbrushPrefabsDirectory);
-        ObjectPooler.InitializePoolsFromDirectory(ObjectPooler.PoolType.Underbrush, underbrushPrefabsDirectory, underbrushCount);
-
-        // Instantiate the wheat
-        InstantiateWheat instantiateWheat = Object.FindObjectOfType<InstantiateWheat>();
-        instantiateWheat.LoopAddWheat(wheatCount, layout, 5);
-        // Debug.Log(arrangement.ToString());
-
+        if(underbrushPrefabsDirectory == null){ // Need to do something similar for weeds
+            Debug.Log("Underbrush prefab directory not found at " + underbrushPrefabsDirectory);
+            underbrushCount = 0;
+        }
         // Instantiate underbrush
-        UnderbrushHandler underbrushHandler = Object.FindObjectOfType<UnderbrushHandler>();
-        underbrushHandler.LoopInstantiateUnderbrushInBounds(underbrushCount, layout);
+        if (underbrushCount > 0){
+            ObjectPooler.InitializePoolsFromDirectory(ObjectPooler.PoolType.Underbrush, underbrushPrefabsDirectory, underbrushCount);
+            UnderbrushHandler underbrushHandler = Object.FindObjectOfType<UnderbrushHandler>();
+            underbrushHandler.LoopInstantiateUnderbrushInBounds(underbrushCount, layout);
+        }
+
+        // Create the weed prefabs pool from the given WeedTypes parameter
+        WeedHandler weedHandler = Object.FindObjectOfType<WeedHandler>();
+        if (weedTypes != null && weedCount > 0){
+            ObjectPooler.InitializePools(ObjectPooler.PoolType.Weeds, weedHandler.GetAvailableWeeds(weedTypes).ToArray(), weedCount);
+            weedHandler.LoopInstantiateWeedsInBounds(weedCount);
+        }
+
+        sw.Stop();
+        Debug.Log($"Time to load new domain: {sw.ElapsedMilliseconds} ms");
     }
 
     static private string GetPrefabDirectory(string prefabType, string fieldName){
@@ -88,6 +145,7 @@ public abstract class Event {
     public float RunEventForIteration(int iteration){
         if (iteration % frequency == 0){
             RunEvent();
+            Debug.Log("Ran event: " + name);
             return timeToExecute;
         }
         return 0f;
@@ -146,13 +204,15 @@ public class MoveGroundEvent : Event {
 
 [Serializable]
 public class Domain {
+    public string name;
     public string fieldName;
     public List<string> eventNames;
     public int imagesLimit; // -1 represents no limit
     public int minutesLimit; // -1 represents no limit
 
-    public Domain(string fieldName, List<string> eventNames, int imagesLimit = -1, int minutesLimit = -1) 
+    public Domain(string name, string fieldName, List<string> eventNames, int imagesLimit = -1, int minutesLimit = -1) 
     {
+        this.name = name;
         this.fieldName = fieldName;
         this.eventNames = eventNames;
         this.imagesLimit = imagesLimit;

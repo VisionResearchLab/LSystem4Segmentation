@@ -14,6 +14,11 @@ public class LightSourceHandler : MonoBehaviour {
         dim = 1,
         bright = 2
     }
+
+    public static List<LightsourceType> GetAllLightsourceTypes(){
+        return new List<LightsourceType>(){LightsourceType.dark, LightsourceType.dim, LightsourceType.bright};
+    }
+
     private List<GameObject> GetAvailableLightsources(List<LightsourceType> availableLightsourceTypes){
         List<GameObject> availableLightsources = new List<GameObject>();
         if (availableLightsourceTypes.Contains(LightsourceType.dark)){
@@ -27,6 +32,7 @@ public class LightSourceHandler : MonoBehaviour {
         }
         return availableLightsources;
     }
+
     private List<GameObject> GetAllLightsources(){
         List<GameObject> availableLightsources = new List<GameObject>();
 
@@ -35,7 +41,6 @@ public class LightSourceHandler : MonoBehaviour {
         availableLightsources.AddRange(brightLightSources);
 
         return availableLightsources;
-        
     }
 
     public void SwapLightSource(List<LightsourceType> availableLightsourceTypes){

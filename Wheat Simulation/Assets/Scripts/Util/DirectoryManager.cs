@@ -1,0 +1,58 @@
+using System.Collections.Generic;
+using UnityEngine;
+using System.Collections;
+using System;
+using System.Text;
+using System.IO;
+using System.Diagnostics;
+using Debug = UnityEngine.Debug;
+
+public class DirectoryManager : MonoBehaviour {
+    // Inspector variables
+    public profileChoice profileChoiceDropdown = profileChoice.Laptop;
+    public string currentDatasetName;
+    public string currentScheduleName;
+
+    // Public, hide-in-inspector
+    public Profile currentProfile => getCurrentProfile();
+    public string currentDatasetDirectory => currentProfile.datasetDirectory;
+    public string currentPythonPath => currentProfile.pythonPath;
+
+
+    private List<Profile> profiles = new List<Profile>();
+    public enum profileChoice
+    {
+        PC, 
+        Laptop
+    };
+    
+    private Profile getCurrentProfile(){
+        foreach (Profile profile in profiles){
+            if (profile.key == profileChoiceDropdown){
+                return profile;
+            }
+        }
+        Debug.LogError("Error: Could not find profile.");
+        return null;
+    }
+
+    // Define profiles
+    void Start(){
+        profiles.Add(new Profile(profileChoice.Laptop, @"C:\Users\xSkul\OneDrive\Documents\Projects\Wheat\wheat\Datasets", @"C:\Users\xSkul\AppData\Local\Programs\Python\Python311\python.exe"));
+        profiles.Add(new Profile(profileChoice.PC, @"K:\Users\Skull\Downloads\tempDatasets", @"C:\Users\Skull\AppData\Local\Programs\Python\Python311\python.exe"));
+    }
+    
+
+}
+
+public class Profile {
+    public Profile(DirectoryManager.profileChoice key, string datasetDirectory, string pythonPath){
+        this.key = key;
+        this.datasetDirectory = datasetDirectory;
+        this.pythonPath = pythonPath;
+    }
+
+    public DirectoryManager.profileChoice key;
+    public string datasetDirectory;
+    public string pythonPath;
+}
