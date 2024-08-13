@@ -8,7 +8,6 @@ import os
 import sys
 from tqdm import tqdm
 from imantics import Mask
-import pycocotools
 
 
 # Copy a JSON file to a new location. Categories can be excluded from the final result by passing a list of ints.
@@ -210,7 +209,7 @@ def get_rle_segmentation_from_masks(domain_path):
 
 # Copy a JSON file to a new location. Categories can be excluded from the final result by passing a list of ints.
 def add_is_crowd_and_fix_bbox(domain_path):
-    json_path = f"{domain_path}_seg/coco_annotations.json"
+    json_path = f"{domain_path}coco_annotations_onlywheatheads.json"
 
     # Load the existing JSON file
     with open(json_path, 'r') as f:
@@ -245,35 +244,19 @@ if sys.argv[1] is not None and sys.argv[2] is not None:
     domain_paths = glob.glob(f"{dataset_path}/*/")
     print(f"Domain paths found: {domain_paths}")
 
-    segment_type = sys.argv[2]
-    if segment_type.lower is not "polygons" and segment_type.lower is not "polygon" and segment_type.lower is not "rle":
-        print("Error: Could not find type")
-    elif len(domain_paths) > 0:
+    if len(domain_paths) > 0:
         for domain_path in domain_paths:
             domain_path = domain_path.rstrip("/\\")
 
-            # Create a new json in the same place as the original, updated with segmentations
-            if segment_type.lower == "polygon" or segment_type.lower == "polygons":
-                # polygon encoding segmentation
-                get_polygon_segmentation_from_masks(domain_path)
+            # polygon encoding segmentation
+            get_polygon_segmentation_from_masks(domain_path)
 
-                # Move the files to another directory without anything unnecessary
-                reorganize_dataset(domain_path)
+            # Move the files to another directory without anything unnecessary
+            reorganize_dataset(domain_path)
 
-                # Fix some issues with the annotation
-                add_is_crowd_and_fix_bbox(domain_path)
-            elif segment_type.lower == "rle":
-                # run-length encoding segmentation
-                get_rle_segmentation_from_masks(domain_path)
-
-                # Move the files to another directory without anything unnecessary
-                reorganize_dataset(domain_path)
-
-                # Fix some issues with the annotation
-                add_is_crowd_and_fix_bbox(domain_path)
-            else:
-                print("Error: Segment type argument is invalid.")
+            # Fix some issues with the annotation
+            add_is_crowd_and_fix_bbox(domain_path)
     else:
         print("Error: could not find any domain paths in dataset path")
 else:
-    print("arg 1: dataset path (not domain path), arg 2: 'polygons' or 'RLE'")
+    print("arg 1: dataset path (not domain path!)")

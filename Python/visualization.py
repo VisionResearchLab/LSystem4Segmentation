@@ -6,8 +6,8 @@ import sys
 
 # Load COCO JSON file
 if sys.argv[1] is not None:
-    coco_json_path = f"{sys.argv[1]}/coco_annotations.json"
-    image_directory = f"{sys.argv[1]}/images/"
+    coco_json_path = f"{sys.argv[1]}/coco_annotations_onlywheatheads.json"
+    image_directory = f"{sys.argv[1]}/images"
 
     with open(coco_json_path) as f:
         coco_data = json.load(f)
@@ -21,7 +21,7 @@ if sys.argv[1] is not None:
             annotations_dict[img_id] = []
         annotations_dict[img_id].append(annotation)
 
-    # Function to draw polygons on images
+    # Function to draw polygons and bounding boxes on images
     def draw_polygons(image_path, annotations):
         print(len(annotations))
         image = Image.open(image_path)
@@ -30,6 +30,15 @@ if sys.argv[1] is not None:
 
         for annotation in annotations:
             print(annotation['id'])
+            # Draw bounding box
+            bbox = annotation['bbox']
+            bbox_rect = plt.Rectangle(
+                (bbox[0], bbox[1]), bbox[2], bbox[3],
+                linewidth=1, edgecolor='yellow', facecolor='none'
+            )
+            ax.add_patch(bbox_rect)
+
+            # Draw polygons
             for polygon in annotation['segmentation']:
                 poly = np.array(polygon).reshape((len(polygon)//2, 2))
                 category_id = annotation['category_id']
