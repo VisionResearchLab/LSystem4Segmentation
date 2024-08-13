@@ -1,0 +1,202 @@
+{
+  "$type": "Schedule, Assembly-CSharp",
+  "fields": {
+    "$type": "System.Collections.Generic.List`1[[Field, Assembly-CSharp]], mscorlib",
+    "$values": [
+      {
+        "$type": "Field, Assembly-CSharp",
+        "name": "0a68ff4e05",
+        "layout": 0,
+        "weedTypes": {
+          "$type": "System.Collections.Generic.List`1[[WeedHandler+WeedType, Assembly-CSharp]], mscorlib",
+          "$values": [
+            0,
+            1
+          ]
+        },
+        "wheatCount": 1200,
+        "underbrushCount": 10000,
+        "weedCount": 1350
+      },
+      {
+        "$type": "Field, Assembly-CSharp",
+        "name": "0a671b00f0",
+        "layout": 0,
+        "weedTypes": {
+          "$type": "System.Collections.Generic.List`1[[WeedHandler+WeedType, Assembly-CSharp]], mscorlib",
+          "$values": [
+            1
+          ]
+        },
+        "wheatCount": 1200,
+        "underbrushCount": 10000,
+        "weedCount": 1350
+      },
+      {
+        "$type": "Field, Assembly-CSharp",
+        "name": "0de114d8b1",
+        "layout": 1,
+        "weedTypes": {
+          "$type": "System.Collections.Generic.List`1[[WeedHandler+WeedType, Assembly-CSharp]], mscorlib",
+          "$values": [
+            0,
+            1
+          ]
+        },
+        "wheatCount": 1000,
+        "underbrushCount": 1000,
+        "weedCount": 1000
+      },
+      {
+        "$type": "Field, Assembly-CSharp",
+        "name": "2a0c2644bf",
+        "layout": 0,
+        "weedTypes": {
+          "$type": "System.Collections.Generic.List`1[[WeedHandler+WeedType, Assembly-CSharp]], mscorlib",
+          "$values": [
+            0,
+            1
+          ]
+        },
+        "wheatCount": 1000,
+        "underbrushCount": 5000,
+        "weedCount": 1000
+      }
+    ]
+  },
+  "events": {
+    "$type": "System.Collections.Generic.List`1[[Event, Assembly-CSharp]], mscorlib",
+    "$values": [
+      {
+        "$type": "SwapGroundTextureEvent, Assembly-CSharp",
+        "terrainTypes": {
+          "$type": "System.Collections.Generic.List`1[[TerrainHandler+TerrainType, Assembly-CSharp]], mscorlib",
+          "$values": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "name": "SwapToAnyGround",
+        "frequency": 15,
+        "timeToExecute": 1.0
+      },
+      {
+        "$type": "SwapLightSourceEvent, Assembly-CSharp",
+        "lightsourceTypes": {
+          "$type": "System.Collections.Generic.List`1[[LightSourceHandler+LightsourceType, Assembly-CSharp]], mscorlib",
+          "$values": [
+            0,
+            1,
+            2
+          ]
+        },
+        "name": "SwapToAnyLightsource",
+        "frequency": 25,
+        "timeToExecute": 4.0
+      },
+      {
+        "$type": "SwapLightSourceEvent, Assembly-CSharp",
+        "lightsourceTypes": {
+          "$type": "System.Collections.Generic.List`1[[LightSourceHandler+LightsourceType, Assembly-CSharp]], mscorlib",
+          "$values": [
+            2,
+            1
+          ]
+        },
+        "name": "SwapToNonDarkLightsource",
+        "frequency": 25,
+        "timeToExecute": 4.0
+      },
+      {
+        "$type": "SwapLightSourceEvent, Assembly-CSharp",
+        "lightsourceTypes": {
+          "$type": "System.Collections.Generic.List`1[[LightSourceHandler+LightsourceType, Assembly-CSharp]], mscorlib",
+          "$values": [
+            0
+          ]
+        },
+        "name": "SwapToDarkLightSource",
+        "frequency": 25,
+        "timeToExecute": 4.0
+      }
+    ]
+  },
+  "domains": {
+    "$type": "System.Collections.Generic.List`1[[Domain, Assembly-CSharp]], mscorlib",
+    "$values": [
+      {
+        "$type": "Domain, Assembly-CSharp",
+        "name": "0a68ff4e05",
+        "fieldName": "0a68ff4e05",
+        "eventNames": {
+          "$type": "System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib",
+          "$values": [
+            "SwapToAnyGround",
+            "SwapToNonDarkLightsource"
+          ]
+        },
+        "imagesLimit": 700,
+        "minutesLimit": 72
+      },
+      {
+        "$type": "Domain, Assembly-CSharp",
+        "name": "0a671b00f0",
+        "fieldName": "0a671b00f0",
+        "eventNames": {
+          "$type": "System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib",
+          "$values": [
+            "SwapToAnyGround",
+            "SwapToNonDarkLightsource"
+          ]
+        },
+        "imagesLimit": 700,
+        "minutesLimit": 72
+      },
+      {
+        "$type": "Domain, Assembly-CSharp",
+        "name": "0de114d8b1",
+        "fieldName": "0de114d8b1",
+        "eventNames": {
+          "$type": "System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib",
+          "$values": [
+            "SwapToAnyGround",
+            "SwapToNonDarkLightsource"
+          ]
+        },
+        "imagesLimit": 700,
+        "minutesLimit": 72
+      },
+      {
+        "$type": "Domain, Assembly-CSharp",
+        "name": "2a0c2644bf_Light",
+        "fieldName": "2a0c2644bf",
+        "eventNames": {
+          "$type": "System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib",
+          "$values": [
+            "SwapToAnyGround",
+            "SwapToNonDarkLightsource"
+          ]
+        },
+        "imagesLimit": 700,
+        "minutesLimit": 72
+      },
+      {
+        "$type": "Domain, Assembly-CSharp",
+        "name": "2a0c2644bf_Dark",
+        "fieldName": "2a0c2644bf",
+        "eventNames": {
+          "$type": "System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib",
+          "$values": [
+            "SwapToAnyGround",
+            "SwapToDarkLightSource"
+          ]
+        },
+        "imagesLimit": 700,
+        "minutesLimit": 72
+      }
+    ]
+  }
+}

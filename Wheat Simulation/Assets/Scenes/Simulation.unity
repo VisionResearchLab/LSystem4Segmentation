@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 27.685413, g: 26.22744, b: 28.05636, a: 1}
+  m_IndirectSpecularColor: {r: 27.721325, g: 26.260487, b: 28.10294, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -513,8 +513,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   positionFinder: {fileID: 317227218}
   cam: {fileID: 963194227}
-  minCameraHeight: 2
-  maxCameraHeight: 4.5
+  minCameraHeight: 3.2
+  maxCameraHeight: 5
 --- !u!114 &317227215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -594,7 +594,7 @@ MonoBehaviour:
     eventNames: []
     imagesLimit: 0
     minutesLimit: 0
-  disablePythonProcessing: 0
+  disablePythonProcessing: 1
 --- !u!114 &317227220
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -732,7 +732,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bf069777611860438f6f094fbf98f11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  profileChoiceDropdown: 1
+  profileChoiceDropdown: 0
   currentDatasetName: InstanceSeg3
   currentScheduleName: InstanceSeg3
 --- !u!1 &329793927
@@ -2878,7 +2878,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6275
   m_UseColorTemperature: 1
-  m_BoundingSphereOverride: {x: 1.02e-43, y: 3e-45, z: 1.2715e-41, w: 0}
+  m_BoundingSphereOverride: {x: 9.08e-43, y: 0, z: 7e-44, w: -1.4406568e-23}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0

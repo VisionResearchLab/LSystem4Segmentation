@@ -75,6 +75,8 @@ public class ScheduleInterpreter : MonoBehaviour {
             PythonRunner pythonRunner = FindObjectOfType<PythonRunner>();
             ScreenShot screenShot = FindObjectOfType<ScreenShot>();
             pythonRunner.RunPythonScript(screenShot.datasetDirectory);
+        } else {
+            Debug.Log("Skipped running python script");
         }
         
         sw.Stop();
