@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Newtonsoft.Json;
-using System.IO;
 
 public class InputHandler : MonoBehaviour
 {
@@ -19,17 +17,11 @@ public class InputHandler : MonoBehaviour
     
     void Start(){
         // Maps keybinds to functions in other scripts
-
-        keyMap[KeyCode.Alpha1] = AddManyWheatUniformLayout;
-        keyMap[KeyCode.Alpha2] = AddManyWheatRowLayout;
-        keyMap[KeyCode.Alpha3] = AddManyUnderbrushUniformLayout;
-        keyMap[KeyCode.Alpha4] = AddManyUnderbrushRowLayout;
-
         keyMap[KeyCode.T] = TakeScreenShot;
 
-        keyMap[KeyCode.Y] = CreateSchedule;
-        keyMap[KeyCode.U] = RunSchedule;
-        keyMap[KeyCode.R] = InterruptSchedule; // untested
+        keyMap[KeyCode.Z] = CreateSchedule;
+        keyMap[KeyCode.X] = RunSchedule;
+        keyMap[KeyCode.C] = InterruptSchedule;
     }
 
     // Update is called once per frame
@@ -63,23 +55,5 @@ public class InputHandler : MonoBehaviour
     // Try to interrupt the schedule processing
     private void InterruptSchedule(){
         scheduleInterpreter.Interrupt();
-    }
-
-    
-    // Add wheat or underbrush en masse
-    private void AddManyWheatUniformLayout(){
-        instantiateWheat.LoopAddWheat(100, PositionFinder.FieldLayout.Uniform);
-    }
-
-    private void AddManyWheatRowLayout(){
-        instantiateWheat.LoopAddWheat(100, PositionFinder.FieldLayout.EightRows);
-    }
-
-    private void AddManyUnderbrushUniformLayout(){
-        underbrushHandler.LoopInstantiateUnderbrushInBounds(1000, PositionFinder.FieldLayout.Uniform);
-    }
-
-    private void AddManyUnderbrushRowLayout(){
-        underbrushHandler.LoopInstantiateUnderbrushInBounds(1000, PositionFinder.FieldLayout.EightRows);
     }
 }
