@@ -13,7 +13,7 @@ public class DirectoryManager : MonoBehaviour {
     public string currentDatasetName;
     public string currentScheduleName;
 
-    // Public, hide-in-inspector
+    // Public, not visible in inspector
     public Profile currentProfile => getCurrentProfile();
     public string currentDatasetDirectory => currentProfile.datasetDirectory;
     public string currentPythonPath => currentProfile.pythonPath;
@@ -41,10 +41,9 @@ public class DirectoryManager : MonoBehaviour {
         profiles.Add(new Profile(profileChoice.Laptop, @"C:\Users\xSkul\OneDrive\Documents\Projects\Wheat\wheat\Datasets", @"C:\Users\xSkul\AppData\Local\Programs\Python\Python311\python.exe"));
         profiles.Add(new Profile(profileChoice.PC, @"K:\Users\Skull\Downloads\tempDatasets", @"C:\Users\Skull\AppData\Local\Programs\Python\Python311\python.exe"));
     }
-    
-
 }
 
+// Each Profile contains several directories that need to be referenced. This is mostly useful when working from multiple devices.
 public class Profile {
     public Profile(DirectoryManager.profileChoice key, string datasetDirectory, string pythonPath){
         this.key = key;

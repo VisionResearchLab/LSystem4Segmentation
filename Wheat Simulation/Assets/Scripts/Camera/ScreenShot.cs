@@ -30,6 +30,7 @@ public class ScreenShot : MonoBehaviour
     private string datasetJSONPath => $"{datasetsDirectory}/{datasetName}/{domainName}/annotations.json";
 
     // Setting to decide whether awns should be labelled as wheat heads or passed through
+    [SerializeField] private bool useInstanceSegmentation;
     [SerializeField] private bool labelAwnsAsWheatHeads;
 
     // Screen width and height
@@ -56,17 +57,19 @@ public class ScreenShot : MonoBehaviour
                 return false;
             }
 
-        // Check if the DATASETS directory exists. If it does, proceed.
+        // Check if the datasets directory exists. If it does, proceed.
         if (Directory.Exists(datasetsDirectory)){
-            // If the DOMAIN directory does not exist based on the private name, create it.
+            // If the domain directory does not exist based on the private name, create it.
             // Also create a new JSON.
             if (!Directory.Exists(domainDirectory)){
                 Directory.CreateDirectory(domainDirectory);
-                InitializeDatasetJSONWithCategories();
+                if (useInstanceSegmentation){
+                    InitializeDatasetJSONWithCategories();
+                }
                 return true;
             } 
             // Try to load instanceLabels from the JSON if the domain was found
-            else {
+            else if (useInstanceSegmentation) {
                 if (File.Exists(datasetJSONPath)){
                     string jsonContent = File.ReadAllText(datasetJSONPath);
                     datasetJSON = JsonConvert.DeserializeObject<DatasetJSON>(jsonContent);
@@ -76,6 +79,7 @@ public class ScreenShot : MonoBehaviour
                     return true;
                 }
             }
+            return true;
         }
         else {
             UnityEngine.Debug.LogError("The datasets directory could not be found.");
@@ -106,15 +110,25 @@ public class ScreenShot : MonoBehaviour
 
             // Create the image, assign it an ID, then add it to the JSON
             StartCoroutine(ImageScreenshot(imagePath));
-            int imageID = datasetJSON.images.Count;
-            AddImageToDataset(imageID, imageName, dateTimeJSONFormatting);
 
-            // Use raycasts to create a BMP of annotation IDs for the current image, then add them to the JSON
-            Annotate(imageID, labelName, labelPath);
+            // Instance segmentation
+            if(useInstanceSegmentation){
+                int imageID = datasetJSON.images.Count;
 
-            // Update the JSON so prior changes are included
-            UpdateJSONFile();
+                AddImageToDataset(imageID, imageName, dateTimeJSONFormatting);
 
+                AnnotateInstance(imageID, labelName, labelPath);
+                
+                // Update the JSON so prior changes are included
+                UpdateJSONFile();
+            } 
+
+            // Semantic segmentation
+            else 
+            {
+                AnnotateSemantic(labelPath);
+            }
+            
             yield return new WaitForEndOfFrame();
             // ShowUI();
         } else {
@@ -141,11 +155,11 @@ public class ScreenShot : MonoBehaviour
         canvasGroup.blocksRaycasts = true;
     }
 
-    // Use texture to avoid screenshot lag
+    // Saving the screenshot as a Texture2D which is then encoded to a PNG allows multithreading, so this does not delay anything else in the scene
     private IEnumerator ImageScreenshot(string path){
         yield return new WaitForEndOfFrame();
         // https://stackoverflow.com/a/36188311
-        Texture2D screenShot = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, true); // mipchain??
+        Texture2D screenShot = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, true);
         screenShot.ReadPixels(new Rect(0,0,Screen.width,Screen.height), 0, 0);
         screenShot.Apply();
         byte[] bytes = screenShot.EncodeToPNG();
@@ -195,7 +209,8 @@ public class ScreenShot : MonoBehaviour
         return raycastResults;
     }
 
-    private void AnnotateScreenshotRaycast(string path){
+    // Semantic segmentation
+    private void AnnotateSemantic(string path){
         Stopwatch sw = new Stopwatch();
         sw.Start(); // track raycast
 
@@ -233,94 +248,6 @@ public class ScreenShot : MonoBehaviour
         UnityEngine.Debug.Log("Screenshot saved to: " + path);
     }
 
-    // private void AddBoundingBoxForImage(string imageName){
-    //     Stopwatch sw = new Stopwatch();
-    //     sw.Start(); // track raycast
-
-
-    //     string boundingBoxPath = datasetDirectory + "bounding_boxes.csv";
-
-    //     // Create a stringbuilder to iteratively add to, for each image taken
-    //     StringBuilder newText = new StringBuilder();
-
-    //     // If the bounding box file does not exist, create it and add the information row
-    //     if(!File.Exists(boundingBoxPath)){
-    //         using (FileStream fs = File.Create(boundingBoxPath))
-    //         {
-    //             newText.Append("image_name,BoxesString,domain\n");
-    //         }
-    //     }
-
-    //     // Create a dictionary to record the bounding boxes for each object that is hit by the raycast
-    //     //Key: obj, Value: [x_min, y_min, x_max, y_max]
-    //     Dictionary<GameObject, List<int>> objectBoundingBoxDict = new Dictionary<GameObject, List<int>>();
-        
-    //     // Get raycast hits
-    //     NativeArray<RaycastHit> raycastResults = RaycastFromCamera();
-
-    //     // Simple method to get a new bounding box coordinate list based on new coordinates where the object is hit by raycasts
-    //     List<int> UpdateBoundingBoxCoordinates(List<int> coordinates, int x, int y){
-    //         // values: [x_min, y_min, x_max, y_max]
-    //         List<int> newValues = new List<int>(coordinates);
-    //         UnityEngine.Debug.Log(coordinates.Count);
-    //         UnityEngine.Debug.Log(newValues.Count);
-    //         if (coordinates[0] > x){
-    //             newValues[0] = x;
-    //         }
-    //         if (coordinates[1] > y){
-    //             newValues[1] = y;
-    //         }
-    //         if (coordinates[2] < x){
-    //             newValues[2] = x;
-    //         }
-    //         if (coordinates[3] < y){
-    //             newValues[3] = y;
-    //         }
-    //         return newValues;
-    //     }
-
-    //     // Find bounding boxes using raycast results, saving them to objectBoundingBoxDict
-    //     for (int y = 0; y < height; y++){
-    //         for (int x = 0; x < width; x++){
-    //             RaycastHit hit = raycastResults[x + width*y];
-    //             GameObject obj = hit.transform ? hit.transform.gameObject : null;
-    //             if (obj != null && Wheat.IsWheat(obj, Wheat.Part.Head)){
-    //                 if (objectBoundingBoxDict.ContainsKey(obj)){
-    //                     List<int> coordinates = objectBoundingBoxDict[obj];
-    //                     objectBoundingBoxDict[obj] = UpdateBoundingBoxCoordinates(coordinates, x, y);
-    //                 }
-    //                 else {
-    //                     List<int> coordinates = new List<int>{x, y, x, y};
-    //                     objectBoundingBoxDict[obj] = coordinates;
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     raycastResults.Dispose();
-    
-    //     // Add this image to the stringbuilder, with its bounding box results.
-    //     //  Image name
-    //     newText.Append($"{imageName},");
-    //     //  Bounding box coordinates
-    //     if (objectBoundingBoxDict.Values.Count != 0){
-    //         foreach (List<int> values in objectBoundingBoxDict.Values){
-    //             newText.Append($"{values[0]} {values[1]} {values[2]} {values[3]};");
-    //         }
-    //         newText.Length--; // Clear the semicolon in the last position
-    //     }
-    //     else {
-    //         newText.Append("no_box");
-    //     }
-    //     //  Domain name
-    //     newText.Append($",{domainName}\n");
-
-    //     // Write the stringbuilder to the CSV
-    //     File.AppendAllText(boundingBoxPath, newText.ToString());
-
-    //     sw.Stop();
-    //     UnityEngine.Debug.Log($"Time to append bounding box: {sw.ElapsedMilliseconds} ms");
-    // }
-
     // Takes the annotation json object script and resets it with updated caegories
     private void InitializeDatasetJSONWithCategories(){
         datasetJSON = new DatasetJSON();
@@ -340,7 +267,8 @@ public class ScreenShot : MonoBehaviour
         datasetJSON.images.Add(new Image(id, width, height, file_name, date_captured));
     }
 
-    private void Annotate(int image_id, string labelName, string labelPath){
+    // Instance segmentation
+    private void AnnotateInstance(int image_id, string labelName, string labelPath){
         Stopwatch sw = new Stopwatch();
         sw.Start(); // track raycast
 

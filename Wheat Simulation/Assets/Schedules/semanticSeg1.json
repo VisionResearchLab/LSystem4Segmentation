@@ -1,0 +1,102 @@
+{
+  "$type": "Schedule, Assembly-CSharp",
+  "fields": {
+    "$type": "System.Collections.Generic.List`1[[Field, Assembly-CSharp]], mscorlib",
+    "$values": [
+      {
+        "$type": "Field, Assembly-CSharp",
+        "name": "FieldTest",
+        "layout": 0,
+        "weedTypes": {
+          "$type": "System.Collections.Generic.List`1[[WeedHandler+WeedType, Assembly-CSharp]], mscorlib",
+          "$values": [
+            0,
+            1
+          ]
+        },
+        "wheatCount": 1200,
+        "underbrushCount": 10000,
+        "weedCount": 1350
+      }
+    ]
+  },
+  "events": {
+    "$type": "System.Collections.Generic.List`1[[Event, Assembly-CSharp]], mscorlib",
+    "$values": [
+      {
+        "$type": "SwapGroundTextureEvent, Assembly-CSharp",
+        "terrainTypes": {
+          "$type": "System.Collections.Generic.List`1[[TerrainHandler+TerrainType, Assembly-CSharp]], mscorlib",
+          "$values": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "name": "SwapToAnyGround",
+        "frequency": 15,
+        "timeToExecute": 1.0
+      },
+      {
+        "$type": "SwapLightSourceEvent, Assembly-CSharp",
+        "lightsourceTypes": {
+          "$type": "System.Collections.Generic.List`1[[LightSourceHandler+LightsourceType, Assembly-CSharp]], mscorlib",
+          "$values": [
+            0,
+            1,
+            2
+          ]
+        },
+        "name": "SwapToAnyLightsource",
+        "frequency": 25,
+        "timeToExecute": 4.0
+      },
+      {
+        "$type": "SwapLightSourceEvent, Assembly-CSharp",
+        "lightsourceTypes": {
+          "$type": "System.Collections.Generic.List`1[[LightSourceHandler+LightsourceType, Assembly-CSharp]], mscorlib",
+          "$values": [
+            2,
+            1
+          ]
+        },
+        "name": "SwapToNonDarkLightsource",
+        "frequency": 25,
+        "timeToExecute": 4.0
+      },
+      {
+        "$type": "SwapLightSourceEvent, Assembly-CSharp",
+        "lightsourceTypes": {
+          "$type": "System.Collections.Generic.List`1[[LightSourceHandler+LightsourceType, Assembly-CSharp]], mscorlib",
+          "$values": [
+            0
+          ]
+        },
+        "name": "SwapToDarkLightSource",
+        "frequency": 25,
+        "timeToExecute": 4.0
+      }
+    ]
+  },
+  "domains": {
+    "$type": "System.Collections.Generic.List`1[[Domain, Assembly-CSharp]], mscorlib",
+    "$values": [
+      {
+        "$type": "Domain, Assembly-CSharp",
+        "name": "FieldTestDomain",
+        "fieldName": "FieldTest",
+        "eventNames": {
+          "$type": "System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib",
+          "$values": [
+            "SwapToAnyGround",
+            "SwapToNonDarkLightsource"
+          ]
+        },
+        "imagesLimit": 15,
+        "minutesLimit": 60
+      }
+    ]
+  }
+}

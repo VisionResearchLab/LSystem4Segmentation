@@ -79,7 +79,7 @@ public class Field {
 
         // Get wheat prefabs directory. If not found, set wheat count to 0.
         string wheatPrefabsDirectory = GetPrefabDirectory("Wheat Models", name);
-        if(wheatPrefabsDirectory == null){ // Need to do something similar for weeds
+        if(wheatPrefabsDirectory == null){
             Debug.Log("Wheat prefab directory not found at " + wheatPrefabsDirectory);
             wheatCount = 0;
         }
