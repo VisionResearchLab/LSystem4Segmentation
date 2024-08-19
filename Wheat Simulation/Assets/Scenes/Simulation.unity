@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 27.721325, g: 26.260487, b: 28.10294, a: 1}
+  m_IndirectSpecularColor: {r: 27.683422, g: 26.212736, b: 28.016102, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -400,7 +400,7 @@ GameObject:
   - component: {fileID: 317227223}
   - component: {fileID: 317227224}
   m_Layer: 0
-  m_Name: Singletons
+  m_Name: Scripts
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -497,6 +497,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainCam: {fileID: 963194227}
   canvasGroup: {fileID: 830734411}
+  useInstanceSegmentation: 1
   labelAwnsAsWheatHeads: 0
   scheduleInterpreter: {fileID: 317227219}
 --- !u!114 &317227214
@@ -732,9 +733,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bf069777611860438f6f094fbf98f11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  profileChoiceDropdown: 0
-  currentDatasetName: InstanceSeg3
-  currentScheduleName: InstanceSeg3
+  profileChoiceDropdown: 1
+  currentDatasetName: instanceSeg4
+  currentScheduleName: instanceSeg4
 --- !u!1 &329793927
 GameObject:
   m_ObjectHideFlags: 0
@@ -2878,7 +2879,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6275
   m_UseColorTemperature: 1
-  m_BoundingSphereOverride: {x: 9.08e-43, y: 0, z: 7e-44, w: -1.4406568e-23}
+  m_BoundingSphereOverride: {x: 7.143088e+31, y: 6.8611926e+22, z: 2.423924e+14, w: 1.4847233e-27}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
@@ -6570,8 +6571,8 @@ SceneRoots:
   - {fileID: 419039606}
   - {fileID: 1027205072}
   - {fileID: 680051335}
+  - {fileID: 1087695798}
   - {fileID: 2060330630}
   - {fileID: 1697762591}
-  - {fileID: 1087695798}
   - {fileID: 196514692}
   - {fileID: 1085993164}
