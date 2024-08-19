@@ -10,19 +10,20 @@ In Blender, to generate a wheat model, follow these steps:
 2. Adjust the parameters listed under Instantiate Wheat as desired, then click "Create Wheat". If you plan to export the wheat to Unity, leave the position and position variance at (0,0,0).
 3. Click on the "Separate Wheat Parts" button to apply all modifiers to all wheat models, then separate them into folders that contain their parts. This makes the process of baking textures and exporting to Unity much easier.
 4. Enter the Unity project directory into the field above the "Export Wheat Models" button, then click it to export the wheat models to Unity.
-
-If you create other objects and want to export them to Unity as well, use the "Export Selected Objects" button.
+5. (optional) If desired, select a number of leaf objects and click "Export As Underbrush" to place additional leaves on the ground later
 
 ### Creating dataset via Unity
-In Unity, to generate a wheat model, follow these steps:
-1. Enter Play mode.
-2. Enter the number of objects that you wish to place into the bottom left input field.
-3. Press a button on your keyboard according to the commands listed on screen to instantiate objects in the field in your desired arrangement.
-4. Enter the directory where the dataset should be created.
-5. Once you are ready to generate the dataset, press Y to start generation.
-6. Once you are finished generating data, press U to stop generation, or simply exit play mode.
+In Unity, to generate the dataset, follow these steps:
+1. Adjust settings in the Unity inspector as desired. These include whether to use semantic or instance segmentation, the location and name of the dataset, and which objects to include in the segmentation.
+2. Using the ScheduleCreator script, create a Schedule object with the desired time limit, image limit, fields, events, and domains. In future versions, an interface will be created to simplify this process.
+3. Enter Play Mode.
+5. Save the Schedule object by pressing Z.
+5. Once you are ready to generate the dataset, run the Schedule object by pressing X.
+6. To stop generation early, press C. Otherwise, wait until generation is complete.
+7. Exit play mode.
 
-The dataset will consist of images and corresponding labels in the same folder. They have identical names of the format "YYYY-MM-DD_HH-mm-SS_image.png" for images and "YYYY-MM-DD_HH-mm-SS_label.png" for labels.
+For semantic segmentation, the dataset will consist of images and corresponding labels in the same folder. They have identical names of the format "YYYY-MM-DD_HH-mm-SS_image.png" for images and "YYYY-MM-DD_HH-mm-SS_label.png" for labels.
+For instance segmentation, the same applies, but the labels consist of integer values (created by combining the color value of into a 32-bit integer for each pixel) and an additional JSON file is created that tracks the ID numbers of each object. A Python script is also provided that can adapt these segmentations for the COCO format by representing these labels as polygon segmentations. 
 
 ## Support
 For help, contact Elijah Mickelson at the following email:
@@ -30,10 +31,8 @@ elijah.mickelson@ucalgary.ca
 
 ## Roadmap
 Future goals:
-- Simplify exporting of objects that are not single users of their materials
-- Use geonodes to generate randomized leaf models
-- Improve texture variety, especially for stem
-- Implement a file reader to automatically progress through each stage of dataset generation
+- Create a new UI, because the previous UI was mostly scrapped after implementing schedule and instance segmentation features
+- Further tweak the geometry nodes setup to improve wheat realism and variety
 
 ## Authors and acknowledgment
 Developer: Elijah Mickelson
