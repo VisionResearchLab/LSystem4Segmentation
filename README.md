@@ -1,4 +1,4 @@
-# Wheat Head Segmentation Dataset Generator
+# L Systems for Segmentation
 
 ## Description
 This application is designed for the purpose of generating synthetic datasets for wheat head segmentation.
@@ -29,14 +29,11 @@ For instance segmentation, the same applies, but the labels consist of integer v
 For help, contact Elijah Mickelson at the following email:
 elijah.mickelson@ucalgary.ca
 
-## Roadmap
-Future goals:
-- Create a new UI, because the previous UI was mostly scrapped after implementing schedule and instance segmentation features
-- Further tweak the geometry nodes setup to improve wheat realism and variety
+## Future improvements
+* Create a new UI to simply the user experience; the previous one was scrapped since changes were made to accommodate dataset creation scheduling and instance segmentation features.
+* Replicate the existing Unity project in Unreal Engine 5, potentially improving realism.
 
 ## Authors and acknowledgment
-Developer: Elijah Mickelson
-Special thanks to Hosein Beheshti and Dr. Farhad Maleki for the helpful advice in improving this program.
+Developed by Elijah Mickelson (elijah.mickelson@ucalgary.ca).
 
-## Project status
-The project will be frequently improved upon until September 2024.
+Special thanks to Hosein Beheshtifard and Dr. Farhad Maleki for the support they provided in the development of this program.
